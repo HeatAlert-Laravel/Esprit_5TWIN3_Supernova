@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +14,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        if (app()->environment('local') && env('DEMO_ADMIN_EMAIL') && env('DEMO_ADMIN_PASSWORD')) {
+            $admin = User::firstOrNew(['email' => env('DEMO_ADMIN_EMAIL')]);
+            $admin->name = 'HeatAlert Admin';
+            $admin->role = 'ADMIN';
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+            if (! $admin->exists || ! Hash::check(env('DEMO_ADMIN_PASSWORD'), $admin->password)) {
+                $admin->password = Hash::make(env('DEMO_ADMIN_PASSWORD'));
+            }
+
+            $admin->save();
+        }
+
+        $this->call([ProfileSeeder::class, SensitiveEquipmentSeeder::class]);
     }
 }
