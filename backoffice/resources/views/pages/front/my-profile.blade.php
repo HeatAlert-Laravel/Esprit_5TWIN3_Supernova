@@ -1,0 +1,10 @@
+@extends('layouts.front')
+@section('title', 'My Profile')
+@section('content')
+<div class="mb-8"><span class="text-sm font-bold uppercase tracking-widest text-orange-600">Resident area</span><h1 class="mt-2 text-4xl font-bold">My Profile</h1><p class="mt-3 text-gray-600">Keep your household information ready for local heat planning.</p></div>
+<div class="grid gap-6 lg:grid-cols-2"><div class="rounded-2xl bg-white p-6 shadow-sm"><h2 class="text-xl font-bold">Household details</h2><form method="POST" action="{{ route('my-profile.update') }}" class="mt-5 space-y-4">@csrf @method('PUT')
+    @foreach ([['phone','Phone'],['address','Address'],['neighborhood','Neighborhood']] as [$field,$label])<div><label class="block font-medium" for="{{ $field }}">{{ $label }}</label><input class="mt-2 w-full rounded-lg border border-gray-300 p-3" id="{{ $field }}" name="{{ $field }}" value="{{ old($field, $profile?->$field) }}" required>@error($field)<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror</div>@endforeach
+    <input type="hidden" name="has_fragile_person" value="0"><label class="flex items-center gap-2"><input type="checkbox" name="has_fragile_person" value="1" {{ old('has_fragile_person', $profile?->has_fragile_person) ? 'checked' : '' }}>A fragile person lives in this household</label>@error('has_fragile_person')<p class="text-sm text-red-700">{{ $message }}</p>@enderror
+    <button class="rounded-lg bg-orange-600 px-5 py-3 font-semibold text-white hover:bg-orange-700">Save profile</button>
+</form></div><div class="rounded-2xl bg-white p-6 shadow-sm"><h2 class="text-xl font-bold">Sensitive equipment</h2><p class="mt-2 text-gray-600">Equipment linked to your household profile.</p><ul class="mt-5 divide-y divide-gray-100">@forelse($profile?->sensitiveEquipments ?? [] as $item)<li class="py-3"><strong>{{ $item->name }}</strong><span class="ms-2 text-sm text-gray-500">{{ ucfirst($item->priority_level) }} priority</span></li>@empty<li class="py-3 text-gray-500">No equipment recorded yet.</li>@endforelse</ul></div></div>
+@endsection

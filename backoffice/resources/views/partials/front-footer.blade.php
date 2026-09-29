@@ -1,0 +1,1 @@
+<footer class="border-t border-orange-200 bg-white"><div class="mx-auto max-w-6xl px-5 py-8 text-sm text-gray-600">HeatAlert · Prepared neighbors, safer summers. Information modules are being developed by the team.</div></footer>

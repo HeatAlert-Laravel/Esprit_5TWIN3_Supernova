@@ -1,0 +1,8 @@
+@extends('layouts.app')
+@section('title', 'Equipment details')
+@section('content')
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3"><div><p class="text-sm font-semibold text-orange-600">Sensitive equipment</p><h1 class="text-3xl font-bold dark:text-white">{{ $equipment->name }}</h1></div><div class="flex gap-3"><a href="{{ route('admin.equipment.edit', $equipment) }}" class="rounded-lg bg-orange-600 px-4 py-2 font-semibold text-white">Edit</a><a href="{{ route('admin.equipment.index') }}" class="rounded-lg border border-gray-300 px-4 py-2 dark:border-gray-700">All equipment</a></div></div>
+@if(session('status'))<p role="status" class="mb-5 rounded-lg bg-green-100 p-3 text-green-900">{{ session('status') }}</p>@endif
+<div class="max-w-2xl rounded-xl bg-white p-6 shadow-sm dark:bg-gray-900 dark:text-white"><dl class="space-y-4"><div><dt class="text-sm text-gray-500">Profile</dt><dd><a class="font-semibold text-orange-700 dark:text-orange-300" href="{{ route('admin.profiles.show', $equipment->profile) }}">{{ $equipment->profile->user->name }} · {{ $equipment->profile->neighborhood }}</a></dd></div><div><dt class="text-sm text-gray-500">Type</dt><dd>{{ $equipment->type }}</dd></div><div><dt class="text-sm text-gray-500">Priority</dt><dd>{{ ucfirst($equipment->priority_level) }}</dd></div><div><dt class="text-sm text-gray-500">Description</dt><dd>{{ $equipment->description ?: 'None' }}</dd></div></dl></div>
+<form method="POST" action="{{ route('admin.equipment.destroy', $equipment) }}" onsubmit="return confirm('Delete this equipment?')" class="mt-8">@csrf @method('DELETE')<button class="rounded-lg border border-red-300 px-4 py-2 font-semibold text-red-700">Delete equipment</button></form>
+@endsection
