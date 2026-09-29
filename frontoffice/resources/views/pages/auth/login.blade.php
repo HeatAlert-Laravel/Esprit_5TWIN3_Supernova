@@ -6,6 +6,7 @@
     <div><label for="email" class="block font-medium">Email</label><input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus class="mt-2 w-full rounded-lg border border-gray-300 p-3">@error('email')<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror</div>
     <div><label for="password" class="block font-medium">Password</label><input id="password" name="password" type="password" required class="mt-2 w-full rounded-lg border border-gray-300 p-3">@error('password')<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror</div>
     <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="remember" value="1" {{ old('remember') ? 'checked' : '' }}>Remember me</label>
+    <a class="inline-block text-sm font-semibold text-orange-700" href="{{ route('password.request') }}">Forgot your password?</a>
     <button class="w-full rounded-lg bg-orange-600 p-3 font-semibold text-white hover:bg-orange-700">Log in</button>
 </form><p class="mt-5 text-sm">New here? <a class="font-semibold text-orange-700" href="{{ route('register') }}">Create an account</a></p></div>
 @endsection

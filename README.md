@@ -39,6 +39,8 @@ Front Office: <http://127.0.0.1:8080/>. Back Office: <http://127.0.0.1:8081/admi
 
 Resident routes, controllers, Blade layouts, and Vite assets live in `frontoffice/`. The resident equipment controller loads equipment through the signed-in user's profile relation. Admin routes, controllers, middleware, Blade layouts, and TailAdmin assets live in `backoffice/`. The Back Office login accepts only `ADMIN` credentials, and the `admin` middleware checks every admin route. Registration always creates a `USER`. Both apps use the same app key, session cookie, session table, and database so a local browser session works across ports.
 
+The Front Office login offers Laravel's native Remember Me and password recovery. With `MAIL_MAILER=log`, password reset links are written to the ignored `frontoffice/storage/logs/laravel.log` for local use. The reset token is stored in the shared `password_reset_tokens` table and consumed after a successful reset.
+
 Tests use in-memory SQLite and additive migrations, leaving the local demo database intact:
 
 ```powershell
