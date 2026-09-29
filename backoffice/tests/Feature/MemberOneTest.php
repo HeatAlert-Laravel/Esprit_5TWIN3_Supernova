@@ -33,6 +33,7 @@ test('registration creates a USER, login rotates the session, and logout ends it
 
 test('USER cannot access admin routes and can save only their own profile', function () {
     $user = User::factory()->create(['role' => 'USER']);
+    $this->actingAs($user)->get(route('admin.dashboard'))->assertForbidden();
     $this->actingAs($user)->get(route('admin.profiles.index'))->assertForbidden();
     $this->actingAs($user)->put(route('my-profile.update'), [
         'phone' => '+216 71 123 456', 'address' => '12 Rue des Jasmins', 'neighborhood' => 'La Marsa', 'has_fragile_person' => '1',
