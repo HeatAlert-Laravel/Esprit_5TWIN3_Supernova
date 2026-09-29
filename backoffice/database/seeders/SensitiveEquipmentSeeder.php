@@ -10,7 +10,9 @@ class SensitiveEquipmentSeeder extends Seeder
 {
     public function run(): void
     {
-        foreach (Profile::all() as $profile) {
+        $demoEmails = ['amina@example.test', 'youssef@example.test', 'leila@example.test'];
+
+        foreach (Profile::whereHas('user', fn ($query) => $query->whereIn('email', $demoEmails))->get() as $profile) {
             if ($profile->sensitiveEquipments()->exists()) {
                 continue;
             }

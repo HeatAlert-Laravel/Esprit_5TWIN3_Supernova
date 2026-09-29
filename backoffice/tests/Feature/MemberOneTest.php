@@ -102,9 +102,11 @@ test('profile validation rejects missing fields and preserves form input', funct
 });
 
 test('factories and seeders preserve the one to many relationship', function () {
+    $realProfile = Profile::factory()->create();
     $this->seed([ProfileSeeder::class, SensitiveEquipmentSeeder::class]);
-    expect(Profile::count())->toBe(3);
+    expect(Profile::count())->toBe(4);
     expect(SensitiveEquipment::count())->toBe(6);
-    expect(Profile::first()->sensitiveEquipments)->toHaveCount(2);
+    expect($realProfile->fresh()->sensitiveEquipments)->toHaveCount(0);
+    expect(Profile::whereHas('user', fn ($query) => $query->where('email', 'amina@example.test'))->first()->sensitiveEquipments)->toHaveCount(2);
     expect(SensitiveEquipment::first()->profile->user)->toBeInstanceOf(User::class);
 });
