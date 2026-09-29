@@ -13,11 +13,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        if (env('DEMO_ADMIN_EMAIL') && env('DEMO_ADMIN_PASSWORD')) {
+            User::firstOrCreate(['email' => env('DEMO_ADMIN_EMAIL')], [
+                'name' => 'HeatAlert Admin',
+                'password' => env('DEMO_ADMIN_PASSWORD'),
+                'role' => 'ADMIN',
+            ]);
+        }
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $this->call([ProfileSeeder::class, SensitiveEquipmentSeeder::class]);
     }
 }
