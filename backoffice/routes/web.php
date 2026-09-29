@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SensitiveEquipmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ResidentProfileController;
+use App\Http\Controllers\ResidentSensitiveEquipmentController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'pages.front.home')->name('home');
@@ -24,6 +25,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/my-profile', [ResidentProfileController::class, 'show'])->name('my-profile');
     Route::put('/my-profile', [ResidentProfileController::class, 'update'])->name('my-profile.update');
+
+    Route::prefix('my-profile/equipment')->name('profile.equipment.')->group(function () {
+        Route::get('/create', [ResidentSensitiveEquipmentController::class, 'create'])->name('create');
+        Route::post('/', [ResidentSensitiveEquipmentController::class, 'store'])->name('store');
+        Route::get('/{equipment}/edit', [ResidentSensitiveEquipmentController::class, 'edit'])->name('edit');
+        Route::put('/{equipment}', [ResidentSensitiveEquipmentController::class, 'update'])->name('update');
+        Route::delete('/{equipment}', [ResidentSensitiveEquipmentController::class, 'destroy'])->name('destroy');
+    });
 });
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
