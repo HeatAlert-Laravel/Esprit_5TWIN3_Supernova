@@ -3,9 +3,8 @@
 use App\Models\Profile;
 use App\Models\SensitiveEquipment;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-uses(RefreshDatabase::class);
+// Tests use the PHPUnit in-memory SQLite connection and additive migrations only.
+beforeEach(fn () => $this->artisan('migrate', ['--force' => true]));
 
 test('guest cannot use any resident equipment route', function () {
     $equipment = SensitiveEquipment::factory()->create();
@@ -74,7 +73,6 @@ test('resident cannot read edit update or delete another residents equipment', f
     $resident = $profile->user;
 
     $this->actingAs($resident)->get(route('my-profile'))->assertOk()->assertDontSee('Foreign equipment');
-    $this->get(route('admin.equipment.show', $foreign))->assertForbidden();
     $this->get(route('profile.equipment.edit', $foreign))->assertNotFound();
     $this->put(route('profile.equipment.update', $foreign), [
         'name' => 'Changed', 'type' => 'Medical', 'priority_level' => 'high',

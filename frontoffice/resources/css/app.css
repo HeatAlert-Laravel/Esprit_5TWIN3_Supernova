@@ -1,0 +1,8 @@
+@import 'tailwindcss';
+
+@source '../views/**/*.blade.php';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@theme {
+    --font-sans: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+}

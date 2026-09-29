@@ -1,3 +1,7 @@
+# HeatAlert Back Office
+
+This directory runs the admin application on port 8081. See the [repository setup guide](../README.md) for the shared database, Front Office, and exact local commands. The TailAdmin template information below describes the UI foundation.
+
 # TailAdmin Laravel - Tailwind CSS Free Laravel Dashboard
 
 **TailAdmin Laravel** is a modern, production-ready admin dashboard template powered by **Laravel 12**, **Tailwind CSS v4**, **Alpine.js**, and a clean, modular architecture. TailAdmin is one of the most popular Tailwind CSS dashboard now also available for Larvael. It’s designed for building fast, scalable admin panels, CRM dashboards, SaaS backends, and any data-driven application where clarity and performance matter.

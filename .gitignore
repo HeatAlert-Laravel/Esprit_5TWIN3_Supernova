@@ -1,3 +1,5 @@
 backoffice/database/*.sqlite
 backoffice/database/*.sqlite-*
+frontoffice/database/*.sqlite
+frontoffice/database/*.sqlite-*
 agent/

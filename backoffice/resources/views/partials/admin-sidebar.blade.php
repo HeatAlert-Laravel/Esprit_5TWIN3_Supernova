@@ -4,12 +4,13 @@
         <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">HeatAlert</span>
     </a>
     <nav class="space-y-2" aria-label="Admin navigation">
-        @foreach ([['admin.dashboard', 'Dashboard', '▦'], ['admin.profiles.index', 'Profiles', '♙'], ['admin.equipment.index', 'Sensitive equipment', '◈'], ['home', 'Public site', '⌂']] as [$name, $label, $icon])
+        @foreach ([['admin.dashboard', 'Dashboard', '▦'], ['admin.profiles.index', 'Profiles', '♙'], ['admin.equipment.index', 'Sensitive equipment', '◈']] as [$name, $label, $icon])
             <a href="{{ route($name) }}" title="{{ $label }}" class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium {{ request()->routeIs($name) || ($name === 'admin.profiles.index' && request()->routeIs('admin.profiles.*')) || ($name === 'admin.equipment.index' && request()->routeIs('admin.equipment.*')) ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100' : 'text-gray-600 hover:bg-orange-50 dark:text-gray-300 dark:hover:bg-gray-800' }}">
                 <span class="w-6 text-center text-xl" aria-hidden="true">{{ $icon }}</span>
                 <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">{{ $label }}</span>
             </a>
         @endforeach
+        <a href="{{ config('app.frontoffice_url') }}" title="Public site" class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-gray-600 hover:bg-orange-50 dark:text-gray-300 dark:hover:bg-gray-800"><span class="w-6 text-center text-xl" aria-hidden="true">⌂</span><span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">Public site</span></a>
     </nav>
     <p x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen" class="mt-10 rounded-xl bg-orange-50 p-4 text-xs leading-5 text-orange-900 dark:bg-gray-800 dark:text-orange-200">Local heat resilience starts with clear information and prepared households.</p>
 </aside>

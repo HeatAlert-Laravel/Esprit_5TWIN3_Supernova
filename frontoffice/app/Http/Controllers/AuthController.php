@@ -29,7 +29,11 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended($request->user()->role === 'ADMIN' ? route('admin.dashboard') : route('my-profile'));
+        if ($request->user()->role === 'ADMIN') {
+            return redirect()->away(rtrim(config('app.backoffice_url'), '/').'/admin');
+        }
+
+        return redirect()->intended(route('my-profile'));
     }
 
     public function registerForm(): View

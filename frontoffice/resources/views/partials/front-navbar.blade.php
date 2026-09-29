@@ -7,7 +7,7 @@
             @endforeach
             @auth
                 <a href="{{ route('my-profile') }}" class="rounded-lg px-2 py-2 hover:bg-orange-100">My Profile</a>
-                @if(auth()->user()->role === 'ADMIN')<a href="{{ route('admin.dashboard') }}" class="rounded-lg px-2 py-2 hover:bg-orange-100">Admin</a>@endif
+                @if(auth()->user()->role === 'ADMIN')<a href="{{ rtrim(config('app.backoffice_url'), '/') }}/admin" class="rounded-lg px-2 py-2 hover:bg-orange-100">Admin</a>@endif
                 <form method="POST" action="{{ route('logout') }}">@csrf<button class="rounded-lg border border-orange-300 px-3 py-2 hover:bg-orange-100">Log out</button></form>
             @else
                 <a href="{{ route('login') }}" class="rounded-lg px-2 py-2 hover:bg-orange-100">Login</a>
