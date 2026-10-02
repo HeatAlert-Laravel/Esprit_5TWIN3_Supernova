@@ -16,7 +16,7 @@ export default defineConfig({
     },
     plugins: [
         laravel({
-            input: ["resources/css/app.css", "resources/css/heatalert-theme.css", "resources/js/app.js", "resources/images/heat-alert-mark.svg"],
+            input: ["resources/css/app.css", "resources/css/heatalert-theme.css", "resources/js/app.js"],
             refresh: true,
         }),
         tailwindcss(),

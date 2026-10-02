@@ -419,11 +419,14 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
 .ha-strip__tag { margin-left: auto; padding: 0 8px; border: 1px solid rgba(255, 255, 255, .4); border-radius: var(--ha-r-sm); font-size: 0.6875rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .ha-strip a { color: #fff; font-weight: 600; }
 
+/* ---- Logo (x-logo component: "Shelter" mark + wordmark) --------------------------- */
+.ha-logo { display: inline-flex; align-items: center; gap: calc(var(--ha-logo-size) * 0.25); text-decoration: none; }
+.ha-logo__mark { display: block; flex: none; width: var(--ha-logo-size); height: var(--ha-logo-size); }
+.ha-logo__word { font-family: Outfit, 'Public Sans', system-ui, sans-serif; font-weight: 700; letter-spacing: -0.02em; font-size: calc(var(--ha-logo-size) * 0.6); line-height: 1; white-space: nowrap; }
+
 /* ---- 14. Navbar -------------------------------------------------------------- */
 .ha-navbar { background: var(--ha-surface); border-bottom: 1px solid var(--ha-border); position: relative; z-index: 30; }
 .ha-navbar__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--ha-s-4); min-height: 72px; }
-.ha-brand { display: inline-flex; align-items: center; gap: var(--ha-s-3); text-decoration: none; color: var(--ha-shade-800); font-family: var(--ha-font-heading); font-weight: 600; font-size: 1.375rem; }
-.ha-brand img { width: 36px; height: 36px; }
 .ha-nav__toggle { display: none; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid var(--ha-border-strong); border-radius: var(--ha-r-md); background: var(--ha-surface); color: var(--ha-ink); }
 .ha-nav__panel { display: flex; align-items: center; gap: var(--ha-s-6); flex: 1; justify-content: space-between; margin-left: var(--ha-s-6); }
 .ha-nav__links { display: flex; align-items: center; gap: var(--ha-s-1); list-style: none; margin: 0; padding: 0; }
@@ -437,6 +440,7 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
 .ha-nav__actions { display: flex; align-items: center; gap: var(--ha-s-2); }
 
 @media (max-width: 1023px) {
+    .ha-navbar .ha-logo { --ha-logo-size: 28px !important; } /* compact brand in the mobile header */
     .ha-nav__toggle { display: inline-flex; }
     .js .ha-nav__panel {
         display: none; position: absolute; left: 0; right: 0; top: 100%; margin: 0;
@@ -491,7 +495,8 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
 .ha-auth__panel .ha-icon-chip { background: rgba(255, 255, 255, .12); color: #fff; }
 .ha-auth__panel strong { display: block; color: #fff; font-weight: 600; }
 .ha-auth__panel li span { font-size: 0.875rem; color: rgba(255, 255, 255, .78); }
-.ha-auth__sun { position: absolute; right: -48px; top: -48px; width: 160px; height: 160px; border-radius: 50%; background: var(--ha-ember-600); opacity: .22; }
+.ha-auth__logo { display: flex; width: fit-content; margin-bottom: var(--ha-s-6); }
+.ha-auth__mark { align-self: flex-start; }
 .ha-auth-card { max-width: 420px; margin: 0 auto; }
 .ha-auth-card h1 { font-size: 1.625rem; font-weight: 600; margin: 0; }
 .ha-auth-card > p { margin: var(--ha-s-2) 0 var(--ha-s-6); color: var(--ha-ink-2); }

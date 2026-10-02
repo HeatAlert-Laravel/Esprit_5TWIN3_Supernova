@@ -14,10 +14,11 @@
 <aside id="sidebar" class="ha-sidebar" aria-label="Admin sidebar"
     x-data="{ get open() { return $store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen } }"
     :class="{'max-xl:-translate-x-full max-xl:rtl:translate-x-full': !$store.sidebar.isMobileOpen}">
-    <a href="{{ route('admin.dashboard') }}" class="ha-sidebar__brand" aria-label="HeatAlert admin dashboard">
-        <img src="{{ Vite::asset('resources/images/heat-alert-mark.svg') }}" alt="">
-        <span x-show="open">HeatAlert</span>
-    </a>
+    <div class="ha-sidebar__brand">
+        {{-- Full lockup when the sidebar is open, mark only when it is collapsed. --}}
+        <x-logo x-show="open" variant="dark" :size="32" :href="route('admin.dashboard')" label="HeatAlert administration" />
+        <x-logo x-show="!open" variant="dark" :size="32" :wordmark="false" :href="route('admin.dashboard')" label="HeatAlert administration" />
+    </div>
 
     <nav aria-label="Admin navigation">
         @foreach($navGroups as $groupLabel => $items)

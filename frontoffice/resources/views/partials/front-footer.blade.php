@@ -1,7 +1,7 @@
 <footer class="ha-footer">
     <div class="ha-container ha-footer__inner">
         <div>
-            <a href="{{ route('home') }}" class="ha-brand"><img src="{{ Vite::asset('resources/images/heat-alert-mark.svg') }}" alt="">HeatAlert</a>
+            <x-logo variant="light" :size="28" :href="route('home')" />
             <p>HeatAlert · Prepared neighbors, safer summers. Information modules are being developed by the team.</p>
         </div>
         <ul aria-label="Footer navigation">

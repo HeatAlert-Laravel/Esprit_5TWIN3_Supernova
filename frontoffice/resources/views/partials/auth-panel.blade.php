@@ -1,6 +1,6 @@
 {{-- Shade info panel next to the auth forms. Hidden below 900px (see .ha-auth__panel). --}}
 <aside class="ha-auth__panel" aria-label="About HeatAlert">
-    <span class="ha-auth__sun" aria-hidden="true"></span>
+    <x-logo variant="dark" :size="96" :wordmark="false" class="ha-auth__mark" />
     <h2>Prepare before the heat arrives.</h2>
     <p>One resident account keeps your household information ready for local heat planning.</p>
     <ul>

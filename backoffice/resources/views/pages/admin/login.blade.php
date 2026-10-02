@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin login | HeatAlert</title>
+    @include('partials.brand-head')
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/heatalert-theme.css'])
 </head>
 <body>
     <main class="ha-login">
         <div class="ha-login__card">
             <div class="ha-login__brand">
-                <img src="{{ Vite::asset('resources/images/heat-alert-mark.svg') }}" alt="">
-                <div><p>HeatAlert</p><h1>Admin login</h1></div>
+                <x-logo variant="light" :size="36" :href="route('admin.dashboard')" label="HeatAlert administration" />
+                <h1>Admin login</h1>
             </div>
             <div class="ha-card">
                 <x-ha.error-summary />

@@ -3,6 +3,7 @@
 @section('content')
 <div class="ha-auth">
     <div class="ha-auth__form">
+        <x-logo variant="light" :size="28" :href="route('home')" class="ha-auth__logo" />
         <h1>Welcome back</h1>
         <p>Sign in to manage your HeatAlert profile.</p>
         <x-ha.error-summary />

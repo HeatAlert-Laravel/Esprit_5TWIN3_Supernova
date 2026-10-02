@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'Dashboard') | HeatAlert</title>
+    @include('partials.brand-head')
 
     <!-- Scripts -->
     {{-- The Shade & Signal theme layer is loaded AFTER the template CSS so it can override it. --}}

@@ -2,6 +2,7 @@
 @section('title', 'Forgot Password')
 @section('content')
 <div class="ha-card ha-auth-card">
+    <x-logo variant="light" :size="28" :href="route('home')" class="ha-auth__logo" />
     <a href="{{ route('login') }}" class="ha-back"><x-ha.icon name="arrow-left" size="sm" />Back to login</a>
     <h1>Forgot your password?</h1>
     <p>Enter your email address and we will send you a reset link.</p>

@@ -2,6 +2,7 @@
 @section('title', 'Reset Password')
 @section('content')
 <div class="ha-card ha-auth-card">
+    <x-logo variant="light" :size="28" :href="route('home')" class="ha-auth__logo" />
     <h1>Reset your password</h1>
     <p>Choose a new password for your HeatAlert account.</p>
     <form method="POST" action="{{ route('password.update') }}" class="ha-form-grid">

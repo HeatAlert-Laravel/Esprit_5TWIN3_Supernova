@@ -1,6 +1,6 @@
 <header class="ha-navbar">
     <div class="ha-container ha-navbar__inner">
-        <a href="{{ route('home') }}" class="ha-brand" aria-label="HeatAlert home"><img src="{{ Vite::asset('resources/images/heat-alert-mark.svg') }}" alt="">HeatAlert</a>
+        <x-logo variant="light" :size="36" :href="route('home')" />
         <button type="button" class="ha-nav__toggle" data-nav-toggle aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation"><x-ha.icon name="menu" /></button>
         <div class="ha-nav__panel" id="main-nav">
             <nav aria-label="Main navigation">

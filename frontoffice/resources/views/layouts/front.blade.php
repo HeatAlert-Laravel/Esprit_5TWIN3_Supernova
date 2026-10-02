@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Home') | HeatAlert</title>
+    @include('partials.brand-head')
     <script>document.documentElement.classList.add('js');</script>
     {{-- The Shade & Signal theme layer is loaded AFTER the base CSS so it can override it. --}}
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/heatalert-theme.css'])
