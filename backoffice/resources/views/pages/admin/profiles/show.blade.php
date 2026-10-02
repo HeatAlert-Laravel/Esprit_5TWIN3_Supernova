@@ -1,8 +1,82 @@
 @extends('layouts.app')
 @section('title', 'Profile details')
 @section('content')
-<div class="mb-6 flex flex-wrap items-center justify-between gap-3"><div><p class="text-sm font-semibold text-orange-600">Profile</p><h1 class="text-3xl font-bold dark:text-white">{{ $profile->user->name }}</h1></div><div class="flex gap-3"><a href="{{ route('admin.profiles.edit', $profile) }}" class="rounded-lg bg-orange-600 px-4 py-2 font-semibold text-white">Edit</a><a href="{{ route('admin.profiles.index') }}" class="rounded-lg border border-gray-300 px-4 py-2 dark:border-gray-700">All profiles</a></div></div>
-@if(session('status'))<p role="status" class="mb-5 rounded-lg bg-green-100 p-3 text-green-900">{{ session('status') }}</p>@endif
-<div class="grid gap-6 lg:grid-cols-2"><div class="rounded-xl bg-white p-6 shadow-sm dark:bg-gray-900 dark:text-white"><h2 class="text-xl font-bold">Resident details</h2><dl class="mt-5 space-y-4"><div><dt class="text-sm text-gray-500">Email</dt><dd>{{ $profile->user->email }}</dd></div><div><dt class="text-sm text-gray-500">Phone</dt><dd>{{ $profile->phone }}</dd></div><div><dt class="text-sm text-gray-500">Address</dt><dd>{{ $profile->address }}</dd></div><div><dt class="text-sm text-gray-500">Neighborhood</dt><dd>{{ $profile->neighborhood }}</dd></div><div><dt class="text-sm text-gray-500">Fragile person</dt><dd>{{ $profile->has_fragile_person ? 'Yes' : 'No' }}</dd></div></dl></div><div class="rounded-xl bg-white p-6 shadow-sm dark:bg-gray-900 dark:text-white"><div class="flex justify-between gap-3"><h2 class="text-xl font-bold">Sensitive equipment</h2><a class="font-semibold text-orange-700 dark:text-orange-300" href="{{ route('admin.equipment.create', ['profile_id' => $profile->id]) }}">Add</a></div><ul class="mt-4 divide-y divide-gray-100 dark:divide-gray-800">@forelse($profile->sensitiveEquipments as $item)<li class="py-3"><a class="font-semibold text-orange-700 dark:text-orange-300" href="{{ route('admin.equipment.show', $item) }}">{{ $item->name }}</a> · {{ ucfirst($item->priority_level) }} priority</li>@empty<li class="py-3 text-gray-500">No equipment linked.</li>@endforelse</ul></div></div>
-<form method="POST" action="{{ route('admin.profiles.destroy', $profile) }}" onsubmit="return confirm('Delete this profile and all its equipment?')" class="mt-8">@csrf @method('DELETE')<button class="rounded-lg border border-red-300 px-4 py-2 font-semibold text-red-700">Delete profile</button></form>
+@php
+    $user = $profile->user;
+    $notProvided = fn ($value) => filled($value) ? e($value) : '<span class="ha-empty-value">Not provided</span>';
+@endphp
+<x-ha.page-header :title="$user->name" :breadcrumbs="[['Dashboard', route('admin.dashboard')], ['Profiles', route('admin.profiles.index')], [$user->name, null]]">
+    <x-slot:badges>
+        <x-ha.badge :variant="$profile->isComplete() ? 'success' : 'warning'">{{ $profile->isComplete() ? 'Complete' : 'Incomplete' }}</x-ha.badge>
+        @if($profile->neighborhood)<span class="ha-tag"><x-ha.icon name="map-pin" size="sm" />{{ $profile->neighborhood }}</span>@endif
+    </x-slot:badges>
+    <x-slot:actions>
+        <a href="{{ route('admin.profiles.edit', $profile) }}" class="ha-btn ha-btn--primary"><x-ha.icon name="pencil" size="sm" />Edit</a>
+        <form method="POST" action="{{ route('admin.profiles.destroy', $profile) }}" onsubmit="return confirm('Delete this profile and all its equipment?')">
+            @csrf @method('DELETE')
+            <button class="ha-btn ha-btn--danger-soft"><x-ha.icon name="trash" size="sm" />Delete profile</button>
+        </form>
+    </x-slot:actions>
+</x-ha.page-header>
+
+<div class="ha-grid ha-grid--main-rev">
+    <div class="ha-stack">
+        <section class="ha-card" aria-labelledby="identity-title">
+            <div class="ha-card__head"><h2 class="ha-card__title ha-card__title--with-icon" id="identity-title"><span class="ha-icon-chip"><x-ha.icon name="user" /></span>Identity</h2></div>
+            <dl class="ha-dl ha-dl--2">
+                <div><dt>Name</dt><dd>{!! $notProvided($user->name) !!}</dd></div>
+                <div><dt>Email</dt><dd>{!! $notProvided($user->email) !!}</dd></div>
+                <div><dt>Account role</dt><dd>{{ ucfirst(strtolower($user->role)) }}</dd></div>
+            </dl>
+        </section>
+
+        <section class="ha-card" aria-labelledby="contact-title">
+            <div class="ha-card__head"><h2 class="ha-card__title ha-card__title--with-icon" id="contact-title"><span class="ha-icon-chip"><x-ha.icon name="phone" /></span>Contact</h2></div>
+            <dl class="ha-dl ha-dl--2">
+                <div><dt>Phone</dt><dd>{!! $notProvided($profile->phone) !!}</dd></div>
+                <div><dt>Address</dt><dd>{!! $notProvided($profile->address) !!}</dd></div>
+            </dl>
+        </section>
+
+        <section class="ha-card" aria-labelledby="household-title">
+            <div class="ha-card__head"><h2 class="ha-card__title ha-card__title--with-icon" id="household-title"><span class="ha-icon-chip"><x-ha.icon name="home" /></span>Household</h2></div>
+            <dl class="ha-dl ha-dl--2">
+                <div><dt>Neighborhood</dt><dd>{!! $notProvided($profile->neighborhood) !!}</dd></div>
+                <div><dt>Fragile person</dt><dd>{{ $profile->has_fragile_person ? 'Yes' : 'No' }}</dd></div>
+            </dl>
+        </section>
+    </div>
+
+    <div class="ha-stack">
+        <section class="ha-card" aria-labelledby="equipment-title">
+            <div class="ha-card__head">
+                <h2 class="ha-card__title ha-card__title--with-icon" id="equipment-title"><span class="ha-icon-chip"><x-ha.icon name="plug" /></span>Sensitive equipment <span class="ha-count-pill">{{ $profile->sensitiveEquipments->count() }}</span></h2>
+                <a class="ha-btn ha-btn--outline ha-btn--sm" href="{{ route('admin.equipment.create', ['profile_id' => $profile->id]) }}"><x-ha.icon name="plus" size="sm" />Add</a>
+            </div>
+            @forelse($profile->sensitiveEquipments as $item)
+                @if($loop->first)<ul class="ha-list">@endif
+                <li>
+                    <div class="min-w-0">
+                        <a class="ha-cell-person__name" href="{{ route('admin.equipment.show', $item) }}">{{ $item->name }}</a>
+                        <span class="ha-tag">{{ $item->type }}</span>
+                    </div>
+                    <x-ha.priority-badge :level="$item->priority_level" />
+                </li>
+                @if($loop->last)</ul>@endif
+            @empty
+                <x-ha.empty-state icon="plug" title="No equipment linked" description="This household has not recorded any sensitive equipment." />
+            @endforelse
+        </section>
+
+        <section class="ha-card ha-card--compact" aria-labelledby="meta-title">
+            <h2 class="ha-card__title mb-3" id="meta-title">Record metadata</h2>
+            <dl class="ha-dl">
+                <div><dt>Profile ID</dt><dd class="ha-mono">{{ $profile->id }}</dd></div>
+                <div><dt>User ID</dt><dd class="ha-mono">{{ $profile->user_id }}</dd></div>
+                <div><dt>Created</dt><dd class="ha-mono">{{ $profile->created_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
+                <div><dt>Last updated</dt><dd class="ha-mono">{{ $profile->updated_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
+            </dl>
+        </section>
+    </div>
+</div>
 @endsection

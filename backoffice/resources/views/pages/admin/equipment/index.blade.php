@@ -1,7 +1,90 @@
 @extends('layouts.app')
 @section('title', 'Sensitive equipment')
 @section('content')
-<div class="mb-6 flex items-center justify-between gap-4"><div><p class="text-sm font-semibold text-orange-600">Household readiness</p><h1 class="text-3xl font-bold text-gray-900 dark:text-white">Sensitive equipment</h1></div><a href="{{ route('admin.equipment.create') }}" class="rounded-lg bg-orange-600 px-4 py-3 font-semibold text-white hover:bg-orange-700">Add equipment</a></div>
-@if(session('status'))<p role="status" class="mb-5 rounded-lg bg-green-100 p-3 text-green-900">{{ session('status') }}</p>@endif
-<div class="overflow-x-auto rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"><table class="w-full text-start text-sm"><thead class="bg-orange-50 text-gray-700 dark:bg-gray-800 dark:text-gray-200"><tr><th class="p-4 text-start">Equipment</th><th class="p-4 text-start">Profile</th><th class="p-4 text-start">Priority</th><th class="p-4 text-start">Actions</th></tr></thead><tbody class="divide-y divide-gray-100 dark:divide-gray-800">@forelse($equipment as $item)<tr class="text-gray-700 dark:text-gray-200"><td class="p-4">{{ $item->name }}</td><td class="p-4">{{ $item->profile->user->name }}</td><td class="p-4">{{ ucfirst($item->priority_level) }}</td><td class="p-4"><a class="font-semibold text-orange-700 dark:text-orange-300" href="{{ route('admin.equipment.show', $item) }}">View</a> · <a class="font-semibold text-orange-700 dark:text-orange-300" href="{{ route('admin.equipment.edit', $item) }}">Edit</a></td></tr>@empty<tr><td colspan="4" class="p-6 text-center text-gray-500">No equipment yet.</td></tr>@endforelse</tbody></table></div><div class="mt-5">{{ $equipment->links() }}</div>
+@php($isFiltered = $filters['q'] !== '' || $filters['priority'] !== '' || $filters['type'] !== '')
+<x-ha.page-header title="Sensitive equipment" description="Devices residents rely on during heat and power cuts, with the household that owns them." :breadcrumbs="[['Dashboard', route('admin.dashboard')], ['Sensitive equipment', null]]">
+    <x-slot:badges><span class="ha-count-pill">{{ $isFiltered ? $equipment->total().' of '.$totalEquipment : $totalEquipment }} {{ $isFiltered ? \Illuminate\Support\Str::plural('record', $equipment->total()) : \Illuminate\Support\Str::plural('record', $totalEquipment) }}</span></x-slot:badges>
+    <x-slot:actions><a href="{{ route('admin.equipment.create') }}" class="ha-btn ha-btn--primary"><x-ha.icon name="plus" size="sm" />Add equipment</a></x-slot:actions>
+</x-ha.page-header>
+
+<form method="GET" action="{{ route('admin.equipment.index') }}" class="ha-filter" role="search" aria-label="Filter equipment">
+    <div class="ha-field ha-field--grow">
+        <label class="ha-label" for="q">Equipment or resident</label>
+        <input class="ha-input" id="q" name="q" type="search" value="{{ $filters['q'] }}" placeholder="Search by equipment name, resident name or email">
+    </div>
+    <div class="ha-field">
+        <label class="ha-label" for="priority-filter">Priority</label>
+        <select class="ha-select" id="priority-filter" name="priority">
+            <option value="">All priorities</option>
+            @foreach(['high', 'medium', 'low'] as $level)<option value="{{ $level }}" @selected($filters['priority'] === $level)>{{ ucfirst($level) }}</option>@endforeach
+        </select>
+    </div>
+    <div class="ha-field">
+        <label class="ha-label" for="type-filter">Type</label>
+        <select class="ha-select" id="type-filter" name="type">
+            <option value="">All types</option>
+            @foreach($types as $type)<option value="{{ $type }}" @selected($filters['type'] === $type)>{{ $type }}</option>@endforeach
+        </select>
+    </div>
+    <div class="ha-filter__actions">
+        <button class="ha-btn ha-btn--secondary"><x-ha.icon name="search" size="sm" />Filter</button>
+        @if($isFiltered)<a href="{{ route('admin.equipment.index') }}" class="ha-btn ha-btn--ghost">Reset</a>@endif
+    </div>
+</form>
+
+@if($equipment->isEmpty())
+    <div class="ha-card">
+        @if($isFiltered)
+            <x-ha.empty-state icon="search" title="No equipment matches these filters" description="Try a different search, priority or type.">
+                <a href="{{ route('admin.equipment.index') }}" class="ha-btn ha-btn--outline">Reset filters</a>
+            </x-ha.empty-state>
+        @else
+            <x-ha.empty-state icon="plug" title="No equipment yet" description="Equipment appears here once residents record it, or when you add it for a household.">
+                <a href="{{ route('admin.equipment.create') }}" class="ha-btn ha-btn--primary"><x-ha.icon name="plus" size="sm" />Add equipment</a>
+            </x-ha.empty-state>
+        @endif
+    </div>
+@else
+    <div class="ha-table-wrap">
+        <table class="ha-table">
+            <thead>
+                <tr>
+                    <th scope="col">Equipment</th>
+                    <th scope="col">Owner</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Priority</th>
+                    <th scope="col">Updated</th>
+                    <th scope="col" class="ha-actions-cell"><span class="sr-only">Actions</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($equipment as $item)
+                    <tr>
+                        <td>
+                            <div class="ha-cell-person">
+                                <span class="ha-icon-chip"><x-ha.icon name="plug" /></span>
+                                <div>
+                                    <a href="{{ route('admin.equipment.show', $item) }}" class="ha-cell-person__name">{{ $item->name }}</a>
+                                    @if($item->description)<span class="ha-cell-person__sub">{{ \Illuminate\Support\Str::limit($item->description, 60) }}</span>@endif
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="{{ route('admin.profiles.show', $item->profile) }}" class="ha-cell-person__name">{{ $item->profile->user->name }}</a>
+                            <span class="ha-cell-person__sub">{{ $item->profile->neighborhood }}</span>
+                        </td>
+                        <td><span class="ha-tag">{{ $item->type }}</span></td>
+                        <td><x-ha.priority-badge :level="$item->priority_level" short /></td>
+                        <td><time class="ha-mono" datetime="{{ $item->updated_at?->toDateString() }}">{{ $item->updated_at?->format('d M Y') ?? '—' }}</time></td>
+                        <td class="ha-actions-cell">
+                            <a href="{{ route('admin.equipment.show', $item) }}" class="ha-btn ha-btn--outline ha-btn--sm" aria-label="View {{ $item->name }}"><x-ha.icon name="eye" size="sm" />View</a>
+                            <a href="{{ route('admin.equipment.edit', $item) }}" class="ha-btn ha-btn--ghost ha-btn--sm" aria-label="Edit {{ $item->name }}"><x-ha.icon name="pencil" size="sm" />Edit</a>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    <div class="ha-pagination">{{ $equipment->links() }}</div>
+@endif
 @endsection

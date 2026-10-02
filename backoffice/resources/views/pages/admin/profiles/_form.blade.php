@@ -1,8 +1,33 @@
 @csrf
 @if(isset($profile)) @method('PUT') @endif
-<div class="grid gap-5 sm:grid-cols-2">
-    <div class="sm:col-span-2"><label for="user_id" class="block font-medium">Resident</label><select id="user_id" name="user_id" required class="mt-2 w-full rounded-lg border border-gray-300 bg-white p-3 dark:border-gray-700 dark:bg-gray-800 dark:text-white"><option value="">Choose a user</option>@foreach($users as $user)<option value="{{ $user->id }}" {{ (string) old('user_id', $profile->user_id ?? '') === (string) $user->id ? 'selected' : '' }}>{{ $user->name }} ({{ $user->email }})</option>@endforeach</select>@error('user_id')<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror</div>
-    @foreach ([['phone','Phone'],['address','Address'],['neighborhood','Neighborhood']] as [$field,$label])<div class="{{ $field === 'address' ? 'sm:col-span-2' : '' }}"><label for="{{ $field }}" class="block font-medium">{{ $label }}</label><input id="{{ $field }}" name="{{ $field }}" value="{{ old($field, $profile?->$field) }}" required class="mt-2 w-full rounded-lg border border-gray-300 p-3 dark:border-gray-700 dark:bg-gray-800 dark:text-white">@error($field)<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror</div>@endforeach
+<x-ha.divider>Resident</x-ha.divider>
+<x-ha.field name="user_id" label="Resident account" help="Each resident account can have one household profile.">
+    <select id="user_id" name="user_id" required class="ha-select" @error('user_id') aria-invalid="true" @enderror aria-describedby="user_id-help @error('user_id')user_id-error @enderror">
+        <option value="">Choose a user</option>
+        @foreach($users as $user)
+            <option value="{{ $user->id }}" {{ (string) old('user_id', $profile->user_id ?? '') === (string) $user->id ? 'selected' : '' }}>{{ $user->name }} ({{ $user->email }})</option>
+        @endforeach
+    </select>
+</x-ha.field>
+
+<x-ha.divider>Contact</x-ha.divider>
+<div class="ha-form-grid ha-form-grid--2">
+    <x-ha.input name="phone" label="Phone" type="tel" autocomplete="tel" :value="old('phone', $profile?->phone)" required maxlength="20" />
+    <x-ha.input name="address" label="Address" :value="old('address', $profile?->address)" required maxlength="255" wrapper-class="ha-span-2" />
 </div>
-<div class="mt-5"><input type="hidden" name="has_fragile_person" value="0"><label class="flex items-center gap-2"><input type="checkbox" name="has_fragile_person" value="1" {{ old('has_fragile_person', $profile?->has_fragile_person) ? 'checked' : '' }}>Fragile person in household</label>@error('has_fragile_person')<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror</div>
-<div class="mt-7 flex gap-3"><button class="rounded-lg bg-orange-600 px-5 py-3 font-semibold text-white hover:bg-orange-700">Save profile</button><a href="{{ route('admin.profiles.index') }}" class="rounded-lg border border-gray-300 px-5 py-3 dark:border-gray-700">Cancel</a></div>
+
+<x-ha.divider>Household</x-ha.divider>
+<div class="ha-form-grid">
+    <x-ha.input name="neighborhood" label="Neighborhood" :value="old('neighborhood', $profile?->neighborhood)" required maxlength="100" list="neighborhood-suggestions" help="Free text. Existing neighborhoods are suggested to keep spelling consistent." />
+    <datalist id="neighborhood-suggestions">@foreach($neighborhoods as $suggestion)<option value="{{ $suggestion }}"></option>@endforeach</datalist>
+    <div class="ha-field">
+        <input type="hidden" name="has_fragile_person" value="0">
+        <label class="ha-check"><input type="checkbox" name="has_fragile_person" value="1" {{ old('has_fragile_person', $profile?->has_fragile_person) ? 'checked' : '' }}><span class="ha-check__text">Fragile person in household</span></label>
+        @error('has_fragile_person')<p class="ha-error"><x-ha.icon name="alert-triangle" size="sm" />{{ $message }}</p>@enderror
+    </div>
+</div>
+
+<div class="ha-form-actions">
+    <a href="{{ route('admin.profiles.index') }}" class="ha-btn ha-btn--outline">Cancel</a>
+    <button class="ha-btn ha-btn--primary">Save profile</button>
+</div>

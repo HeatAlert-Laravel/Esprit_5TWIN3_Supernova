@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="h-full bg-gray-50 dark:bg-gray-900">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="h-full">
 
 <head>
     <meta charset="utf-8">
@@ -9,7 +9,8 @@
     <title>@yield('title', 'Dashboard') | HeatAlert</title>
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- The Shade & Signal theme layer is loaded AFTER the template CSS so it can override it. --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/heatalert-theme.css'])
 
     <!-- Theme Store -->
     <style>
@@ -145,19 +146,21 @@
 </head>
 
 <body>
+    <a href="#main-content" class="ha-skip-link">Skip to content</a>
 
     <div class="min-h-screen xl:flex sidebar-expanded" x-data :class="{ 'sidebar-expanded': $store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen }">
         @include('layouts.backdrop')
         @include('partials.admin-sidebar')
 
         {{-- transition-all duration-300 ease-in-out --}}
-        <div class="flex-1 ml-0 ltr:xl:ml-[90px] rtl:xl:ml-0 rtl:xl:mr-[90px] [.sidebar-expanded_&]:ltr:xl:ml-[290px] [.sidebar-expanded_&]:rtl:xl:ml-0 [.sidebar-expanded_&]:rtl:xl:mr-[290px] transition-all duration-300 ease-in-out">
+        <div class="flex-1 min-w-0 ml-0ltr:xl:ml-[90px] rtl:xl:ml-0 rtl:xl:mr-[90px] [.sidebar-expanded_&]:ltr:xl:ml-[290px] [.sidebar-expanded_&]:rtl:xl:ml-0 [.sidebar-expanded_&]:rtl:xl:mr-[290px] transition-all duration-300 ease-in-out">
             <!-- app header start -->
             @include('partials.admin-header')
             <!-- app header end -->
-            <div class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+            <main id="main-content" class="ha-admin-main">
+                <x-ha.flash />
                 @yield('content')
-            </div>
+            </main>
         </div>
 
     </div>

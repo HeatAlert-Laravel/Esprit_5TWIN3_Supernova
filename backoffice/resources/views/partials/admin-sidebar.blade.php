@@ -1,16 +1,63 @@
-<aside class="fixed top-0 start-0 z-50 h-screen w-[90px] border-e border-orange-100 bg-white p-4 dark:border-gray-800 dark:bg-gray-900 [.sidebar-expanded_&]:w-[290px]" :class="{'max-xl:-translate-x-full max-xl:rtl:translate-x-full': !$store.sidebar.isMobileOpen}">
-    <a href="{{ route('admin.dashboard') }}" class="mb-10 flex items-center gap-3 text-xl font-bold text-orange-700 dark:text-orange-300">
-        <img src="{{ Vite::asset('resources/images/heat-alert-mark.svg') }}" alt="" class="h-10 w-10 shrink-0">
-        <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">HeatAlert</span>
+@php
+    // Real counts supplied by the view composer in AppServiceProvider (two cheap COUNT queries).
+    $navGroups = [
+        'Overview' => [
+            ['route' => 'admin.dashboard', 'match' => 'admin.dashboard', 'label' => 'Dashboard', 'icon' => 'layout-dashboard'],
+        ],
+        'Residents' => [
+            ['route' => 'admin.profiles.index', 'match' => 'admin.profiles.*', 'label' => 'Profiles', 'icon' => 'users', 'count' => $sidebarCounts['profiles'] ?? null],
+            ['route' => 'admin.equipment.index', 'match' => 'admin.equipment.*', 'label' => 'Sensitive equipment', 'icon' => 'plug', 'count' => $sidebarCounts['equipment'] ?? null],
+        ],
+    ];
+    $plannedModules = [['Alerts', 'alert-triangle'], ['Outages', 'zap'], ['Cooling points', 'snowflake']];
+@endphp
+<aside id="sidebar" class="ha-sidebar" aria-label="Admin sidebar"
+    x-data="{ get open() { return $store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen } }"
+    :class="{'max-xl:-translate-x-full max-xl:rtl:translate-x-full': !$store.sidebar.isMobileOpen}">
+    <a href="{{ route('admin.dashboard') }}" class="ha-sidebar__brand" aria-label="HeatAlert admin dashboard">
+        <img src="{{ Vite::asset('resources/images/heat-alert-mark.svg') }}" alt="">
+        <span x-show="open">HeatAlert</span>
     </a>
-    <nav class="space-y-2" aria-label="Admin navigation">
-        @foreach ([['admin.dashboard', 'Dashboard', '▦'], ['admin.profiles.index', 'Profiles', '♙'], ['admin.equipment.index', 'Sensitive equipment', '◈']] as [$name, $label, $icon])
-            <a href="{{ route($name) }}" title="{{ $label }}" class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium {{ request()->routeIs($name) || ($name === 'admin.profiles.index' && request()->routeIs('admin.profiles.*')) || ($name === 'admin.equipment.index' && request()->routeIs('admin.equipment.*')) ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100' : 'text-gray-600 hover:bg-orange-50 dark:text-gray-300 dark:hover:bg-gray-800' }}">
-                <span class="w-6 text-center text-xl" aria-hidden="true">{{ $icon }}</span>
-                <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">{{ $label }}</span>
-            </a>
+
+    <nav aria-label="Admin navigation">
+        @foreach($navGroups as $groupLabel => $items)
+            <div class="ha-sidebar__group">
+                <p class="ha-sidebar__label" x-show="open">{{ $groupLabel }}</p>
+                <ul class="ha-nav-list">
+                    @foreach($items as $item)
+                        <li>
+                            <a href="{{ route($item['route']) }}" title="{{ $item['label'] }}" class="ha-nav-item" @if(request()->routeIs($item['match'])) aria-current="page" @endif>
+                                <x-ha.icon :name="$item['icon']" />
+                                <span class="ha-nav-item__text" x-show="open">{{ $item['label'] }}</span>
+                                @if(isset($item['count']))<span class="ha-nav-count" x-show="open">{{ $item['count'] }}</span>@endif
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
         @endforeach
-        <a href="{{ config('app.frontoffice_url') }}" title="Public site" class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-gray-600 hover:bg-orange-50 dark:text-gray-300 dark:hover:bg-gray-800"><span class="w-6 text-center text-xl" aria-hidden="true">⌂</span><span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">Public site</span></a>
+
+        <div class="ha-sidebar__group">
+            <p class="ha-sidebar__label" x-show="open">Modules</p>
+            <ul class="ha-nav-list">
+                @foreach($plannedModules as [$moduleLabel, $moduleIcon])
+                    <li>
+                        <span class="ha-nav-item ha-nav-item--soon" title="{{ $moduleLabel }} — coming soon" aria-disabled="true">
+                            <x-ha.icon :name="$moduleIcon" />
+                            <span class="ha-nav-item__text" x-show="open">{{ $moduleLabel }}</span>
+                            <span class="ha-nav-soon" x-show="open">Soon</span>
+                        </span>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
     </nav>
-    <p x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen" class="mt-10 rounded-xl bg-orange-50 p-4 text-xs leading-5 text-orange-900 dark:bg-gray-800 dark:text-orange-200">Local heat resilience starts with clear information and prepared households.</p>
+
+    <div class="ha-sidebar__foot">
+        <a href="{{ config('app.frontoffice_url') }}" title="Public site" class="ha-nav-item">
+            <x-ha.icon name="home" />
+            <span class="ha-nav-item__text" x-show="open">Public site</span>
+            <x-ha.icon name="external-link" size="sm" x-show="open" />
+        </a>
+    </div>
 </aside>

@@ -12,14 +12,32 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        return view('pages.admin.profiles.index', ['profiles' => Profile::with('user')->withCount('sensitiveEquipments')->latest()->paginate(10)]);
+        // Optional GET filters: resident name / email search and an exact neighborhood match.
+        $search = trim((string) $request->query('q', ''));
+        $neighborhood = trim((string) $request->query('neighborhood', ''));
+
+        $profiles = Profile::with('user')->withCount('sensitiveEquipments')
+            ->when($search !== '', fn ($query) => $query->whereHas('user', fn ($user) => $user
+                ->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%")))
+            ->when($neighborhood !== '', fn ($query) => $query->where('neighborhood', $neighborhood))
+            ->latest()->paginate(10)->withQueryString();
+
+        return view('pages.admin.profiles.index', [
+            'profiles' => $profiles,
+            'neighborhoods' => $this->neighborhoods(),
+            'filters' => ['q' => $search, 'neighborhood' => $neighborhood],
+            'totalProfiles' => Profile::count(),
+        ]);
     }
 
     public function create(): View
     {
-        return view('pages.admin.profiles.create', ['users' => User::doesntHave('profile')->orderBy('name')->get()]);
+        return view('pages.admin.profiles.create', [
+            'users' => User::doesntHave('profile')->orderBy('name')->get(),
+            'neighborhoods' => $this->neighborhoods(),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -40,6 +58,7 @@ class ProfileController extends Controller
         return view('pages.admin.profiles.edit', [
             'profile' => $profile,
             'users' => User::whereDoesntHave('profile')->orWhere('id', $profile->user_id)->orderBy('name')->get(),
+            'neighborhoods' => $this->neighborhoods(),
         ]);
     }
 
@@ -55,6 +74,12 @@ class ProfileController extends Controller
         $profile->delete();
 
         return redirect()->route('admin.profiles.index')->with('status', 'Profile deleted.');
+    }
+
+    /** Neighborhood values already stored (free text): used for the filter and as input suggestions only. */
+    private function neighborhoods()
+    {
+        return Profile::query()->distinct()->orderBy('neighborhood')->pluck('neighborhood');
     }
 
     private function validated(Request $request, ?Profile $profile = null): array

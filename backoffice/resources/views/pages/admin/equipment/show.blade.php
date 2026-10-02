@@ -1,8 +1,52 @@
 @extends('layouts.app')
 @section('title', 'Equipment details')
 @section('content')
-<div class="mb-6 flex flex-wrap items-center justify-between gap-3"><div><p class="text-sm font-semibold text-orange-600">Sensitive equipment</p><h1 class="text-3xl font-bold dark:text-white">{{ $equipment->name }}</h1></div><div class="flex gap-3"><a href="{{ route('admin.equipment.edit', $equipment) }}" class="rounded-lg bg-orange-600 px-4 py-2 font-semibold text-white">Edit</a><a href="{{ route('admin.equipment.index') }}" class="rounded-lg border border-gray-300 px-4 py-2 dark:border-gray-700">All equipment</a></div></div>
-@if(session('status'))<p role="status" class="mb-5 rounded-lg bg-green-100 p-3 text-green-900">{{ session('status') }}</p>@endif
-<div class="max-w-2xl rounded-xl bg-white p-6 shadow-sm dark:bg-gray-900 dark:text-white"><dl class="space-y-4"><div><dt class="text-sm text-gray-500">Profile</dt><dd><a class="font-semibold text-orange-700 dark:text-orange-300" href="{{ route('admin.profiles.show', $equipment->profile) }}">{{ $equipment->profile->user->name }} · {{ $equipment->profile->neighborhood }}</a></dd></div><div><dt class="text-sm text-gray-500">Type</dt><dd>{{ $equipment->type }}</dd></div><div><dt class="text-sm text-gray-500">Priority</dt><dd>{{ ucfirst($equipment->priority_level) }}</dd></div><div><dt class="text-sm text-gray-500">Description</dt><dd>{{ $equipment->description ?: 'None' }}</dd></div></dl></div>
-<form method="POST" action="{{ route('admin.equipment.destroy', $equipment) }}" onsubmit="return confirm('Delete this equipment?')" class="mt-8">@csrf @method('DELETE')<button class="rounded-lg border border-red-300 px-4 py-2 font-semibold text-red-700">Delete equipment</button></form>
+@php($owner = $equipment->profile)
+<x-ha.page-header :title="$equipment->name" :breadcrumbs="[['Dashboard', route('admin.dashboard')], ['Sensitive equipment', route('admin.equipment.index')], [$equipment->name, null]]">
+    <x-slot:badges>
+        <x-ha.priority-badge :level="$equipment->priority_level" />
+        <span class="ha-tag">{{ $equipment->type }}</span>
+    </x-slot:badges>
+    <x-slot:actions>
+        <a href="{{ route('admin.equipment.edit', $equipment) }}" class="ha-btn ha-btn--primary"><x-ha.icon name="pencil" size="sm" />Edit</a>
+        <form method="POST" action="{{ route('admin.equipment.destroy', $equipment) }}" onsubmit="return confirm('Delete this equipment?')">
+            @csrf @method('DELETE')
+            <button class="ha-btn ha-btn--danger-soft"><x-ha.icon name="trash" size="sm" />Delete equipment</button>
+        </form>
+    </x-slot:actions>
+</x-ha.page-header>
+
+<div class="ha-grid ha-grid--main-rev">
+    <section class="ha-card" aria-labelledby="equipment-info">
+        <div class="ha-card__head"><h2 class="ha-card__title ha-card__title--with-icon" id="equipment-info"><span class="ha-icon-chip"><x-ha.icon name="plug" /></span>Equipment information</h2></div>
+        <dl class="ha-dl ha-dl--2">
+            <div><dt>Name</dt><dd>{{ $equipment->name }}</dd></div>
+            <div><dt>Type</dt><dd>{{ $equipment->type }}</dd></div>
+            <div><dt>Priority</dt><dd><x-ha.priority-badge :level="$equipment->priority_level" short /></dd></div>
+            <div class="ha-span-2"><dt>Description</dt>@if(filled($equipment->description))<dd>{{ $equipment->description }}</dd>@else<dd class="ha-empty-value">Not provided</dd>@endif</div>
+        </dl>
+        <x-ha.divider>Record metadata</x-ha.divider>
+        <dl class="ha-dl ha-dl--2">
+            <div><dt>Equipment ID</dt><dd class="ha-mono">{{ $equipment->id }}</dd></div>
+            <div><dt>Last updated</dt><dd class="ha-mono">{{ $equipment->updated_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
+        </dl>
+    </section>
+
+    <section class="ha-card" aria-labelledby="equipment-owner">
+        <div class="ha-card__head"><h2 class="ha-card__title ha-card__title--with-icon" id="equipment-owner"><span class="ha-icon-chip"><x-ha.icon name="home" /></span>Owner</h2></div>
+        <div class="ha-cell-person">
+            <x-ha.avatar :name="$owner->user->name" size="lg" />
+            <div class="min-w-0">
+                <a class="ha-cell-person__name" href="{{ route('admin.profiles.show', $owner) }}">{{ $owner->user->name }}</a>
+                <span class="ha-cell-person__sub">{{ $owner->neighborhood }}</span>
+            </div>
+        </div>
+        <dl class="ha-dl mt-5">
+            <div><dt>Neighborhood</dt><dd>@if($owner->neighborhood)<span class="ha-tag">{{ $owner->neighborhood }}</span>@else<span class="ha-empty-value">Not provided</span>@endif</dd></div>
+            <div><dt>Email</dt><dd>{{ $owner->user->email }}</dd></div>
+            <div><dt>Phone</dt>@if(filled($owner->phone))<dd>{{ $owner->phone }}</dd>@else<dd class="ha-empty-value">Not provided</dd>@endif</div>
+        </dl>
+        <a href="{{ route('admin.profiles.show', $owner) }}" class="ha-btn ha-btn--outline ha-btn--sm mt-5">View profile<x-ha.icon name="arrow-right" size="sm" /></a>
+    </section>
+</div>
 @endsection

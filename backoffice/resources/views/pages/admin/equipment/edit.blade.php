@@ -1,5 +1,9 @@
 @extends('layouts.app')
 @section('title', 'Edit equipment')
 @section('content')
-<h1 class="mb-6 text-3xl font-bold dark:text-white">Edit sensitive equipment</h1><form method="POST" action="{{ route('admin.equipment.update', $equipment) }}" class="max-w-2xl rounded-xl bg-white p-6 shadow-sm dark:bg-gray-900 dark:text-white">@include('pages.admin.equipment._form')</form>
+<x-ha.page-header title="Edit sensitive equipment" :description="'Update the details for '.$equipment->name.'.'" :breadcrumbs="[['Dashboard', route('admin.dashboard')], ['Sensitive equipment', route('admin.equipment.index')], [$equipment->name, route('admin.equipment.show', $equipment)], ['Edit', null]]" />
+<x-ha.error-summary />
+<form method="POST" action="{{ route('admin.equipment.update', $equipment) }}" class="ha-form">
+    <div class="ha-card">@include('pages.admin.equipment._form')</div>
+</form>
 @endsection

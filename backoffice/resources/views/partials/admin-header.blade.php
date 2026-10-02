@@ -1,10 +1,21 @@
-<header class="sticky top-0 z-40 flex items-center justify-between border-b border-orange-100 bg-white px-5 py-4 dark:border-gray-800 dark:bg-gray-900">
-    <div class="flex items-center gap-3">
-        <button type="button" @click="$store.sidebar.toggleMobileOpen()" class="rounded-lg border border-gray-200 px-3 py-2 xl:hidden" aria-label="Toggle navigation">☰</button>
-        <div><p class="text-xs font-semibold uppercase tracking-widest text-orange-600">HeatAlert</p><p class="font-semibold text-gray-800 dark:text-white">Administration</p></div>
+<header class="ha-topbar">
+    <div class="ha-topbar__left">
+        <button type="button" @click="$store.sidebar.toggleMobileOpen()" class="ha-menu-btn" aria-label="Toggle navigation" aria-controls="sidebar">
+            <x-ha.icon name="menu" />
+        </button>
+        <p class="ha-topbar__title">@yield('title', 'Dashboard')</p>
     </div>
-    <div class="flex items-center gap-4 text-sm text-gray-700 dark:text-gray-200">
-        <span>{{ auth()->user()->name }}</span>
-        <form method="POST" action="{{ route('logout') }}">@csrf<button class="rounded-lg border border-gray-300 px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800">Log out</button></form>
+    <div class="ha-topbar__right">
+        <div class="ha-topbar__user">
+            <x-ha.avatar :name="auth()->user()->name" />
+            <div class="ha-topbar__who">
+                <strong>{{ auth()->user()->name }}</strong>
+                <span>{{ ucfirst(strtolower(auth()->user()->role)) }}</span>
+            </div>
+        </div>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button class="ha-btn ha-btn--outline ha-btn--sm"><x-ha.icon name="log-out" size="sm" /><span class="ha-btn-label-sm">Log out</span></button>
+        </form>
     </div>
 </header>

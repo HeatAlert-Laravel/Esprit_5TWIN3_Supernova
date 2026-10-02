@@ -1,10 +1,90 @@
 @extends('layouts.app')
 @section('title', 'Dashboard')
 @section('content')
-<div class="mb-8"><p class="text-sm font-bold uppercase tracking-widest text-orange-600">HeatAlert overview</p><h1 class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">Community dashboard</h1><p class="mt-2 text-gray-600 dark:text-gray-300">Resident and equipment information from the local database.</p></div>
-<div class="grid gap-5 md:grid-cols-3">
-    @foreach ([['Registered users', $usersCount], ['Household profiles', $profilesCount], ['Sensitive equipment', $equipmentCount]] as [$label,$count])<div class="rounded-2xl border border-orange-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"><p class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ $label }}</p><p class="mt-4 text-4xl font-bold text-orange-700 dark:text-orange-300">{{ $count }}</p></div>@endforeach
+@php
+    $priorityRows = [
+        'high' => ['High priority', $equipmentByPriority['high'] ?? 0],
+        'medium' => ['Medium priority', $equipmentByPriority['medium'] ?? 0],
+        'low' => ['Low priority', $equipmentByPriority['low'] ?? 0],
+    ];
+@endphp
+<x-ha.page-header title="Community dashboard" eyebrow="HeatAlert overview" description="Resident and equipment information from the local database.">
+    <x-slot:actions>
+        <a href="{{ route('admin.profiles.create') }}" class="ha-btn ha-btn--outline"><x-ha.icon name="plus" size="sm" />Add profile</a>
+        <a href="{{ route('admin.profiles.index') }}" class="ha-btn ha-btn--primary">Manage profiles<x-ha.icon name="arrow-right" size="sm" /></a>
+    </x-slot:actions>
+</x-ha.page-header>
+
+<section aria-label="Key figures" class="ha-grid ha-grid--3">
+    <x-ha.kpi-card label="Registered users" :value="$usersCount" icon="users">
+        <x-ha.badge :variant="$residentsWithoutProfile > 0 ? 'warning' : 'success'">{{ $residentsWithoutProfile }} without a profile</x-ha.badge>
+    </x-ha.kpi-card>
+    <x-ha.kpi-card label="Household profiles" :value="$profilesCount" icon="home">
+        <x-ha.badge variant="success">{{ $completeProfilesCount }} complete</x-ha.badge>
+        <x-ha.badge :variant="$incompleteProfilesCount > 0 ? 'warning' : 'neutral'">{{ $incompleteProfilesCount }} incomplete</x-ha.badge>
+    </x-ha.kpi-card>
+    <x-ha.kpi-card label="Sensitive equipment" :value="$equipmentCount" icon="plug">
+        <x-ha.badge variant="danger">{{ $priorityRows['high'][1] }} high</x-ha.badge>
+        <x-ha.badge variant="warning">{{ $priorityRows['medium'][1] }} medium</x-ha.badge>
+        <x-ha.badge variant="cool">{{ $priorityRows['low'][1] }} low</x-ha.badge>
+    </x-ha.kpi-card>
+</section>
+
+<div class="ha-grid ha-grid--main mt-5">
+    <section class="ha-card" aria-labelledby="check-first-title">
+        <div class="ha-card__head">
+            <h2 class="ha-card__title ha-card__title--with-icon" id="check-first-title"><span class="ha-icon-chip ha-icon-chip--ember"><x-ha.icon name="alert-triangle" /></span>Households to check first</h2>
+            <a href="{{ route('admin.profiles.index') }}" class="ha-btn ha-btn--ghost ha-btn--sm">All profiles</a>
+        </div>
+        @if($checkFirst->isEmpty())
+            <x-ha.empty-state icon="circle-check" title="Nothing to check right now" description="Every profile has complete details and no equipment is marked high priority." />
+        @else
+            <ul class="ha-list">
+                @foreach($checkFirst as $household)
+                    <li>
+                        <div class="ha-cell-person">
+                            <x-ha.avatar :name="$household->user->name" />
+                            <div class="min-w-0">
+                                <a class="ha-cell-person__name" href="{{ route('admin.profiles.show', $household) }}">{{ $household->user->name }}</a>
+                                <span class="ha-cell-person__sub">{{ $household->neighborhood ?: 'Neighborhood not provided' }}</span>
+                            </div>
+                        </div>
+                        <div class="ha-reasons">
+                            @if($household->is_incomplete)<x-ha.badge variant="warning">Incomplete details</x-ha.badge>@endif
+                            @if($household->high_priority_count > 0)<x-ha.badge variant="danger">{{ $household->high_priority_count }} high-priority {{ \Illuminate\Support\Str::plural('item', $household->high_priority_count) }}</x-ha.badge>@endif
+                            @if($household->has_fragile_person)<x-ha.badge variant="info">Fragile person noted</x-ha.badge>@endif
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+        <p class="ha-rule-note"><strong>How this list works:</strong> a household appears when its profile has a blank required detail (phone, address or neighborhood) or at least one equipment item set to high priority. Incomplete profiles come first, then households with more high-priority items. It is a data check, not an emergency or medical assessment.</p>
+    </section>
+
+    <section class="ha-card" aria-labelledby="priority-title">
+        <div class="ha-card__head">
+            <h2 class="ha-card__title ha-card__title--with-icon" id="priority-title"><span class="ha-icon-chip"><x-ha.icon name="plug" /></span>Equipment by priority</h2>
+        </div>
+        @if($equipmentCount === 0)
+            <x-ha.empty-state icon="plug" title="No equipment recorded yet" description="Residents add equipment from their profile page." />
+        @else
+            <ul class="ha-bars">
+                @foreach($priorityRows as $level => [$label, $total])
+                    <li class="ha-bars__row">
+                        <div class="ha-bars__head"><span>{{ $label }}</span><span class="ha-num">{{ $total }}</span></div>
+                        <div class="ha-bars__track" aria-hidden="true"><div class="ha-bars__fill ha-bars__fill--{{ $level }}" style="width: {{ round($total / $equipmentCount * 100) }}%"></div></div>
+                    </li>
+                @endforeach
+            </ul>
+            <a href="{{ route('admin.equipment.index') }}" class="ha-btn ha-btn--outline ha-btn--sm mt-6">View equipment</a>
+        @endif
+    </section>
 </div>
-<div class="mt-6 grid gap-5 md:grid-cols-3">@foreach (['Active alerts', 'Ongoing outages', 'Cooling points'] as $heading)<div class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900"><h2 class="font-bold text-gray-900 dark:text-white">{{ $heading }}</h2><p class="mt-3 text-sm text-gray-500 dark:text-gray-400">Module pending team integration. No live data yet.</p></div>@endforeach</div>
-<div class="mt-8 flex flex-wrap gap-3"><a href="{{ route('admin.profiles.index') }}" class="rounded-lg bg-orange-600 px-5 py-3 font-semibold text-white hover:bg-orange-700">Manage profiles</a><a href="{{ route('admin.equipment.index') }}" class="rounded-lg border border-orange-300 px-5 py-3 font-semibold text-orange-800 dark:text-orange-200">Manage equipment</a></div>
+
+<x-ha.divider>Planned modules</x-ha.divider>
+<section aria-label="Planned modules" class="ha-grid ha-grid--3">
+    <x-ha.module-slot title="Active alerts" description="Heat alerts will appear here once the Weather Alerts module is integrated." icon="alert-triangle" />
+    <x-ha.module-slot title="Ongoing outages" description="Power outage tracking will be added by the Outages module." icon="zap" />
+    <x-ha.module-slot title="Cooling points" description="Cooling point management will be added by the Cooling Points module." icon="snowflake" />
+</section>
 @endsection

@@ -11,9 +11,27 @@ use Illuminate\View\View;
 
 class SensitiveEquipmentController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        return view('pages.admin.equipment.index', ['equipment' => SensitiveEquipment::with('profile.user')->latest()->paginate(10)]);
+        // Optional GET filters on existing fields: free-text search, priority_level and type.
+        $search = trim((string) $request->query('q', ''));
+        $priority = (string) $request->query('priority', '');
+        $type = trim((string) $request->query('type', ''));
+
+        $equipment = SensitiveEquipment::with('profile.user')
+            ->when($search !== '', fn ($query) => $query->where(fn ($inner) => $inner
+                ->where('name', 'like', "%{$search}%")
+                ->orWhereHas('profile.user', fn ($user) => $user->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%"))))
+            ->when(in_array($priority, ['low', 'medium', 'high'], true), fn ($query) => $query->where('priority_level', $priority))
+            ->when($type !== '', fn ($query) => $query->where('type', $type))
+            ->latest()->paginate(10)->withQueryString();
+
+        return view('pages.admin.equipment.index', [
+            'equipment' => $equipment,
+            'types' => SensitiveEquipment::query()->distinct()->orderBy('type')->pluck('type'),
+            'filters' => ['q' => $search, 'priority' => $priority, 'type' => $type],
+            'totalEquipment' => SensitiveEquipment::count(),
+        ]);
     }
 
     public function create(): View

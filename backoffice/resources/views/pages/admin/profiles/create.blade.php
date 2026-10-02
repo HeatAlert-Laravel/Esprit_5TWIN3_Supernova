@@ -1,5 +1,9 @@
 @extends('layouts.app')
 @section('title', 'Add profile')
 @section('content')
-<h1 class="mb-6 text-3xl font-bold dark:text-white">Add profile</h1><form method="POST" action="{{ route('admin.profiles.store') }}" class="max-w-2xl rounded-xl bg-white p-6 shadow-sm dark:bg-gray-900 dark:text-white">@include('pages.admin.profiles._form', ['profile' => null])</form>
+<x-ha.page-header title="Add profile" description="Link a household profile to an existing resident account." :breadcrumbs="[['Dashboard', route('admin.dashboard')], ['Profiles', route('admin.profiles.index')], ['Add profile', null]]" />
+<x-ha.error-summary />
+<form method="POST" action="{{ route('admin.profiles.store') }}" class="ha-form">
+    <div class="ha-card">@include('pages.admin.profiles._form', ['profile' => null])</div>
+</form>
 @endsection
