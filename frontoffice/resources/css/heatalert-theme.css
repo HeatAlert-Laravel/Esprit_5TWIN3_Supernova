@@ -132,6 +132,7 @@ a { color: var(--ha-ember-700); }
 .ha-icon { width: 1.25rem; height: 1.25rem; flex: none; stroke: currentColor; fill: none;
     stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .ha-icon--sm { width: 1rem; height: 1rem; }
+.ha-icon[hidden] { display: none; }
 .ha-icon--lg { width: 1.5rem; height: 1.5rem; }
 .ha-icon-chip {
     display: inline-flex; align-items: center; justify-content: center; flex: none;

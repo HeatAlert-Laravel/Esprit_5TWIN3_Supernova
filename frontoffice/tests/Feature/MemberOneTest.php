@@ -5,7 +5,7 @@ use App\Models\User;
 beforeEach(fn () => $this->artisan('migrate', ['--force' => true]));
 
 test('public pages render and protected pages require login', function () {
-    $this->get('/')->assertOk()->assertSee('Stay ready when temperatures rise.');
+    $this->get('/')->assertOk()->assertSee('Stay ready when')->assertSee('temperatures')->assertSee('Weather alerts module coming soon');
     foreach (['weather-alerts', 'outages', 'cooling-points', 'advice'] as $route) {
         $this->get(route($route))->assertOk();
     }

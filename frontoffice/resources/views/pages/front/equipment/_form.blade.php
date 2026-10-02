@@ -1,34 +1,21 @@
 @csrf
 @if(isset($equipment)) @method('PUT') @endif
 
-<div class="space-y-5">
-    @foreach ([['name', 'Name'], ['type', 'Type']] as [$field, $label])
-        <div>
-            <label for="{{ $field }}" class="block font-medium">{{ $label }}</label>
-            <input id="{{ $field }}" name="{{ $field }}" value="{{ old($field, $equipment?->$field) }}" required class="mt-2 w-full rounded-lg border border-gray-300 p-3">
-            @error($field)<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror
-        </div>
-    @endforeach
-
-    <div>
-        <label for="description" class="block font-medium">Description <span class="text-sm font-normal text-gray-500">(optional)</span></label>
-        <textarea id="description" name="description" rows="4" class="mt-2 w-full rounded-lg border border-gray-300 p-3">{{ old('description', $equipment?->description) }}</textarea>
-        @error('description')<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror
-    </div>
-
-    <div>
-        <label for="priority_level" class="block font-medium">Priority</label>
-        <select id="priority_level" name="priority_level" required class="mt-2 w-full rounded-lg border border-gray-300 bg-white p-3">
-            <option value="">Choose priority</option>
-            @foreach (['low', 'medium', 'high'] as $level)
-                <option value="{{ $level }}" {{ old('priority_level', $equipment?->priority_level) === $level ? 'selected' : '' }}>{{ ucfirst($level) }}</option>
-            @endforeach
-        </select>
-        @error('priority_level')<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror
-    </div>
+<x-ha.divider>Device</x-ha.divider>
+<div class="ha-form-grid ha-form-grid--2">
+    <x-ha.input name="name" label="Name" :value="old('name', $equipment?->name)" required help="For example: fan, medication fridge, oxygen concentrator." />
+    <x-ha.input name="type" label="Type" :value="old('type', $equipment?->type)" required help="Free text, such as household or medical." />
 </div>
 
-<div class="mt-7 flex flex-wrap gap-3">
-    <button class="rounded-lg bg-orange-600 px-5 py-3 font-semibold text-white hover:bg-orange-700">Save equipment</button>
-    <a href="{{ route('my-profile') }}" class="rounded-lg border border-orange-300 px-5 py-3 font-semibold text-orange-800 hover:bg-orange-50">Cancel</a>
+<x-ha.divider>Priority and details</x-ha.divider>
+<div class="ha-form-grid">
+    <x-ha.priority-picker :selected="old('priority_level', $equipment?->priority_level)" />
+    <x-ha.field name="description" label="Description" optional help="Anything that helps describe how you use this equipment.">
+        <textarea id="description" name="description" rows="4" class="ha-textarea" @error('description') aria-invalid="true" @enderror aria-describedby="description-help @error('description')description-error @enderror">{{ old('description', $equipment?->description) }}</textarea>
+    </x-ha.field>
+</div>
+
+<div class="ha-form-actions">
+    <a href="{{ route('my-profile') }}" class="ha-btn ha-btn--outline">Cancel</a>
+    <button class="ha-btn ha-btn--primary">Save equipment</button>
 </div>
