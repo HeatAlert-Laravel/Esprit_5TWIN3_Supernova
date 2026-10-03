@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Profile;
 use App\Models\SensitiveEquipment;
+use App\Models\TypeEquipement;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /** @extends Factory<SensitiveEquipment> */
@@ -13,14 +14,20 @@ class SensitiveEquipmentFactory extends Factory
 
     public function definition(): array
     {
-        $name = fake()->randomElement(['Refrigerator', 'Freezer', 'Medical respirator', 'Aquarium', 'Air conditioner']);
-
         return [
             'profile_id' => Profile::factory(),
-            'name' => $name,
-            'type' => $name === 'Medical respirator' ? 'medical' : 'household',
+            // Always a real TypeEquipement (never an orphan FK): reuse an existing one, else create one.
+            'type_equipement_id' => fn () => TypeEquipement::query()->inRandomOrder()->value('id')
+                ?? TypeEquipement::factory()->create()->id,
+            // Named after its type unless a test overrides it.
+            'name' => fn (array $attributes) => TypeEquipement::findOrFail($attributes['type_equipement_id'])->name,
             'description' => 'Needs power or cooling during periods of extreme heat.',
-            'priority_level' => $name === 'Medical respirator' ? 'high' : fake()->randomElement(['low', 'medium', 'high']),
         ];
+    }
+
+    /** Link the equipment to a specific type, e.g. ->ofType($refrigerator). */
+    public function ofType(TypeEquipement $type): static
+    {
+        return $this->state(['type_equipement_id' => $type->id]);
     }
 }
