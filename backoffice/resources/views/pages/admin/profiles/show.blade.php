@@ -58,9 +58,9 @@
                 <li>
                     <div class="min-w-0">
                         <a class="ha-cell-person__name" href="{{ route('admin.equipment.show', $item) }}">{{ $item->name }}</a>
-                        <span class="ha-tag">{{ $item->type }}</span>
+                        <span class="ha-tag">{{ $item->typeEquipement->name }}</span>
                     </div>
-                    <x-ha.priority-badge :level="$item->priority_level" />
+                    <x-ha.risk-badge :level="$item->typeEquipement->risk_level" />
                 </li>
                 @if($loop->last)</ul>@endif
             @empty

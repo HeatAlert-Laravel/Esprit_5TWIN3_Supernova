@@ -50,7 +50,7 @@ class ProfileController extends Controller
 
     public function show(Profile $profile): View
     {
-        return view('pages.admin.profiles.show', ['profile' => $profile->load('user', 'sensitiveEquipments')]);
+        return view('pages.admin.profiles.show', ['profile' => $profile->load('user', 'sensitiveEquipments.typeEquipement')]);
     }
 
     public function edit(Profile $profile): View

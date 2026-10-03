@@ -84,12 +84,17 @@
                             <div class="min-w-0">
                                 <h3 class="ha-device__name">{{ $item->name }}</h3>
                                 <div class="ha-device__tags">
-                                    <span class="ha-tag">Type: {{ $item->type }}</span>
-                                    <x-ha.priority-badge :level="$item->priority_level" />
+                                    <span class="ha-tag">Type: {{ $item->typeEquipement->name }}</span>
+                                    <x-ha.risk-badge :level="$item->typeEquipement->risk_level" />
+                                </div>
+                                <div class="ha-device__tags">
+                                    <x-ha.sensitivity kind="heat" :on="$item->typeEquipement->sensitive_to_heat" />
+                                    <x-ha.sensitivity kind="outage" :on="$item->typeEquipement->sensitive_to_outage" />
                                 </div>
                             </div>
                         </div>
-                        @if($item->description)<p class="ha-device__desc">{{ $item->description }}</p>@else<p class="ha-device__desc">No description added.</p>@endif
+                        @if($item->description)<p class="ha-device__desc">{{ $item->description }}</p>@else<p class="ha-device__desc">No notes added.</p>@endif
+                        <x-ha.preparedness :equipment="$item" />
                         <div class="ha-device__actions">
                             <a href="{{ route('profile.equipment.edit', $item) }}" class="ha-btn ha-btn--outline ha-btn--sm" aria-label="Edit {{ $item->name }}"><x-ha.icon name="pencil" size="sm" />Edit</a>
                             <form method="POST" action="{{ route('profile.equipment.destroy', $item) }}" onsubmit="return confirm('Delete this equipment?')">

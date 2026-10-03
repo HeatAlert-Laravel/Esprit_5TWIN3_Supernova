@@ -1,11 +1,14 @@
 @extends('layouts.app')
 @section('title', 'Equipment details')
 @section('content')
-@php($owner = $equipment->profile)
+@php
+    $owner = $equipment->profile;
+    $type = $equipment->typeEquipement;
+@endphp
 <x-ha.page-header :title="$equipment->name" :breadcrumbs="[['Dashboard', route('admin.dashboard')], ['Sensitive equipment', route('admin.equipment.index')], [$equipment->name, null]]">
     <x-slot:badges>
-        <x-ha.priority-badge :level="$equipment->priority_level" />
-        <span class="ha-tag">{{ $equipment->type }}</span>
+        <x-ha.risk-badge :level="$type->risk_level" />
+        <a href="{{ route('admin.type-equipements.show', $type) }}" class="ha-tag">{{ $type->name }}</a>
     </x-slot:badges>
     <x-slot:actions>
         <a href="{{ route('admin.equipment.edit', $equipment) }}" class="ha-btn ha-btn--primary"><x-ha.icon name="pencil" size="sm" />Edit</a>
@@ -21,9 +24,12 @@
         <div class="ha-card__head"><h2 class="ha-card__title ha-card__title--with-icon" id="equipment-info"><span class="ha-icon-chip"><x-ha.icon name="plug" /></span>Equipment information</h2></div>
         <dl class="ha-dl ha-dl--2">
             <div><dt>Name</dt><dd>{{ $equipment->name }}</dd></div>
-            <div><dt>Type</dt><dd>{{ $equipment->type }}</dd></div>
-            <div><dt>Priority</dt><dd><x-ha.priority-badge :level="$equipment->priority_level" short /></dd></div>
+            <div><dt>Type</dt><dd><a href="{{ route('admin.type-equipements.show', $type) }}">{{ $type->name }}</a></dd></div>
+            <div><dt>Risk level</dt><dd><x-ha.risk-badge :level="$type->risk_level" short /></dd></div>
+            <div><dt>Heat sensitivity</dt><dd><x-ha.sensitivity kind="heat" :on="$type->sensitive_to_heat" /></dd></div>
+            <div><dt>Outage sensitivity</dt><dd><x-ha.sensitivity kind="outage" :on="$type->sensitive_to_outage" /></dd></div>
             <div class="ha-span-2"><dt>Description</dt>@if(filled($equipment->description))<dd>{{ $equipment->description }}</dd>@else<dd class="ha-empty-value">Not provided</dd>@endif</div>
+            @if($equipment->preparednessMessages())<div class="ha-span-2"><dt>Preparedness</dt><dd><x-ha.preparedness :equipment="$equipment" /></dd></div>@endif
         </dl>
         <x-ha.divider>Record metadata</x-ha.divider>
         <dl class="ha-dl ha-dl--2">

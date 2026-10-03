@@ -9,7 +9,7 @@ HeatAlert/
 └── shared/       Eloquent models, factories, seeders, and migrations
 ```
 
-`User`, `Profile`, and `SensitiveEquipment` have one canonical definition in `shared/app/Models/`. Both Composer autoloaders map those classes and the database factories/seeders to `shared/`. Both service providers load the same migration files. Both apps share one local MySQL/MariaDB database named `heatalert` (XAMPP). Neither app has its own database.
+`User`, `Profile`, `TypeEquipement`, and `SensitiveEquipment` have one canonical definition in `shared/app/Models/`. Both Composer autoloaders map those classes and the database factories/seeders to `shared/`. Both service providers load the same migration files. Both apps share one local MySQL/MariaDB database named `heatalert` (XAMPP). Neither app has its own database.
 
 ## Local setup
 
@@ -51,3 +51,24 @@ php artisan test
 cd D:\laravelprojet\HeatAlert\backoffice
 php artisan test
 ```
+
+## Module 5: TypeEquipement and SensitiveEquipment
+
+The evaluated pair is `TypeEquipement` (parent) 1 -> N `SensitiveEquipment` (child). `Profile` stays as supporting functionality (resident details and ownership: `Profile` 1 -> N `SensitiveEquipment`).
+
+```php
+TypeEquipement::sensitiveEquipments()  // hasMany(SensitiveEquipment::class)
+SensitiveEquipment::typeEquipement()   // belongsTo(TypeEquipement::class)
+```
+
+**One source of truth.** `type_equipements` holds `name`, `sensitive_to_heat`, `sensitive_to_outage` and `risk_level` (`low`, `medium`, `high`, `critical`). `sensitive_equipments` keeps only `profile_id`, `type_equipement_id`, `name` and `description`. The former free-text `type` and per-row `priority_level` columns were removed, so nothing duplicates a type's name, sensitivities or risk. Column names are English like the rest of the schema; the `type_equipements` table name follows the official module guide.
+
+**Migrations (additive, run with a plain `php artisan migrate`):**
+
+1. `create_type_equipements_table` creates the table and the seven canonical types (Refrigerator, Medical equipment, Aquarium, Freezer, Fan, Air conditioner, Other).
+2. `add_type_equipement_id_to_sensitive_equipments_table` adds a nullable foreign key (`restrictOnDelete`) and maps every existing row.
+3. `finalize_sensitive_equipment_type_normalization` aborts if any row is unmapped, then drops `type` and `priority_level` and makes the key mandatory. Its `down()` restores both columns from the type.
+
+Mapping rule for existing rows (first match on the equipment name, then the legacy `type`): medical, respirator, oxygen, cpap, insulin, dialysis or nebuliser -> Medical equipment; freezer -> Freezer; refrigerator or fridge -> Refrigerator; aquarium -> Aquarium; air conditioner -> Air conditioner; fan -> Fan; legacy type `medical` -> Medical equipment; anything else -> Other. Old per-row priorities were demo values, so risk now comes from the type (for example a refrigerator that was `low` is now `high`).
+
+**Back Office:** `Equipment types` CRUD at `/admin/type-equipements`. A type used by equipment cannot be deleted (flash message, no cascade). The equipment list filters by type, risk, heat-sensitive, outage-sensitive and resident search; filters persist across pagination. The dashboard shows aggregate equipment statistics from the types. **Front Office:** residents pick a type, see risk and sensitivity badges, and get simple rule-based preparedness messages (no AI, no medical advice).

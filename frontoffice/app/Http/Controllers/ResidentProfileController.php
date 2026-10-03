@@ -11,7 +11,7 @@ class ResidentProfileController extends Controller
     public function show(Request $request): View
     {
         return view('pages.front.my-profile', [
-            'profile' => $request->user()->profile?->load('sensitiveEquipments'),
+            'profile' => $request->user()->profile?->load('sensitiveEquipments.typeEquipement'),
         ]);
     }
 
