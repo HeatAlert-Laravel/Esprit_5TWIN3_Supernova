@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\QuartierController;
 use App\Http\Controllers\Admin\SensitiveEquipmentController;
 use App\Http\Controllers\AdminAuthController;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,7 @@ Route::post('/logout', [AdminAuthController::class, 'logout'])->middleware('auth
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('quartiers', QuartierController::class)->except(['show']);
     Route::resource('profiles', ProfileController::class);
     Route::resource('equipment', SensitiveEquipmentController::class);
 });

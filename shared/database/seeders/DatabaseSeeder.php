@@ -26,6 +26,6 @@ class DatabaseSeeder extends Seeder
             $admin->save();
         }
 
-        $this->call([ProfileSeeder::class, SensitiveEquipmentSeeder::class]);
+        $this->call([QuartierSeeder::class, ProfileSeeder::class, SensitiveEquipmentSeeder::class]);
     }
 }
