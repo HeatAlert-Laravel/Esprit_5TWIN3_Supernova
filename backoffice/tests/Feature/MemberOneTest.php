@@ -2,6 +2,7 @@
 
 use App\Models\Profile;
 use App\Models\SensitiveEquipment;
+use App\Models\TypeEquipement;
 use App\Models\User;
 use Database\Seeders\ProfileSeeder;
 use Database\Seeders\SensitiveEquipmentSeeder;
@@ -60,18 +61,20 @@ test('ADMIN can create, view, update and delete a profile with related equipment
 test('ADMIN can complete equipment CRUD and sees the linked profile', function () {
     $admin = User::factory()->create(['role' => 'ADMIN']);
     $profile = Profile::factory()->create();
-    $this->actingAs($admin)->get(route('admin.equipment.create'))->assertOk()->assertSee($profile->user->name);
+    $freezer = TypeEquipement::where('name', 'Freezer')->firstOrFail();
+    $fan = TypeEquipement::where('name', 'Fan')->firstOrFail();
+    $this->actingAs($admin)->get(route('admin.equipment.create'))->assertOk()->assertSee($profile->user->name)->assertSee('Freezer');
     $this->post(route('admin.equipment.store'), [
-        'profile_id' => $profile->id, 'name' => 'Freezer', 'type' => 'household', 'priority_level' => 'high', 'description' => 'Stores medicine',
+        'profile_id' => $profile->id, 'name' => 'Freezer', 'type_equipement_id' => $freezer->id, 'description' => 'Stores medicine',
     ])->assertRedirect();
     $item = SensitiveEquipment::where('name', 'Freezer')->firstOrFail();
     $this->get(route('admin.equipment.index'))->assertOk()->assertSee('Freezer');
     $this->get(route('admin.equipment.show', $item))->assertOk()->assertSee($profile->user->name);
     $this->get(route('admin.equipment.edit', $item))->assertOk()->assertSee('Stores medicine');
     $this->put(route('admin.equipment.update', $item), [
-        'profile_id' => $profile->id, 'name' => 'Freezer', 'type' => 'household', 'priority_level' => 'medium', 'description' => 'Updated',
+        'profile_id' => $profile->id, 'name' => 'Freezer', 'type_equipement_id' => $fan->id, 'description' => 'Updated',
     ])->assertRedirect();
-    expect($item->fresh()->priority_level)->toBe('medium');
+    expect($item->fresh()->type_equipement_id)->toBe($fan->id);
     $this->delete(route('admin.equipment.destroy', $item))->assertRedirect(route('admin.equipment.index'));
     $this->assertDatabaseMissing('sensitive_equipments', ['id' => $item->id]);
 });
@@ -80,9 +83,9 @@ test('invalid form data shows errors and preserves prior input', function () {
     $admin = User::factory()->create(['role' => 'ADMIN']);
     $profile = Profile::factory()->create();
     $this->actingAs($admin)->from(route('admin.equipment.create'))->post(route('admin.equipment.store'), [
-        'profile_id' => $profile->id, 'name' => 'Freezer', 'type' => 'household', 'priority_level' => 'urgent',
-    ])->assertRedirect(route('admin.equipment.create'))->assertSessionHasErrors('priority_level')->assertSessionHasInput('name', 'Freezer');
-    $this->get(route('admin.equipment.create'))->assertOk()->assertSee('Freezer')->assertSee('The selected priority level is invalid.');
+        'profile_id' => $profile->id, 'name' => 'Freezer', 'type_equipement_id' => 999999,
+    ])->assertRedirect(route('admin.equipment.create'))->assertSessionHasErrors('type_equipement_id')->assertSessionHasInput('name', 'Freezer');
+    $this->get(route('admin.equipment.create'))->assertOk()->assertSee('Freezer')->assertSee('The selected type is invalid.');
 });
 
 test('profile validation rejects missing fields and preserves form input', function () {

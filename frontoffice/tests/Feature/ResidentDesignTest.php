@@ -2,6 +2,7 @@
 
 use App\Models\Profile;
 use App\Models\SensitiveEquipment;
+use App\Models\TypeEquipement;
 use App\Models\User;
 use App\Support\Readiness;
 
@@ -45,12 +46,12 @@ test('home shows real readiness progress to a signed-in resident', function () {
 
 test('my profile is a readiness hub with completion, grouped fields and equipment cards', function () {
     $profile = Profile::factory()->create(['neighborhood' => 'Carthage']);
-    SensitiveEquipment::factory()->for($profile)->create(['name' => 'Medication fridge', 'type' => 'medical', 'priority_level' => 'high', 'description' => 'Keeps insulin cool']);
+    SensitiveEquipment::factory()->for($profile)->ofType(TypeEquipement::where('name', 'Medical equipment')->firstOrFail())->create(['name' => 'Medication fridge', 'description' => 'Keeps insulin cool']);
 
     $this->actingAs($profile->user)->get(route('my-profile'))->assertOk()
         ->assertSee($profile->user->name)->assertSee('Complete · 100%')
         ->assertSeeInOrder(['Contact', 'Household', 'Household members'])
-        ->assertSee('Medication fridge')->assertSee('Type: medical')->assertSee('Priority: High')->assertSee('Keeps insulin cool')
+        ->assertSee('Medication fridge')->assertSee('Type: Medical equipment')->assertSee('Risk: CRITICAL')->assertSee('Keeps insulin cool')
         ->assertSee('Remove')->assertSee(route('profile.equipment.edit', SensitiveEquipment::first()), false);
 });
 
@@ -67,15 +68,15 @@ test('my profile empty equipment state keeps the original message', function () 
     $this->actingAs($profile->user)->get(route('my-profile'))->assertOk()->assertSee('No equipment recorded yet.');
 });
 
-test('equipment form renders priority radio cards with the existing values and keeps the selection', function () {
+test('equipment form renders a type select with the selected type kept', function () {
     $profile = Profile::factory()->create();
-    $item = SensitiveEquipment::factory()->for($profile)->create(['priority_level' => 'high']);
+    $type = TypeEquipement::where('name', 'Aquarium')->firstOrFail();
+    $item = SensitiveEquipment::factory()->for($profile)->ofType($type)->create();
 
     $this->actingAs($profile->user)->get(route('profile.equipment.edit', $item))->assertOk()
-        ->assertSee('name="priority_level" value="low"', false)
-        ->assertSee('name="priority_level" value="medium"', false)
-        ->assertSee('name="priority_level" value="high" checked', false)
-        ->assertDontSee('<select id="priority_level"', false);
+        ->assertSee('<select id="type_equipement_id" name="type_equipement_id"', false)
+        ->assertSee('value="'.$type->id.'" selected', false)
+        ->assertDontSee('name="priority_level"', false);
 });
 
 test('auth pages render the redesigned shells and keep their form behavior', function () {
