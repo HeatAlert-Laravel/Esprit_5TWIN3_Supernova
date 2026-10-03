@@ -43,7 +43,7 @@ Resident routes, controllers, Blade layouts, and Vite assets live in `frontoffic
 
 The Front Office login offers Laravel's native Remember Me and password recovery. With `MAIL_MAILER=log`, password reset links are written to the ignored `frontoffice/storage/logs/laravel.log` for local use. The reset token is stored in the shared `password_reset_tokens` table and consumed after a successful reset.
 
-Tests use in-memory SQLite and additive migrations, leaving the local demo database intact:
+Tests use a separate MySQL database, `heatalert_test`, so the `heatalert` data is never touched. Create it once: `CREATE DATABASE heatalert_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
 
 ```powershell
 cd D:\laravelprojet\HeatAlert\frontoffice

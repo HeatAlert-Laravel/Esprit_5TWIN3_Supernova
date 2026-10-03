@@ -5,7 +5,7 @@ use App\Models\SensitiveEquipment;
 use App\Models\User;
 use App\Support\Readiness;
 
-// Display logic added by the Shade & Signal redesign. In-memory SQLite, additive migrations only.
+// Display logic added by the Shade & Signal redesign. MySQL test database (heatalert_test).
 beforeEach(fn () => $this->artisan('migrate', ['--force' => true]));
 
 test('readiness steps follow the documented rule for guests and residents', function () {

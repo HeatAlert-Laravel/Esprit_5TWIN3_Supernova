@@ -5,7 +5,7 @@ use App\Models\SensitiveEquipment;
 use App\Models\User;
 use Database\Seeders\ProfileSeeder;
 use Database\Seeders\SensitiveEquipmentSeeder;
-// Tests use the PHPUnit in-memory SQLite connection and additive migrations only.
+// Tests use the heatalert_test MySQL database, never the heatalert application database.
 beforeEach(fn () => $this->artisan('migrate', ['--force' => true]));
 
 test('guest is redirected and USER is forbidden from admin routes', function () {

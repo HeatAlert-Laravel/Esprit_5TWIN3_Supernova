@@ -4,7 +4,7 @@ use App\Models\Profile;
 use App\Models\SensitiveEquipment;
 use App\Models\User;
 
-// Display logic added by the Shade & Signal redesign. In-memory SQLite, additive migrations only.
+// Display logic added by the Shade & Signal redesign. MySQL test database (heatalert_test).
 beforeEach(function () {
     $this->artisan('migrate', ['--force' => true]);
     $this->admin = User::factory()->create(['role' => 'ADMIN']);

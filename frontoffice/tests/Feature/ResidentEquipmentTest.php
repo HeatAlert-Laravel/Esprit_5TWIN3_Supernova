@@ -3,7 +3,7 @@
 use App\Models\Profile;
 use App\Models\SensitiveEquipment;
 use App\Models\User;
-// Tests use the PHPUnit in-memory SQLite connection and additive migrations only.
+// Tests use the heatalert_test MySQL database, never the heatalert application database.
 beforeEach(fn () => $this->artisan('migrate', ['--force' => true]));
 
 test('guest cannot use any resident equipment route', function () {

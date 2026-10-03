@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-// Tests use the PHPUnit in-memory SQLite connection and additive migrations only.
+// Tests use the heatalert_test MySQL database, never the heatalert application database.
 beforeEach(fn () => $this->artisan('migrate', ['--force' => true]));
 
 test('public pages render and protected pages require login', function () {
