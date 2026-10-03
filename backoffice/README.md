@@ -42,7 +42,7 @@ To set up TailAdmin Laravel, make sure your environment includes:
 * **PHP 8.2+**
 * **Composer** (PHP dependency manager)
 * **Node.js 18+** and **npm** (for compiling frontend assets)
-* **Database** - Works with SQLite (default), MySQL, or PostgreSQL
+* **Database** - MySQL/MariaDB (XAMPP)
 
 ### Tailwind CSS Laravel Dashboard
 
