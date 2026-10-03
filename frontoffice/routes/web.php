@@ -4,10 +4,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ResidentProfileController;
 use App\Http\Controllers\ResidentSensitiveEquipmentController;
+use App\Http\Controllers\WeatherAlertController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'pages.front.home')->name('home');
-Route::get('/weather-alerts', fn () => view('pages.front.placeholder', ['title' => 'Weather Alerts']))->name('weather-alerts');
+Route::get('/weather-alerts', [WeatherAlertController::class, 'index'])->name('weather-alerts');
 Route::get('/outages', fn () => view('pages.front.placeholder', ['title' => 'Outages']))->name('outages');
 Route::get('/cooling-points', fn () => view('pages.front.placeholder', ['title' => 'Cooling Points']))->name('cooling-points');
 Route::get('/advice', fn () => view('pages.front.placeholder', ['title' => 'Advice']))->name('advice');

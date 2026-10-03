@@ -10,6 +10,7 @@
         ],
         'Heat planning' => [
             ['route' => 'admin.quartiers.index', 'match' => 'admin.quartiers.*', 'label' => 'Neighborhoods', 'icon' => 'map-pin'],
+            ['route' => 'admin.alertes-meteo.index', 'match' => 'admin.alertes-meteo.*', 'label' => 'Weather alerts', 'icon' => 'alert-triangle'],
         ],
     ];
     $plannedModules = [['Alerts', 'alert-triangle'], ['Outages', 'zap'], ['Cooling points', 'snowflake']];
