@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 
-// Every feature test migrates the heatalert_test MySQL database, never the heatalert application database.
+// Every feature test migrates a fresh in-memory SQLite connection, never the local demo database.
 beforeEach(fn () => $this->artisan('migrate', ['--force' => true]));
 
 test('guest forms are available and authenticated residents are redirected to their profile', function () {

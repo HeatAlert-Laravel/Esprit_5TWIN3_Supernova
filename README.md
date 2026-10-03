@@ -18,7 +18,7 @@ Use PHP 8.3, Composer 2, and Node.js/npm. From each application directory, run `
 1. Start **Apache** and **MySQL** in the XAMPP Control Panel (phpMyAdmin at <http://localhost/phpmyadmin> is optional, for inspection only). PHP needs the `pdo_mysql` extension enabled.
 2. Create the database once: `CREATE DATABASE heatalert CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
 3. Copy each `.env.example` to its ignored `.env`. Both must use `DB_CONNECTION=mysql`, `DB_DATABASE=heatalert`, and the same `DB_USERNAME`/`DB_PASSWORD` (XAMPP default: `root`, empty). Set both `APP_KEY` values to the same key and keep `SESSION_DRIVER=database` and `SESSION_COOKIE=heatalert_session`. Hostnames must match (`127.0.0.1`) for shared browser cookies.
-4. Run `php artisan migrate` once from either app (migrations live in `shared/`). Demo admin credentials belong only in the ignored local `.env`.
+4. Cache is `file`, the queue is `sync`, and sessions use the database (`SESSION_DRIVER=database`). Run `php artisan migrate` once from either app (migrations live in `shared/`). Demo admin credentials belong only in the ignored local `.env`.
 5. `shared/` has nothing to launch.
 
 ## Run
@@ -43,7 +43,7 @@ Resident routes, controllers, Blade layouts, and Vite assets live in `frontoffic
 
 The Front Office login offers Laravel's native Remember Me and password recovery. With `MAIL_MAILER=log`, password reset links are written to the ignored `frontoffice/storage/logs/laravel.log` for local use. The reset token is stored in the shared `password_reset_tokens` table and consumed after a successful reset.
 
-Tests use a separate MySQL database, `heatalert_test`, so the `heatalert` data is never touched. Create it once: `CREATE DATABASE heatalert_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
+Tests run on isolated SQLite in-memory storage (configured in each `phpunit.xml`), never on the `heatalert` MySQL database:
 
 ```powershell
 cd D:\laravelprojet\HeatAlert\frontoffice
