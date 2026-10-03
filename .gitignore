@@ -3,3 +3,6 @@ backoffice/database/*.sqlite-*
 frontoffice/database/*.sqlite
 frontoffice/database/*.sqlite-*
 agent/
+
+# Local MySQL backups
+local-backups/

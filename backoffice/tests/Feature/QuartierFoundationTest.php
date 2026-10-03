@@ -18,7 +18,7 @@ test('quartier seeder creates the shared demo neighborhoods idempotently', funct
     $this->seed(QuartierSeeder::class);
     $this->seed(QuartierSeeder::class);
 
-    expect(Quartier::count())->toBe(5)
+    expect(Quartier::count())->toBe(8)
         ->and(Quartier::where('nom', 'La Marsa')->where('ville', 'Tunis')->exists())->toBeTrue();
 });
 

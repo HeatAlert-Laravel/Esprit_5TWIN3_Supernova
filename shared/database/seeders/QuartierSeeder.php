@@ -15,6 +15,9 @@ class QuartierSeeder extends Seeder
             ['nom' => 'Carthage', 'ville' => 'Tunis', 'code_postal' => '2016'],
             ['nom' => 'Sidi Bou Said', 'ville' => 'Tunis', 'code_postal' => '2026'],
             ['nom' => 'El Menzah', 'ville' => 'Tunis', 'code_postal' => '2092'],
+            ['nom' => 'Ben Arous', 'ville' => 'Ben Arous', 'code_postal' => '2013'],
+            ['nom' => 'Mghira', 'ville' => 'Ben Arous', 'code_postal' => '2082'],
+            ['nom' => 'Ariana', 'ville' => 'Ariana', 'code_postal' => '2080'],
         ] as $quartier) {
             Quartier::firstOrCreate(
                 ['nom' => $quartier['nom'], 'ville' => $quartier['ville']],
