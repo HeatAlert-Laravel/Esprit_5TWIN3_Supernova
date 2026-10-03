@@ -3,3 +3,7 @@ backoffice/database/*.sqlite-*
 frontoffice/database/*.sqlite
 frontoffice/database/*.sqlite-*
 agent/
+
+# Local database dumps
+*.sql
+*.sqlite.backup*
