@@ -201,6 +201,7 @@ a { color: var(--ha-ember-700); }
 .ha-badge--info    { background: var(--ha-info-bg);    color: var(--ha-info-ink); }
 .ha-badge--cool    { background: var(--ha-shade-100);  color: var(--ha-shade-800); }
 .ha-badge--neutral { background: var(--ha-surface-2);  color: var(--ha-ink-2); }
+.ha-badge--critical { background: var(--ha-ember-800); color: #fff; }
 .ha-badge--plain::before { display: none; }
 
 .ha-tag {
@@ -479,11 +480,15 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
 .ha-bars__head { display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; font-weight: 600; }
 .ha-bars__track { height: 10px; border-radius: 999px; background: var(--ha-surface-2); overflow: hidden; }
 .ha-bars__fill { height: 100%; border-radius: 999px; background: var(--ha-shade-600); }
+.ha-bars__fill--critical { background: var(--ha-ember-800); }
 .ha-bars__fill--high { background: var(--ha-ember-600); }
 .ha-bars__fill--medium { background: var(--ha-sun-400); }
 .ha-bars__fill--low { background: var(--ha-shade-600); }
 .ha-rule-note { margin: var(--ha-s-4) 0 0; padding: var(--ha-s-3) var(--ha-s-4); background: var(--ha-surface-2); border-radius: var(--ha-r-md); font-size: 0.8125rem; color: var(--ha-ink-2); }
 .ha-reasons { display: flex; flex-wrap: wrap; gap: 6px; }
+.ha-hints { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.ha-hints li { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; background: var(--ha-surface-2); border-radius: var(--ha-r-md); font-size: 0.8125rem; color: var(--ha-ink-2); }
+.ha-hints svg { flex: none; margin-top: 2px; }
 
 /* ---- 16. Admin login (fullscreen) ---------------------------------------- */
 .ha-login { min-height: 100vh; display: grid; place-items: center; padding: var(--ha-s-6) var(--ha-s-4); background: var(--ha-bg); }

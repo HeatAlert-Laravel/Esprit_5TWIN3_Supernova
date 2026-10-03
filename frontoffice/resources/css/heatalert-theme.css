@@ -201,6 +201,10 @@ a { color: var(--ha-ember-700); }
 .ha-badge--info    { background: var(--ha-info-bg);    color: var(--ha-info-ink); }
 .ha-badge--cool    { background: var(--ha-shade-100);  color: var(--ha-shade-800); }
 .ha-badge--neutral { background: var(--ha-surface-2);  color: var(--ha-ink-2); }
+.ha-badge--critical { background: var(--ha-ember-800); color: #fff; }
+.ha-hints { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.ha-hints li { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; background: var(--ha-surface-2); border-radius: var(--ha-r-md); font-size: 0.8125rem; color: var(--ha-ink-2); }
+.ha-hints svg { flex: none; margin-top: 2px; }
 .ha-badge--plain::before { display: none; }
 
 .ha-tag {

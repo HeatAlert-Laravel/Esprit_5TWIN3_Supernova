@@ -7,6 +7,7 @@
         'Residents' => [
             ['route' => 'admin.profiles.index', 'match' => 'admin.profiles.*', 'label' => 'Profiles', 'icon' => 'users', 'count' => $sidebarCounts['profiles'] ?? null],
             ['route' => 'admin.equipment.index', 'match' => 'admin.equipment.*', 'label' => 'Sensitive equipment', 'icon' => 'plug', 'count' => $sidebarCounts['equipment'] ?? null],
+            ['route' => 'admin.type-equipements.index', 'match' => 'admin.type-equipements.*', 'label' => 'Equipment types', 'icon' => 'thermometer', 'count' => $sidebarCounts['types'] ?? null],
         ],
         'Heat planning' => [
             ['route' => 'admin.quartiers.index', 'match' => 'admin.quartiers.*', 'label' => 'Neighborhoods', 'icon' => 'map-pin'],
