@@ -16,9 +16,10 @@ class QuartierController extends Controller
 
         $quartiers = Quartier::query()
             ->when($search !== '', fn ($query) => $query
-                ->where('nom', 'like', "%{$search}%")
-                ->orWhere('ville', 'like', "%{$search}%")
-                ->orWhere('code_postal', 'like', "%{$search}%"))
+                ->where(fn ($searchQuery) => $searchQuery
+                    ->where('nom', 'like', "%{$search}%")
+                    ->orWhere('ville', 'like', "%{$search}%")
+                    ->orWhere('code_postal', 'like', "%{$search}%")))
             ->withCount('alerteMeteos')
             ->orderBy('ville')
             ->orderBy('nom')
@@ -46,7 +47,7 @@ class QuartierController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $quartier = Quartier::create($this->validated($request));
+        Quartier::create($this->validated($request));
 
         return redirect()->route('admin.quartiers.index')->with('status', 'Neighborhood created.');
     }
