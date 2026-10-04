@@ -1,19 +1,20 @@
 @extends('layouts.app')
 @section('title', 'Equipment types')
 @section('content')
+@php($isFiltered = $search !== '')
 <x-ha.page-header title="Equipment types" description="The kinds of equipment residents can record, with the risk level and sensitivities each one carries." :breadcrumbs="[['Dashboard', route('admin.dashboard')], ['Equipment types', null]]">
     <x-slot:badges><span class="ha-count-pill">{{ $search !== '' ? $types->total().' of '.$totalTypes : $totalTypes }} {{ \Illuminate\Support\Str::plural('type', $search !== '' ? $types->total() : $totalTypes) }}</span></x-slot:badges>
     <x-slot:actions><a href="{{ route('admin.type-equipements.create') }}" class="ha-btn ha-btn--primary"><x-ha.icon name="plus" size="sm" />Add type</a></x-slot:actions>
 </x-ha.page-header>
 
-<form method="GET" action="{{ route('admin.type-equipements.index') }}" class="ha-filter" role="search" aria-label="Filter equipment types">
+<form method="GET" action="{{ route('admin.type-equipements.index') }}" class="ha-filter" data-auto-filter role="search" aria-label="Filter equipment types">
     <div class="ha-field ha-field--grow">
         <label class="ha-label" for="q">Type name</label>
         <input class="ha-input" id="q" name="q" type="search" value="{{ $search }}" placeholder="Search equipment types">
     </div>
     <div class="ha-filter__actions">
-        <button class="ha-btn ha-btn--secondary"><x-ha.icon name="search" size="sm" />Filter</button>
-        @if($search !== '')<a href="{{ route('admin.type-equipements.index') }}" class="ha-btn ha-btn--ghost">Reset</a>@endif
+        <noscript><button class="ha-btn ha-btn--secondary">Apply filters</button></noscript>
+        @if($isFiltered)<a href="{{ route('admin.type-equipements.index') }}" class="ha-btn ha-btn--ghost">Reset filters</a>@endif
     </div>
 </form>
 

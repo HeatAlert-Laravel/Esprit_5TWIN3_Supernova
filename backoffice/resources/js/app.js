@@ -1,5 +1,6 @@
 import { createPopper } from '@popperjs/core';
 import './bootstrap';
+import './auto-filter';
 import Alpine from 'alpinejs';
 import ApexCharts from 'apexcharts';
 

@@ -7,7 +7,7 @@
     <x-slot:actions><a href="{{ route('admin.equipment.create') }}" class="ha-btn ha-btn--primary"><x-ha.icon name="plus" size="sm" />Add equipment</a></x-slot:actions>
 </x-ha.page-header>
 
-<form method="GET" action="{{ route('admin.equipment.index') }}" class="ha-filter" role="search" aria-label="Filter equipment">
+<form method="GET" action="{{ route('admin.equipment.index') }}" class="ha-filter" data-auto-filter role="search" aria-label="Filter equipment">
     <div class="ha-field ha-field--grow">
         <label class="ha-label" for="q">Equipment or resident</label>
         <input class="ha-input" id="q" name="q" type="search" value="{{ $filters['q'] }}" placeholder="Search by equipment name, resident name or email">
@@ -32,8 +32,8 @@
         <label class="ha-check"><input type="checkbox" name="outage" value="1" @checked($filters['outage'] === '1')><span class="ha-check__text">Outage-sensitive</span></label>
     </div>
     <div class="ha-filter__actions">
-        <button class="ha-btn ha-btn--secondary"><x-ha.icon name="search" size="sm" />Filter</button>
-        @if($isFiltered)<a href="{{ route('admin.equipment.index') }}" class="ha-btn ha-btn--ghost">Reset</a>@endif
+        <noscript><button class="ha-btn ha-btn--secondary">Apply filters</button></noscript>
+        @if($isFiltered)<a href="{{ route('admin.equipment.index') }}" class="ha-btn ha-btn--ghost">Reset filters</a>@endif
     </div>
 </form>
 
@@ -44,7 +44,7 @@
                 <a href="{{ route('admin.equipment.index') }}" class="ha-btn ha-btn--outline">Reset filters</a>
             </x-ha.empty-state>
         @else
-            <x-ha.empty-state icon="plug" title="No equipment yet" description="Equipment appears here once residents record it, or when you add it for a household.">
+            <x-ha.empty-state icon="plug" title="No sensitive equipment has been added yet." description="Equipment appears here once residents record it, or when you add it for a household.">
                 <a href="{{ route('admin.equipment.create') }}" class="ha-btn ha-btn--primary"><x-ha.icon name="plus" size="sm" />Add equipment</a>
             </x-ha.empty-state>
         @endif
@@ -55,7 +55,7 @@
             <thead>
                 <tr>
                     <th scope="col">Equipment</th>
-                    <th scope="col">Owner</th>
+                    <th scope="col">Resident</th>
                     <th scope="col">Type</th>
                     <th scope="col">Heat</th>
                     <th scope="col">Outage</th>
