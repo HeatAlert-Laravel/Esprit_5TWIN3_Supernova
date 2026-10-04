@@ -107,5 +107,6 @@ test('forgot password shows a success state after the reset link is sent', funct
 
 test('navbar marks the active page and offers login and create account to guests', function () {
     $this->get(route('outages'))->assertOk()->assertSee('aria-current="page"', false)->assertSee('Create account')->assertSee('Login');
-    $this->get(route('outages'))->assertSee('Outages is coming soon');
+    $this->get(route('advice'))->assertOk()->assertSee('aria-current="page"', false)
+        ->assertSee('A little preparation goes a long way.')->assertSee('Create account')->assertSee('Login');
 });

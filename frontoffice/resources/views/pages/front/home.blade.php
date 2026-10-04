@@ -43,6 +43,7 @@
     <div class="ha-section__head">
         <h2 id="guidance-title">Simple ways to prepare</h2>
         <p>General habits that help during hot weather.</p>
+        <a href="{{ route('advice') }}" class="ha-btn ha-btn--outline">{{ __('Explore practical advice') }}<x-ha.icon name="arrow-right" size="sm" class="rtl:rotate-180" /></a>
     </div>
     <div class="ha-grid ha-grid--3">
         <div class="ha-card ha-tip"><span class="ha-icon-chip"><x-ha.icon name="sun" /></span><div><h3>Plan for hot days</h3><p>Keep water within reach and avoid the hottest hours when you can.</p></div></div>

@@ -10,8 +10,11 @@ use Illuminate\Support\Facades\Schema;
  */
 beforeEach(function () {
     $this->artisan('migrate', ['--force' => true]);
-    // Undo only the two normalization migrations (finalize, then add type_equipement_id).
-    $this->artisan('migrate:rollback', ['--step' => 2, '--force' => true]);
+    // Target this module explicitly: teammates may add newer shared migrations.
+    $this->artisan('migrate:rollback', ['--path' => [
+        '../shared/database/migrations/2026_10_05_000003_finalize_sensitive_equipment_type_normalization.php',
+        '../shared/database/migrations/2026_10_05_000002_add_type_equipement_id_to_sensitive_equipments_table.php',
+    ], '--force' => true])->assertExitCode(0);
 });
 
 function legacyEquipment(int $profileId, string $name, string $type, string $priority): int
@@ -56,7 +59,9 @@ test('existing equipment is mapped to canonical types and nothing is lost', func
 test('the finalize migration refuses to drop legacy columns while a row is unmapped', function () {
     $profileId = App\Models\Profile::factory()->create()->id;
     $this->artisan('migrate', ['--force' => true]);
-    $this->artisan('migrate:rollback', ['--step' => 1, '--force' => true]); // undo finalize only: legacy columns are back
+    $this->artisan('migrate:rollback', ['--path' => [
+        '../shared/database/migrations/2026_10_05_000003_finalize_sensitive_equipment_type_normalization.php',
+    ], '--force' => true])->assertExitCode(0); // undo finalize only: legacy columns are back
     legacyEquipment($profileId, 'Unmapped', 'household', 'low'); // has no type_equipement_id
 
     expect(fn () => Artisan::call('migrate', ['--force' => true]))->toThrow(RuntimeException::class);

@@ -581,3 +581,31 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
 .ha-live-module__link { display: inline-flex; align-items: center; gap: var(--ha-s-2); font-size: 0.875rem; font-weight: 600; color: var(--ha-ember-700); }
 
 }
+
+
+/* Advice uses the shared HeatAlert design tokens in both applications. */
+@layer components {
+    .ha-advice-table { min-width: 980px; }
+    .ha-advice-situations { display: flex; flex-wrap: wrap; gap: var(--ha-s-2); margin-block-end: var(--ha-s-5); }
+    .ha-advice-category-head { display: flex; align-items: center; gap: var(--ha-s-3); margin-block-end: var(--ha-s-4); }
+    .ha-advice-category-head h2 { font-family: var(--ha-font-heading); font-size: 1.25rem; font-weight: 600; color: var(--ha-shade-800); }
+    .ha-advice-category-head p { color: var(--ha-ink-2); font-size: .875rem; margin-block-start: var(--ha-s-1); }
+    .ha-advice-card { display: flex; flex-direction: column; gap: var(--ha-s-4); min-width: 0; }
+    .ha-advice-meta { display: flex; align-items: center; flex-wrap: wrap; gap: var(--ha-s-2); color: var(--ha-ink-2); font-size: .8125rem; }
+    .ha-advice-meta > span { display: inline-flex; align-items: center; gap: var(--ha-s-2); }
+    .ha-advice-title { font-family: var(--ha-font-heading); font-size: 1.125rem; font-weight: 600; line-height: 1.45; overflow-wrap: anywhere; }
+    .ha-advice-title a { color: var(--ha-shade-800); }
+    .ha-advice-title a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .ha-advice-excerpt { color: var(--ha-ink-2); line-height: 1.65; font-size: .875rem; overflow-wrap: anywhere; }
+    .ha-advice-foot { margin-block-start: auto; display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: var(--ha-s-2); border-block-start: 1px solid var(--ha-border); padding-block-start: var(--ha-s-3); }
+    .ha-advice-reading { max-width: 800px; margin-inline: auto; padding: clamp(24px, 4vw, 48px); }
+    .ha-advice-reading-meta { padding-block-end: var(--ha-s-4); margin-block-end: var(--ha-s-5); border-block-end: 1px solid var(--ha-border); }
+    .ha-advice-summary { font-size: 1.125rem; line-height: 1.7; color: var(--ha-shade-800); margin-block-end: var(--ha-s-6); overflow-wrap: anywhere; }
+    .ha-advice-body { color: var(--ha-ink); line-height: 1.85; overflow-wrap: anywhere; }
+    .ha-advice-body p { white-space: pre-line; }
+    .ha-advice-body p + p { margin-block-start: var(--ha-s-5); }
+    .ha-advice-back { margin-block: var(--ha-s-6); }
+    .ha-advice-filter-note { margin-block: calc(-1 * var(--ha-s-3)) var(--ha-s-5); }
+    .ha-advice-article { min-width: 0; }
+    .ha-advice-details { margin-block-start: var(--ha-s-4); }
+}

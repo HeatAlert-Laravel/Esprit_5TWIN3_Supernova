@@ -26,9 +26,19 @@ class DatabaseSeeder extends Seeder
             $admin->save();
         }
 
-        $this->call([QuartierSeeder::class, AlerteMeteoSeeder::class, ProfileSeeder::class, TypeEquipementSeeder::class, SensitiveEquipmentSeeder::class]);
-
-        // Membre 3 : après QuartierSeeder (clé étrangère quartier_id), parent avant enfant.
-        $this->call([TypePointSeeder::class, PointFraicheurSeeder::class]);
+        // Shared entry point: parents are always seeded before their children.
+        $this->call([
+            QuartierSeeder::class,
+            AlerteMeteoSeeder::class,
+            ProfileSeeder::class,
+            TypeEquipementSeeder::class,
+            SensitiveEquipmentSeeder::class,
+            CoupureSeeder::class,
+            SignalementSeeder::class,
+            TypePointSeeder::class,
+            PointFraicheurSeeder::class,
+            CategorieConseilSeeder::class,
+            ConseilSeeder::class,
+        ]);
     }
 }
