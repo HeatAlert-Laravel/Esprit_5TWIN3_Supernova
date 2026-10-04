@@ -17,8 +17,8 @@
         @endforeach
     </select>
 </x-ha.field>
-<x-ha.field name="type" :label="__('Type')"><select id="type" name="type" class="ha-select" required>@foreach(\App\Models\Coupure::TYPES as $value)<option value="{{ $value }}" @selected(old('type', $coupure?->type) === $value)>{{ $value }}</option>@endforeach</select></x-ha.field>
-<x-ha.field name="statut" :label="__('Status')"><select id="statut" name="statut" class="ha-select" required>@foreach(\App\Models\Coupure::STATUTS as $value)<option value="{{ $value }}" @selected(old('statut', $coupure?->statut) === $value)>{{ $value }}</option>@endforeach</select></x-ha.field>
+<x-ha.field name="type" :label="__('Type')"><select id="type" name="type" class="ha-select" required>@foreach(\App\Models\Coupure::TYPES as $value)<option value="{{ $value }}" @selected(old('type', $coupure?->type) === $value)>{{ __($value) }}</option>@endforeach</select></x-ha.field>
+<x-ha.field name="statut" :label="__('Status')"><select id="statut" name="statut" class="ha-select" required>@foreach(\App\Models\Coupure::STATUTS as $value)<option value="{{ $value }}" @selected(old('statut', $coupure?->statut) === $value)>{{ __($value) }}</option>@endforeach</select></x-ha.field>
 <x-ha.input name="date_debut" :label="__('Start date')" type="datetime-local" :value="old('date_debut', $coupure?->date_debut?->format('Y-m-d\TH:i'))" required />
 <x-ha.input name="date_fin_estimee" :label="__('Estimated end')" type="datetime-local" :value="old('date_fin_estimee', $coupure?->date_fin_estimee?->format('Y-m-d\TH:i'))" />
 </div>

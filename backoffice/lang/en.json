@@ -47,5 +47,12 @@
     "Type": "Type",
     "Unknown": "Unknown",
     "Update status": "Update status",
-    "View": "View"
+    "View": "View",
+    "prévue": "Planned",
+    "en cours": "Ongoing",
+    "active": "Active",
+    "résolue": "Resolved",
+    "en attente": "Pending",
+    "validé": "Validated",
+    "rejeté": "Rejected"
 }
