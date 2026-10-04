@@ -2,6 +2,7 @@
 @section('title', 'Neighborhood details')
 @section('content')
 @php($statusVariants = ['current' => 'success', 'upcoming' => 'info', 'expired' => 'neutral'])
+@php($levelVariants = ['vert' => 'level-green', 'jaune' => 'level-yellow', 'orange' => 'level-orange', 'rouge' => 'level-red'])
 <x-ha.page-header :title="$quartier->nom" :breadcrumbs="[['Dashboard', route('admin.dashboard')], ['Neighborhoods', route('admin.quartiers.index')], [$quartier->nom, null]]">
     <x-slot:actions>
         <a href="{{ route('admin.quartiers.edit', $quartier) }}" class="ha-btn ha-btn--primary"><x-ha.icon name="pencil" size="sm" />Edit</a>
@@ -21,7 +22,7 @@
     <section class="ha-card" aria-labelledby="neighborhood-alerts">
         <div class="ha-card__head"><h2 class="ha-card__title ha-card__title--with-icon" id="neighborhood-alerts"><span class="ha-icon-chip"><x-ha.icon name="alert-triangle" /></span>Related weather alerts</h2><a href="{{ route('admin.alertes-meteo.create', ['quartier_id' => $quartier->id]) }}" class="ha-btn ha-btn--outline ha-btn--sm"><x-ha.icon name="plus" size="sm" />Add</a></div>
         @forelse($quartier->alerteMeteos as $alerte)
-            <div class="ha-list-item"><div><a href="{{ route('admin.alertes-meteo.show', $alerte) }}" class="ha-cell-person__name">{{ $alerte->titre }}</a><span class="ha-cell-person__sub">{{ $alerte->date_debut->format('d/m/Y') }} - {{ $alerte->date_fin->format('d/m/Y') }}</span></div><div><span class="ha-tag">{{ ucfirst($alerte->niveau) }}</span><x-ha.badge :variant="$statusVariants[$alerte->temporalStatus()]">{{ ucfirst($alerte->temporalStatus()) }}</x-ha.badge></div></div>
+            <div class="ha-list-item"><div><a href="{{ route('admin.alertes-meteo.show', $alerte) }}" class="ha-cell-person__name">{{ $alerte->titre }}</a><span class="ha-cell-person__sub">{{ $alerte->date_debut->format('d/m/Y') }} - {{ $alerte->date_fin->format('d/m/Y') }}</span></div><div><x-ha.badge :variant="$levelVariants[$alerte->niveau]">{{ ucfirst($alerte->niveau) }}</x-ha.badge><x-ha.badge :variant="$statusVariants[$alerte->temporalStatus()]">{{ ucfirst($alerte->temporalStatus()) }}</x-ha.badge></div></div>
         @empty
             <x-ha.empty-state icon="alert-triangle" title="No weather alerts" description="This neighborhood has no alerts yet." />
         @endforelse

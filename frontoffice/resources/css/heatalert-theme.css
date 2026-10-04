@@ -199,6 +199,11 @@ a { color: var(--ha-ember-700); }
 .ha-badge--warning { background: var(--ha-warning-bg); color: var(--ha-warning-ink); }
 .ha-badge--danger  { background: var(--ha-error-bg);   color: var(--ha-error-ink); }
 .ha-badge--info    { background: var(--ha-info-bg);    color: var(--ha-info-ink); }
+.ha-badge--orange  { background: #FFF0E1; color: #9A3412; }
+.ha-badge--level-green { background: #22C55E; color: #064E3B; }
+.ha-badge--level-yellow { background: #FACC15; color: #713F12; }
+.ha-badge--level-orange { background: #F97316; color: #7C2D12; }
+.ha-badge--level-red { background: #EF4444; color: #7F1D1D; }
 .ha-badge--cool    { background: var(--ha-shade-100);  color: var(--ha-shade-800); }
 .ha-badge--neutral { background: var(--ha-surface-2);  color: var(--ha-ink-2); }
 .ha-badge--critical { background: var(--ha-ember-800); color: #fff; }

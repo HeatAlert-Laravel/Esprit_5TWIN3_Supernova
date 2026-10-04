@@ -1,7 +1,7 @@
 @extends('layouts.front')
 @section('title', 'Weather alerts')
 @section('content')
-@php($levelVariants = ['vert' => 'success', 'jaune' => 'warning', 'orange' => 'danger', 'rouge' => 'danger'])
+@php($levelVariants = ['vert' => 'level-green', 'jaune' => 'level-yellow', 'orange' => 'level-orange', 'rouge' => 'level-red'])
 @php($statusVariants = ['current' => 'success', 'upcoming' => 'info', 'expired' => 'neutral'])
 <x-ha.page-header title="Weather alerts" description="Published heat alerts for your neighborhoods." />
 <form method="GET" action="{{ route('weather-alerts') }}" class="ha-filter"><div class="ha-field ha-field--grow"><label class="ha-label" for="quartier_id">Neighborhood</label><select id="quartier_id" name="quartier_id" class="ha-select"><option value="">All neighborhoods</option>@foreach($quartiers as $quartier)<option value="{{ $quartier->id }}" @selected($quartierId == $quartier->id)>{{ $quartier->nom }} - {{ $quartier->ville }}</option>@endforeach</select></div><div class="ha-filter__actions"><button class="ha-btn ha-btn--secondary"><x-ha.icon name="search" size="sm" />Filter</button>@if($quartierId !== '')<a href="{{ route('weather-alerts') }}" class="ha-btn ha-btn--ghost">Reset</a>@endif</div></form>
