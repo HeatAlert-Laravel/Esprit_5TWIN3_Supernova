@@ -4,7 +4,7 @@
 <x-ha.page-header :title="$quartier->nom" :breadcrumbs="[['Dashboard', route('admin.dashboard')], ['Neighborhoods', route('admin.quartiers.index')], [$quartier->nom, null]]">
     <x-slot:actions>
         <a href="{{ route('admin.quartiers.edit', $quartier) }}" class="ha-btn ha-btn--primary"><x-ha.icon name="pencil" size="sm" />Edit</a>
-        <form method="POST" action="{{ route('admin.quartiers.destroy', $quartier) }}" data-confirm="Delete this neighborhood and its {{ $quartier->alerteMeteos->count() }} weather alert(s)? This cannot be undone.">
+        <form method="POST" action="{{ route('admin.quartiers.destroy', $quartier) }}" data-confirm-subject="{{ $quartier->nom }}" data-confirm="Delete this neighborhood and its {{ $quartier->alerteMeteos->count() }} weather alert(s)? This cannot be undone.">
             @csrf @method('DELETE')
             <button class="ha-btn ha-btn--danger-soft"><x-ha.icon name="trash" size="sm" />Delete</button>
         </form>

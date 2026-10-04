@@ -33,7 +33,7 @@
                         <td class="ha-actions-cell">
                             <a href="{{ route('admin.quartiers.show', $quartier) }}" class="ha-btn ha-btn--outline ha-btn--sm"><x-ha.icon name="eye" size="sm" />View</a>
                             <a href="{{ route('admin.quartiers.edit', $quartier) }}" class="ha-btn ha-btn--ghost ha-btn--sm"><x-ha.icon name="pencil" size="sm" />Edit</a>
-                            <form method="POST" action="{{ route('admin.quartiers.destroy', $quartier) }}" data-confirm="Delete this neighborhood and its {{ $quartier->alerte_meteos_count }} weather alert(s)? This cannot be undone." class="inline">
+                            <form method="POST" action="{{ route('admin.quartiers.destroy', $quartier) }}" data-confirm-subject="{{ $quartier->nom }}" data-confirm="Delete this neighborhood and its {{ $quartier->alerte_meteos_count }} weather alert(s)? This cannot be undone." class="inline">
                                 @csrf @method('DELETE')
                                 <button class="ha-btn ha-btn--danger-soft ha-btn--sm"><x-ha.icon name="trash" size="sm" />Delete</button>
                             </form>

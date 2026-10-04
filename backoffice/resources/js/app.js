@@ -27,9 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (confirmDialog) {
         const message = confirmDialog.querySelector('[data-confirm-message]');
-        const close = () => {
+        const subject = confirmDialog.querySelector('[data-confirm-subject]');
+        const submitButton = confirmDialog.querySelector('[data-confirm-submit]');
+        const cancelButton = confirmDialog.querySelector('.ha-confirm-modal__actions [data-confirm-cancel]');
+        const focusable = () => Array.from(confirmDialog.querySelectorAll('button')).filter((el) => !el.hidden && !el.disabled);
+
+        const close = (restoreFocus = true) => {
+            const focusTarget = pendingForm ? pendingForm.querySelector('button[type="submit"], button:not([type])') : null;
             pendingForm = null;
             confirmDialog.hidden = true;
+            confirmDialog.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('ha-modal-lock');
+            if (restoreFocus && focusTarget instanceof HTMLElement) focusTarget.focus();
         };
 
         document.addEventListener('submit', (event) => {
@@ -39,16 +48,49 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             pendingForm = form;
             message.textContent = form.dataset.confirm;
+
+            // Optional item name (neighborhood / weather alert) shown as a themed chip.
+            if (subject) {
+                const label = form.dataset.confirmSubject;
+                subject.hidden = !label;
+                if (label) subject.textContent = label;
+            }
+
             confirmDialog.hidden = false;
-            confirmDialog.querySelector('[data-confirm-submit]').focus();
+            confirmDialog.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('ha-modal-lock');
+            (cancelButton || submitButton).focus();
         });
 
-        confirmDialog.querySelectorAll('[data-confirm-cancel]').forEach((button) => button.addEventListener('click', close));
-        confirmDialog.querySelector('[data-confirm-submit]').addEventListener('click', () => {
+        // Escape closes; Tab is trapped inside the dialog.
+        confirmDialog.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                close();
+                return;
+            }
+            if (event.key !== 'Tab') return;
+
+            const items = focusable();
+            if (items.length < 2) return;
+            const first = items[0];
+            const last = items[items.length - 1];
+
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        });
+
+        confirmDialog.querySelectorAll('[data-confirm-cancel]').forEach((button) => button.addEventListener('click', () => close()));
+        submitButton.addEventListener('click', () => {
             if (!pendingForm) return;
             pendingForm.dataset.confirmed = 'true';
             HTMLFormElement.prototype.submit.call(pendingForm);
-            close();
+            close(false);
         });
     }
 

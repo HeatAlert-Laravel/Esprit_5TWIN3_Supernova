@@ -140,6 +140,7 @@ a { color: var(--ha-ember-700); }
     background: var(--ha-shade-100); color: var(--ha-shade-800);
 }
 .ha-icon-chip--ember { background: var(--ha-ember-50); color: var(--ha-ember-700); }
+.ha-icon-chip--danger { background: var(--ha-error-bg); color: var(--ha-error-ink); }
 
 /* ------------------------------------------------------------------ 4. Buttons */
 .ha-btn {
@@ -235,10 +236,16 @@ a { color: var(--ha-ember-700); }
 .ha-confirm-modal { position: fixed; inset: 0; z-index: 100000; display: grid; place-items: center; padding: var(--ha-s-5); }
 .ha-confirm-modal[hidden] { display: none; }
 .ha-confirm-modal__backdrop { position: absolute; inset: 0; background: rgba(15, 61, 62, .42); backdrop-filter: blur(4px); }
-.ha-confirm-modal__panel { position: relative; width: min(100%, 440px); padding: var(--ha-s-6); border: 1px solid var(--ha-border); border-radius: var(--ha-r-lg); background: var(--ha-surface); box-shadow: 0 24px 70px rgba(28, 26, 23, .22); }
+.ha-confirm-modal__panel { position: relative; width: min(100%, 440px); padding: var(--ha-s-6); border: 1px solid var(--ha-border); border-radius: var(--ha-r-lg); background: var(--ha-surface); box-shadow: 0 24px 70px rgba(28, 26, 23, .22); animation: ha-modal-enter .18s ease-out; }
+@keyframes ha-modal-enter { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
+.ha-confirm-modal__close { position: absolute; top: var(--ha-s-3); right: var(--ha-s-3); width: 36px; height: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: 1px solid transparent; border-radius: var(--ha-r-md); background: transparent; color: var(--ha-ink-2); cursor: pointer; }
+.ha-confirm-modal__close:hover { background: var(--ha-surface-2); color: var(--ha-ink); }
 .ha-confirm-modal__panel h2 { margin: var(--ha-s-4) 0 var(--ha-s-2); font-size: 1.25rem; font-weight: 700; color: var(--ha-ink); }
-.ha-confirm-modal__panel p { margin: 0; color: var(--ha-ink-2); line-height: 1.5; }
+.ha-confirm-modal__panel .ha-confirm-modal__subject { margin: 0 0 var(--ha-s-2); display: inline-flex; align-items: center; gap: var(--ha-s-2); max-width: 100%; padding: var(--ha-s-1) var(--ha-s-3); border: 1px solid var(--ha-border-strong); border-radius: 999px; background: var(--ha-surface-2); color: var(--ha-ink); font-size: 0.875rem; font-weight: 700; word-break: break-word; }
+.ha-confirm-modal__subject[hidden] { display: none; }
+.ha-confirm-modal__panel .ha-confirm-modal__message { margin: 0; color: var(--ha-ink-2); line-height: 1.5; }
 .ha-confirm-modal__actions { display: flex; justify-content: flex-end; gap: var(--ha-s-3); margin-top: var(--ha-s-6); }
+body.ha-modal-lock { overflow: hidden; }
 
 .ha-empty { text-align: center; padding: var(--ha-s-12) var(--ha-s-6); }
 .ha-empty .ha-icon-chip { width: 56px; height: 56px; border-radius: var(--ha-r-lg); margin-bottom: var(--ha-s-4); }

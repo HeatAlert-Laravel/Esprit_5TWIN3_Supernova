@@ -94,7 +94,7 @@
                 toggleExpanded() {
                     this.isExpanded = !this.isExpanded;
                     this.isMobileOpen = false;
-                    
+
                     if (window.innerWidth >= 1280) {
                         localStorage.setItem('sidebarExpanded', this.isExpanded);
                     }
@@ -142,7 +142,7 @@
             }
         })();
     </script>
-    
+
 
 </head>
 
@@ -166,12 +166,14 @@
 
     </div>
 
-<div class="ha-confirm-modal" data-confirm-dialog hidden>
+<div class="ha-confirm-modal" data-confirm-dialog hidden aria-hidden="true">
     <div class="ha-confirm-modal__backdrop" data-confirm-cancel></div>
-    <section class="ha-confirm-modal__panel" role="dialog" aria-modal="true" aria-labelledby="ha-confirm-title">
-        <span class="ha-icon-chip ha-icon-chip--ember"><x-ha.icon name="trash" /></span>
+    <section class="ha-confirm-modal__panel" role="dialog" aria-modal="true" aria-labelledby="ha-confirm-title" aria-describedby="ha-confirm-message">
+        <button type="button" class="ha-confirm-modal__close" data-confirm-cancel aria-label="Close"><x-ha.icon name="x" size="sm" /></button>
+        <span class="ha-icon-chip ha-icon-chip--danger"><x-ha.icon name="trash" /></span>
         <h2 id="ha-confirm-title">Confirm deletion</h2>
-        <p data-confirm-message></p>
+        <p class="ha-confirm-modal__subject" data-confirm-subject hidden></p>
+        <p id="ha-confirm-message" class="ha-confirm-modal__message" data-confirm-message></p>
         <div class="ha-confirm-modal__actions">
             <button type="button" class="ha-btn ha-btn--outline" data-confirm-cancel>Cancel</button>
             <button type="button" class="ha-btn ha-btn--danger-soft" data-confirm-submit><x-ha.icon name="trash" size="sm" />Delete</button>

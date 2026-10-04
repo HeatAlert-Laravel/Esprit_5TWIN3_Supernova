@@ -8,7 +8,7 @@
     <td><x-ha.badge :variant="$alerte->temporalStatusBadgeVariant()">{{ ucfirst($alerte->temporalStatus()) }}</x-ha.badge></td>
     <td class="ha-actions-cell">
         <a href="{{ route('admin.alertes-meteo.edit', $alerte) }}" class="ha-btn ha-btn--ghost ha-btn--sm"><x-ha.icon name="pencil" size="sm" />Edit</a>
-        <form method="POST" action="{{ route('admin.alertes-meteo.destroy', $alerte) }}" data-confirm="Delete this weather alert? This cannot be undone." class="inline">
+        <form method="POST" action="{{ route('admin.alertes-meteo.destroy', $alerte) }}" data-confirm-subject="{{ $alerte->titre }}" data-confirm="Delete this weather alert? This cannot be undone." class="inline">
             @csrf @method('DELETE')
             <button class="ha-btn ha-btn--danger-soft ha-btn--sm"><x-ha.icon name="trash" size="sm" />Delete</button>
         </form>
