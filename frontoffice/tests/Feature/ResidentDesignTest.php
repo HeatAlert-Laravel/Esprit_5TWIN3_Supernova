@@ -27,9 +27,9 @@ test('readiness steps follow the documented rule for guests and residents', func
     expect(Readiness::for($user->fresh())['percent'])->toBe(67);
 });
 
-test('home shows the status strip as a non-live placeholder and generic steps to guests', function () {
+test('home shows the live weather alert card and generic steps to guests', function () {
     $this->get('/')->assertOk()
-        ->assertSee('Weather alerts module coming soon')->assertSee('Not live data')
+        ->assertSee('Live weather alerts')->assertSee('Weather Alerts')->assertSee('View alerts')
         ->assertSee('Prepare my household')->assertSee('Free for residents')
         ->assertSee('Create your account')->assertSee('3 steps')
         ->assertSee('Coming soon')

@@ -22,10 +22,18 @@
 <section class="ha-section" aria-labelledby="modules-title">
     <div class="ha-section__head">
         <h2 id="modules-title">More on the way</h2>
-        <p>These sections are being built by the rest of the team. They are not live yet, so no real alerts or outage data appear here.</p>
+        <p>Heat alerts are live. The rest of the team is still building Outages and Cooling Points — no outage or cooling data appears here yet.</p>
     </div>
     <div class="ha-grid ha-grid--3">
-        <x-ha.module-slot title="Weather Alerts" description="Understand local heat conditions." icon="thermometer" :href="route('weather-alerts')" />
+        <a href="{{ route('weather-alerts') }}" class="ha-card ha-card--interactive ha-live-module" aria-label="Open weather alerts">
+            <div class="ha-live-module__head">
+                <span class="ha-icon-chip ha-icon-chip--ember"><x-ha.icon name="thermometer" /></span>
+                <x-ha.badge variant="success" :dot="false">Live</x-ha.badge>
+            </div>
+            <h3>Weather Alerts</h3>
+            <p>Real heat alerts for your neighborhood — check the level, the forecast maximum and the advice to follow.</p>
+            <span class="ha-live-module__link">View alerts<x-ha.icon name="arrow-right" size="sm" /></span>
+        </a>
         <x-ha.module-slot title="Outages" description="Find updates during power interruptions." icon="zap" :href="route('outages')" />
         <x-ha.module-slot title="Cooling Points" description="Locate nearby spaces to cool down." icon="snowflake" :href="route('cooling-points')" />
     </div>
