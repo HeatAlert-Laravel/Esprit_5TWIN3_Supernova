@@ -27,3 +27,21 @@ test('admin can create, view, update and delete a weather alert', function () {
     $this->assertDatabaseMissing('alerte_meteos', ['id' => $alerte->id]);
 });
 
+test('weather alert period status distinguishes current upcoming and expired alerts', function () {
+    $quartier = Quartier::factory()->create();
+
+    $current = AlerteMeteo::factory()->for($quartier)->create([
+        'date_debut' => today()->subDay(), 'date_fin' => today()->addDay(),
+    ]);
+    $upcoming = AlerteMeteo::factory()->for($quartier)->create([
+        'date_debut' => today()->addDay(), 'date_fin' => today()->addDays(2),
+    ]);
+    $expired = AlerteMeteo::factory()->for($quartier)->create([
+        'date_debut' => today()->subDays(3), 'date_fin' => today()->subDay(),
+    ]);
+
+    expect($current->temporalStatus())->toBe('current')
+        ->and($upcoming->temporalStatus())->toBe('upcoming')
+        ->and($expired->temporalStatus())->toBe('expired');
+});
+
