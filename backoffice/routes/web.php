@@ -17,7 +17,7 @@ Route::post('/logout', [AdminAuthController::class, 'logout'])->middleware('auth
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('quartiers', QuartierController::class)->except(['show']);
+    Route::resource('quartiers', QuartierController::class);
     Route::resource('alertes-meteo', AlerteMeteoController::class)->parameters(['alertes-meteo' => 'alerte']);
     Route::resource('profiles', ProfileController::class);
     Route::resource('type-equipements', TypeEquipementController::class)->parameters(['type-equipements' => 'typeEquipement']);

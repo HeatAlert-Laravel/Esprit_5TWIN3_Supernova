@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Quartier;
+use App\Models\AlerteMeteo;
 use Database\Seeders\QuartierSeeder;
 use App\Models\User;
 
@@ -39,4 +40,19 @@ test('admin can manage neighborhoods from the themed back office', function () {
 
     $this->delete(route('admin.quartiers.destroy', $quartier))->assertRedirect(route('admin.quartiers.index'));
     $this->assertDatabaseMissing('quartiers', ['id' => $quartier->id]);
+});
+
+test('admin can see a neighborhood alert count and its related alerts', function () {
+    $admin = User::factory()->create(['role' => 'ADMIN']);
+    $quartier = Quartier::factory()->create(['nom' => 'Relation area']);
+    $alerte = AlerteMeteo::factory()->for($quartier)->create(['titre' => 'Relation heat alert']);
+
+    $this->actingAs($admin)->get(route('admin.quartiers.index'))
+        ->assertOk()
+        ->assertSee('Relation area')
+        ->assertSee('1');
+    $this->get(route('admin.quartiers.show', $quartier))
+        ->assertOk()
+        ->assertSee('Relation heat alert')
+        ->assertSee(route('admin.alertes-meteo.show', $alerte));
 });

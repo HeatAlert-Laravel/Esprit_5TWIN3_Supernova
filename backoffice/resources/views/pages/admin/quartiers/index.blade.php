@@ -22,14 +22,16 @@
 @else
     <div class="ha-table-wrap">
         <table class="ha-table">
-            <thead><tr><th scope="col">Neighborhood</th><th scope="col">City</th><th scope="col">Postal code</th><th scope="col" class="ha-actions-cell"><span class="sr-only">Actions</span></th></tr></thead>
+            <thead><tr><th scope="col">Neighborhood</th><th scope="col">City</th><th scope="col">Postal code</th><th scope="col">Weather alerts</th><th scope="col" class="ha-actions-cell"><span class="sr-only">Actions</span></th></tr></thead>
             <tbody>
                 @foreach($quartiers as $quartier)
                     <tr>
-                        <td><div class="ha-cell-person"><span class="ha-icon-chip"><x-ha.icon name="map-pin" /></span><span class="ha-cell-person__name">{{ $quartier->nom }}</span></div></td>
+                        <td><div class="ha-cell-person"><span class="ha-icon-chip"><x-ha.icon name="map-pin" /></span><a href="{{ route('admin.quartiers.show', $quartier) }}" class="ha-cell-person__name">{{ $quartier->nom }}</a></div></td>
                         <td>{{ $quartier->ville }}</td>
                         <td><span class="ha-mono">{{ $quartier->code_postal }}</span></td>
+                        <td><span class="ha-count-pill">{{ $quartier->alerte_meteos_count }}</span></td>
                         <td class="ha-actions-cell">
+                            <a href="{{ route('admin.quartiers.show', $quartier) }}" class="ha-btn ha-btn--outline ha-btn--sm"><x-ha.icon name="eye" size="sm" />View</a>
                             <a href="{{ route('admin.quartiers.edit', $quartier) }}" class="ha-btn ha-btn--ghost ha-btn--sm"><x-ha.icon name="pencil" size="sm" />Edit</a>
                             <form method="POST" action="{{ route('admin.quartiers.destroy', $quartier) }}" onsubmit="return confirm('Delete this neighborhood?')" class="inline">
                                 @csrf @method('DELETE')

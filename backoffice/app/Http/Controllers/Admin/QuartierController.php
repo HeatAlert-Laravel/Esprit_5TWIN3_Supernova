@@ -19,6 +19,7 @@ class QuartierController extends Controller
                 ->where('nom', 'like', "%{$search}%")
                 ->orWhere('ville', 'like', "%{$search}%")
                 ->orWhere('code_postal', 'like', "%{$search}%"))
+            ->withCount('alerteMeteos')
             ->orderBy('ville')
             ->orderBy('nom')
             ->paginate(10)
@@ -34,6 +35,13 @@ class QuartierController extends Controller
     public function create(): View
     {
         return view('pages.admin.quartiers.create');
+    }
+
+    public function show(Quartier $quartier): View
+    {
+        return view('pages.admin.quartiers.show', [
+            'quartier' => $quartier->load(['alerteMeteos' => fn ($query) => $query->latest('date_debut')]),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
