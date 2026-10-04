@@ -62,4 +62,36 @@ class AlerteMeteo extends Model
             default => 'neutral',
         };
     }
+
+    public function temporalStatusLabel(): string
+    {
+        return match ($this->temporalStatus()) {
+            'current' => 'Active now',
+            'upcoming' => 'Upcoming',
+            'expired' => 'Ended',
+            default => 'Unknown',
+        };
+    }
+
+    public function levelLabel(): string
+    {
+        return match ($this->niveau) {
+            'vert' => 'Green',
+            'jaune' => 'Yellow',
+            'orange' => 'Orange',
+            'rouge' => 'Red',
+            default => 'Notice',
+        };
+    }
+
+    public function levelAdvice(): string
+    {
+        return match ($this->niveau) {
+            'vert' => 'Stay hydrated and keep an eye on vulnerable people.',
+            'jaune' => 'Limit outdoor activity during the hottest hours.',
+            'orange' => 'Postpone strenuous activities and stay in the shade.',
+            'rouge' => 'Avoid going out, keep your home cool and check on others.',
+            default => 'Follow local safety advice.',
+        };
+    } 
 }

@@ -1,5 +1,6 @@
-// Resident pages are server-rendered Blade. Two small progressive enhancements only:
-// the mobile navigation toggle and the show/hide password button.
+// Resident pages are server-rendered Blade. A few small progressive enhancements only:
+// the mobile navigation toggle, the show/hide password button and auto-applying filters.
+import './auto-filter';
 
 document.addEventListener('DOMContentLoaded', () => {
     const confirmDialog = document.querySelector('[data-confirm-dialog]');

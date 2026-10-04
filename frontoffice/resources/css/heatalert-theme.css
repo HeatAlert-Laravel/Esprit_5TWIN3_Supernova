@@ -547,4 +547,30 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
 .ha-footer ul a { color: var(--ha-ink-2); text-decoration: none; }
 .ha-footer ul a:hover { color: var(--ha-ember-700); text-decoration: underline; }
 
+/* ---- 19. Weather alerts (front) -------------------------------------------- */
+.ha-alert-card { position: relative; overflow: hidden; }
+.ha-alert-card::before {
+    content: ''; position: absolute; inset-inline-start: 0; top: 0; bottom: 0; width: 6px;
+    background: var(--ha-heat-3);
+}
+.ha-alert-card--vert::before { background: var(--ha-heat-1); }
+.ha-alert-card--jaune::before { background: var(--ha-sun-400); }
+.ha-alert-card--orange::before { background: var(--ha-heat-3); }
+.ha-alert-card--rouge::before { background: var(--ha-heat-4); }
+.ha-alert-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ha-s-3); }
+.ha-alert-card__title { font-size: 1.125rem; font-weight: 600; margin: 0; }
+.ha-alert-card__temp { display: flex; align-items: baseline; gap: var(--ha-s-2); margin: var(--ha-s-4) 0 0; }
+.ha-alert-card__temp-value { font-family: var(--ha-font-heading); font-size: 2.25rem; font-weight: 700; line-height: 1; color: var(--ha-ink); }
+.ha-alert-card--vert .ha-alert-card__temp-value { color: #2F855A; }
+.ha-alert-card--jaune .ha-alert-card__temp-value { color: var(--ha-warning); }
+.ha-alert-card--orange .ha-alert-card__temp-value { color: var(--ha-ember-600); }
+.ha-alert-card--rouge .ha-alert-card__temp-value { color: var(--ha-heat-4); }
+.ha-alert-card__temp-unit { font-family: var(--ha-font-heading); font-size: 1.125rem; font-weight: 600; color: var(--ha-ink-2); }
+.ha-alert-card__temp-label { margin-inline-start: auto; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--ha-ink-3); }
+.ha-alert-card__advice { margin: var(--ha-s-2) 0 0; font-size: 0.9375rem; color: var(--ha-ink-2); }
+.ha-alert-card__meta { margin: var(--ha-s-4) 0 0; padding: 0; list-style: none; display: grid; gap: var(--ha-s-2); }
+.ha-alert-card__meta li { display: flex; align-items: center; gap: var(--ha-s-2); font-size: 0.875rem; color: var(--ha-ink-2); }
+.ha-alert-card__meta .ha-icon { color: var(--ha-shade-600); }
+.ha-alert-card__foot { display: flex; justify-content: flex-end; margin: var(--ha-s-3) 0 0; padding-top: var(--ha-s-2); border-top: 1px solid var(--ha-border); }
+
 }
