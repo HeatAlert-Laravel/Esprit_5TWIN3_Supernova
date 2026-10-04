@@ -1,4 +1,4 @@
-# HeatAlert Module 1
+# HeatAlert
 
 The repository has two Laravel 12 applications:
 
@@ -76,3 +76,46 @@ Mapping rule for existing rows (first match on the equipment name, then the lega
 **Admin lists and filters.** Equipment, profile and equipment-type lists filter automatically through plain GET parameters (`resources/js/auto-filter.js`, opt-in with `data-auto-filter`): selects and checkboxes apply on change, text search after a 400 ms pause, empty values are dropped from the URL, and pagination keeps the active filters. "Reset filters" returns to the clean index route; without JavaScript a `<noscript>` Apply button submits the form. Admin screens show names (resident, type, equipment), never raw database IDs.
 
 **Profile deletion rule.** An administrator cannot delete a profile that still owns sensitive equipment ("This profile still has X sensitive equipment records."). Delete or reassign the equipment first; the resident account itself is never deleted by this action.
+
+## Module 4: CategorieConseil and Conseil
+
+`CategorieConseil` is the parent (one category has many articles); `Conseil` belongs to exactly one category. Both models, factories, seeders, and all advice migrations live in `shared/`, so both applications use the same schema.
+
+- `categorie_conseils`: `nom` (unique), optional `description`, and an icon selected from the existing HeatAlert icons.
+- `conseils`: mandatory `categorie_conseil_id`, `titre`, `resume`, searchable plain-text `contenu`, nullable JSON `contenu_formate`, `public_cible` (`everyone`, `seniors`, `parents`, `caregivers`), `situation` (`heatwave`, `outage`, `both`), and `actif` (published, false by default).
+- `conseil_user`: personal bookmarks, with a unique user/article pair and foreign keys that remove bookmarks when their user or article is deleted.
+
+Administrators manage both entities at `/admin/conseils` and `/admin/categorie-conseils`. Articles start as drafts and can be previewed in the resident layout by administrators before publication. A category containing articles cannot be deleted; the database foreign key also enforces this rule. Article text is escaped, including pasted HTML.
+
+The editor uses locally bundled Quill 2.0.3 with paragraphs, two section-heading levels, bold, italic, bullet/numbered lists, and undo/redo. It submits a JSON document; the server validates the allowed text formats and derives plain text for search and reading time. Both apps render the same escaped HTML from that document, so the admin review and resident article have matching formatting. Images, links, colors, and embedded HTML are not supported. Legacy plain articles still display safely and can be upgraded by editing them. Validation errors retain the document. Without JavaScript, formatted documents remain preserved and plain articles have a text fallback.
+
+Residents browse published articles at `/advice`, grouped by category, with search, audience, and heatwave/power-outage filters. Audience filters include general advice for everyone; situation filters include advice applying to both situations. Each article has a reading page and related published advice. Reading requires no account; drafts return 404 on public URLs. Preview requires an authenticated administrator.
+
+Signed-in residents can save articles from cards or the reading page and find them at `/advice/saved`. Bookmarks belong only to their account and persist in the shared database. Guests get a sign-in prompt. Saving is never triggered by a GET request. Result counts update with filters; Back to results preserves filters and pagination, including when opening an article from saved advice.
+
+### Share the structure with the team
+
+After pulling this module, run from **either** application:
+
+```powershell
+php artisan migrate
+# Optional example content (4 categories, 11 published articles, 1 draft):
+php artisan db:seed --class=ConseilSeeder
+```
+
+Also run `npm ci` and `npm run build` in both apps after pulling, to install the editor and rebuild the updated interface. The formatted-content/bookmark migration is additive. Reseeding upgrades untouched sample articles to structured content while preserving administrator edits.
+
+`php artisan db:seed` is also supported: the shared `DatabaseSeeder` calls every module's seeders in parent-before-child order. The advice seeders can be rerun without duplicating unchanged examples or overwriting edits to existing articles.
+
+Each teammate has their own local `heatalert` database. Commit migration files in `shared/database/migrations/`, pull each other's changes, and run `php artisan migrate` to apply only the pending changes. Data is local; migrations share the structure. Use a **new migration** for future schema changes; do not edit a migration the team has already applied. A destructive `migrate:fresh` is unnecessary for this module.
+
+Tests for this module use the isolated SQLite database:
+
+```powershell
+# In backoffice:
+php artisan test --filter=ConseilTest
+php artisan test --filter=AdviceEditorTest
+# In frontoffice:
+php artisan test --filter=AdviceTest
+php artisan test --filter=AdviceBookmarkTest
+```

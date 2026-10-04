@@ -12,6 +12,8 @@
         ],
 
         'Heat planning' => [
+            ['route' => 'admin.conseils.index', 'match' => 'admin.conseils.*', 'label' => __('Advice'), 'icon' => 'lightbulb'],
+            ['route' => 'admin.categorie-conseils.index', 'match' => 'admin.categorie-conseils.*', 'label' => __('Advice categories'), 'icon' => 'shield-check'],
             ['route' => 'admin.coupures.index', 'match' => 'admin.coupures.*', 'label' => __('Outages'), 'icon' => 'zap'],
             ['route' => 'admin.signalements.index', 'match' => 'admin.signalements.*', 'label' => __('Reports'), 'icon' => 'alert-triangle'],
             ['route' => 'admin.quartiers.index', 'match' => 'admin.quartiers.*', 'label' => 'Neighborhoods', 'icon' => 'map-pin'],
@@ -20,7 +22,6 @@
             ['route' => 'admin.type-points.index', 'match' => 'admin.type-points.*', 'label' => 'Point types', 'icon' => 'sun', 'count' => $sidebarCounts['point_types'] ?? null],
         ],
     ];
-    $plannedModules = [];
 @endphp
 
 <aside id="sidebar" class="ha-sidebar" aria-label="Admin sidebar"
@@ -64,30 +65,6 @@
             </div>
         @endforeach
 
-        <div class="ha-sidebar__group">
-            <p class="ha-sidebar__label" x-show="open">Modules</p>
-
-            <ul class="ha-nav-list">
-                @foreach($plannedModules as [$moduleLabel, $moduleIcon])
-                    <li>
-                        <span class="ha-nav-item ha-nav-item--soon"
-                              title="{{ $moduleLabel }} — coming soon"
-                              aria-disabled="true">
-
-                            <x-ha.icon :name="$moduleIcon" />
-
-                            <span class="ha-nav-item__text" x-show="open">
-                                {{ $moduleLabel }}
-                            </span>
-
-                            <span class="ha-nav-soon" x-show="open">
-                                Soon
-                            </span>
-                        </span>
-                    </li>
-                @endforeach
-            </ul>
-        </div>
     </nav>
 
     <div class="ha-sidebar__foot">

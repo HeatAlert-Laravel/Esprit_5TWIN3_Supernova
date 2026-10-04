@@ -35,6 +35,12 @@
         'info' => '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/>',
         'lightbulb' => '<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5M9 18h6M10 22h4"/>',
         'external-link' => '<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+        'bookmark' => '<path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>',
+        'bookmark-check' => '<path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><path d="m9 9 2 2 4-4"/>',
+        'list' => '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+        'list-ordered' => '<path d="M10 6h11M10 12h11M10 18h11M3 4h1v4M3 8h2M3 12h2l-2 4h2M3 19h2v3H3"/>',
+        'undo' => '<path d="M3 10h11a7 7 0 0 1 0 14M3 10l5-5M3 10l5 5"/>',
+        'redo' => '<path d="M21 10H10a7 7 0 0 0 0 14M21 10l-5-5M21 10l-5 5"/>',
     ];
     $class = 'ha-icon'.($size ? ' ha-icon--'.$size : '');
 @endphp

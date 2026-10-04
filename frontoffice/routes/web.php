@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\CoolingPointController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ResidentProfileController;
 use App\Http\Controllers\ResidentSensitiveEquipmentController;
 use App\Http\Controllers\WeatherAlertController;
@@ -12,7 +12,7 @@ Route::view('/', 'pages.front.home')->name('home');
 Route::get('/weather-alerts', [WeatherAlertController::class, 'index'])->name('weather-alerts');
 Route::get('/outages', [\App\Http\Controllers\OutageController::class, 'index'])->name('outages');
 Route::get('/cooling-points', [CoolingPointController::class, 'index'])->name('cooling-points');
-Route::get('/advice', fn () => view('pages.front.placeholder', ['title' => 'Advice']))->name('advice');
+require __DIR__.'/modules/conseils.php';
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'loginForm'])->name('login');

@@ -151,9 +151,10 @@ test('equipment detail shows owner and type context and the form has a type sele
         ->assertDontSee('name="priority_level"', false)->assertDontSee('name="type"', false);
 });
 
-test('admin shell shows real sidebar counts and planned modules as coming soon', function () {
+test('admin shell shows real sidebar counts and links to the implemented advice module', function () {
     Profile::factory()->count(2)->create();
     $this->actingAs($this->admin)->get(route('admin.profiles.index'))->assertOk()
-        ->assertSee('Residents')->assertSee('Modules')->assertSee('Outages')->assertSee('Soon')
+        ->assertSee('Residents')->assertSee('Outages')->assertSee('Advice categories')
+        ->assertSee(route('admin.conseils.index'), false)->assertSee(route('admin.categorie-conseils.index'), false)
         ->assertSee('aria-current="page"', false)->assertSee('Log out');
 });

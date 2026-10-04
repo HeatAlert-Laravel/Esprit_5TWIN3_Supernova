@@ -6,7 +6,7 @@
             <nav aria-label="Main navigation">
                 <ul class="ha-nav__links">
                     @foreach ([['home','Home'],['weather-alerts','Weather Alerts'],['outages','Outages'],['cooling-points','Cooling Points'],['advice','Advice']] as [$name,$label])
-                        <li><a href="{{ route($name) }}" class="ha-nav__link" @if(request()->routeIs($name)) aria-current="page" @endif>{{ $label }}</a></li>
+                        <li><a href="{{ route($name) }}" class="ha-nav__link" @if(request()->routeIs($name, $name.'.*')) aria-current="page" @endif>{{ $label }}</a></li>
                     @endforeach
                     @auth
                         <li><a href="{{ route('my-profile') }}" class="ha-nav__link" @if(request()->routeIs('my-profile*', 'profile.equipment.*')) aria-current="page" @endif>My Profile</a></li>
