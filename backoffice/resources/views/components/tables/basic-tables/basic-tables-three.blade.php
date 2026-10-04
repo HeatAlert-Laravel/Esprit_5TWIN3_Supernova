@@ -196,7 +196,7 @@
                 <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Latest Transactions</h3>
             </div>
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <form>
+                <form novalidate>
                     <div class="relative">
                         <button type="button" class="absolute -translate-y-1/2 ltr:left-4 rtl:right-4 top-1/2">
                             <svg class="fill-gray-500 dark:fill-gray-400" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -64,7 +64,7 @@
                                     <span class="bg-white p-2 text-gray-400 sm:px-5 sm:py-2 dark:bg-gray-900">Or</span>
                                 </div>
                             </div>
-                            <form>
+                            <form novalidate>
                                 <div class="space-y-5">
                                     <!-- Email -->
                                     <div>

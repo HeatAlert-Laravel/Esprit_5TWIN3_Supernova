@@ -67,7 +67,7 @@
 
             <!-- Search Bar (desktop only) -->
             <div class="hidden xl:block">
-                <form>
+                <form novalidate>
                     <div class="relative">
                         <span class="absolute -translate-y-1/2 pointer-events-none ltr:left-4 rtl:right-4 top-1/2">
                             <!-- Search Icon -->

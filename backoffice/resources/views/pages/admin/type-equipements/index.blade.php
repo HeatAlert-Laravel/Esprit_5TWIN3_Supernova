@@ -7,7 +7,7 @@
     <x-slot:actions><a href="{{ route('admin.type-equipements.create') }}" class="ha-btn ha-btn--primary"><x-ha.icon name="plus" size="sm" />Add type</a></x-slot:actions>
 </x-ha.page-header>
 
-<form method="GET" action="{{ route('admin.type-equipements.index') }}" class="ha-filter" data-auto-filter role="search" aria-label="Filter equipment types">
+<form novalidate method="GET" action="{{ route('admin.type-equipements.index') }}" class="ha-filter" data-auto-filter role="search" aria-label="Filter equipment types">
     <div class="ha-field ha-field--grow">
         <label class="ha-label" for="q">Type name</label>
         <input class="ha-input" id="q" name="q" type="search" value="{{ $search }}" placeholder="Search equipment types">
@@ -46,7 +46,7 @@
                         <td class="ha-actions-cell">
                             <a href="{{ route('admin.type-equipements.show', $type) }}" class="ha-btn ha-btn--outline ha-btn--sm" aria-label="View {{ $type->name }}"><x-ha.icon name="eye" size="sm" />View</a>
                             <a href="{{ route('admin.type-equipements.edit', $type) }}" class="ha-btn ha-btn--ghost ha-btn--sm" aria-label="Edit {{ $type->name }}"><x-ha.icon name="pencil" size="sm" />Edit</a>
-                            <form method="POST" action="{{ route('admin.type-equipements.destroy', $type) }}" onsubmit="return confirm('Delete this equipment type?')" class="inline">
+                            <form novalidate method="POST" action="{{ route('admin.type-equipements.destroy', $type) }}" onsubmit="return confirm('Delete this equipment type?')" class="inline">
                                 @csrf @method('DELETE')
                                 <button class="ha-btn ha-btn--danger-soft ha-btn--sm" aria-label="Delete {{ $type->name }}"><x-ha.icon name="trash" size="sm" />Delete</button>
                             </form>

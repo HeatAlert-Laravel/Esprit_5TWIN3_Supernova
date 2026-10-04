@@ -7,7 +7,7 @@
     <x-slot:actions><a href="{{ route('admin.equipment.create') }}" class="ha-btn ha-btn--primary"><x-ha.icon name="plus" size="sm" />Add equipment</a></x-slot:actions>
 </x-ha.page-header>
 
-<form method="GET" action="{{ route('admin.equipment.index') }}" class="ha-filter" data-auto-filter role="search" aria-label="Filter equipment">
+<form novalidate method="GET" action="{{ route('admin.equipment.index') }}" class="ha-filter" data-auto-filter role="search" aria-label="Filter equipment">
     <div class="ha-field ha-field--grow">
         <label class="ha-label" for="q">Equipment or resident</label>
         <input class="ha-input" id="q" name="q" type="search" value="{{ $filters['q'] }}" placeholder="Search by equipment name, resident name or email">

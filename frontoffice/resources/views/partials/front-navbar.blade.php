@@ -16,7 +16,7 @@
             </nav>
             <div class="ha-nav__actions">
                 @auth
-                    <form method="POST" action="{{ route('logout') }}">@csrf<button class="ha-btn ha-btn--outline ha-btn--sm"><x-ha.icon name="log-out" size="sm" />Log out</button></form>
+                    <form novalidate method="POST" action="{{ route('logout') }}">@csrf<button class="ha-btn ha-btn--outline ha-btn--sm"><x-ha.icon name="log-out" size="sm" />Log out</button></form>
                 @else
                     <a href="{{ route('login') }}" class="ha-btn ha-btn--ghost">Login</a>
                     <a href="{{ route('register') }}" class="ha-btn ha-btn--primary">Create account</a>

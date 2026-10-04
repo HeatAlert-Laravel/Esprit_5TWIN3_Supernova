@@ -12,7 +12,7 @@
     </x-slot:badges>
     <x-slot:actions>
         <a href="{{ route('admin.profiles.edit', $profile) }}" class="ha-btn ha-btn--primary"><x-ha.icon name="pencil" size="sm" />Edit</a>
-        <form method="POST" action="{{ route('admin.profiles.destroy', $profile) }}" onsubmit="return confirm('Delete this profile?')">
+        <form novalidate method="POST" action="{{ route('admin.profiles.destroy', $profile) }}" onsubmit="return confirm('Delete this profile?')">
             @csrf @method('DELETE')
             <button class="ha-btn ha-btn--danger-soft"><x-ha.icon name="trash" size="sm" />Delete profile</button>
         </form>

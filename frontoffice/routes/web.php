@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'pages.front.home')->name('home');
 Route::get('/weather-alerts', [WeatherAlertController::class, 'index'])->name('weather-alerts');
-Route::get('/outages', fn () => view('pages.front.placeholder', ['title' => 'Outages']))->name('outages');
+Route::get('/outages', [\App\Http\Controllers\OutageController::class, 'index'])->name('outages');
 Route::get('/cooling-points', fn () => view('pages.front.placeholder', ['title' => 'Cooling Points']))->name('cooling-points');
 Route::get('/advice', fn () => view('pages.front.placeholder', ['title' => 'Advice']))->name('advice');
 
@@ -25,6 +25,8 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/outages/report', [\App\Http\Controllers\OutageController::class, 'create'])->name('outages.report.create');
+    Route::post('/outages/report', [\App\Http\Controllers\OutageController::class, 'store'])->name('outages.report.store');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/my-profile', [ResidentProfileController::class, 'show'])->name('my-profile');
     Route::put('/my-profile', [ResidentProfileController::class, 'update'])->name('my-profile.update');

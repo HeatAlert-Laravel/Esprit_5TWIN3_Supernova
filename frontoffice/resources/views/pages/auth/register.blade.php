@@ -7,7 +7,7 @@
         <h1>Join HeatAlert</h1>
         <p>Create a resident account to prepare your household.</p>
         <x-ha.error-summary />
-        <form method="POST" action="{{ route('register') }}" class="ha-form-grid">
+        <form novalidate method="POST" action="{{ route('register') }}" class="ha-form-grid">
             @csrf
             <x-ha.input name="name" label="Name" autocomplete="name" :value="old('name')" required />
             <x-ha.input name="email" label="Email" type="email" autocomplete="email" :value="old('email')" required />
