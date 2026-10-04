@@ -16,4 +16,10 @@ class Quartier extends Model
     {
         return $this->hasMany(AlerteMeteo::class);
     }
+
+    /** Membre 3 : un quartier possède plusieurs points de fraîcheur. */
+    public function pointFraicheurs(): HasMany
+    {
+        return $this->hasMany(PointFraicheur::class);
+    }
 }
