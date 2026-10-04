@@ -128,7 +128,7 @@ test('equipment list shows type, sensitivities and risk badge from the type', fu
     SensitiveEquipment::factory()->for($profile)->ofType(($this->type)('Medical equipment'))->create(['name' => 'Oxygen unit']);
 
     $this->actingAs($this->admin)->get(route('admin.equipment.index'))->assertOk()
-        ->assertSeeInOrder(['Equipment', 'Owner', 'Type', 'Heat', 'Outage', 'Risk', 'Updated'])
+        ->assertSeeInOrder(['Equipment', 'Resident', 'Type', 'Heat', 'Outage', 'Risk', 'Updated'])
         ->assertSee('Oxygen unit')->assertSee('Medical equipment')->assertSee('Heat-sensitive')->assertSee('Outage-sensitive')->assertSee('CRITICAL');
 });
 
@@ -139,7 +139,7 @@ test('equipment detail shows owner and type context and the form has a type sele
 
     $this->actingAs($this->admin);
     $this->get(route('admin.equipment.show', $item))->assertOk()
-        ->assertSee('Equipment information')->assertSee('Owner')->assertSee($profile->user->name)->assertSee($profile->user->email)
+        ->assertSee('Equipment information')->assertSee('Resident')->assertSee($profile->user->name)->assertSee($profile->user->email)
         ->assertSee(route('admin.profiles.show', $profile), false)
         ->assertSee(route('admin.type-equipements.show', $type), false)
         ->assertSee('Risk: HIGH')->assertSee('Preparedness')
