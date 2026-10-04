@@ -48,3 +48,23 @@ test('weather alert period status distinguishes current upcoming and expired ale
         ->and($expired->temporalStatusBadgeVariant())->toBe('neutral');
 });
 
+test('admin can publish and unpublish a weather alert', function () {
+    $admin = User::factory()->create(['role' => 'ADMIN']);
+    $quartier = Quartier::factory()->create();
+    $alerte = AlerteMeteo::factory()->for($quartier)->create(['publiee' => false]);
+
+    $this->actingAs($admin)->put(route('admin.alertes-meteo.update', $alerte), [
+        'quartier_id' => $quartier->id, 'titre' => $alerte->titre, 'niveau' => $alerte->niveau,
+        'temperature_max' => $alerte->temperature_max, 'date_debut' => $alerte->date_debut->toDateString(),
+        'date_fin' => $alerte->date_fin->toDateString(), 'publiee' => '1',
+    ])->assertRedirect();
+    expect($alerte->fresh()->publiee)->toBeTrue();
+
+    $this->put(route('admin.alertes-meteo.update', $alerte), [
+        'quartier_id' => $quartier->id, 'titre' => $alerte->titre, 'niveau' => $alerte->niveau,
+        'temperature_max' => $alerte->temperature_max, 'date_debut' => $alerte->date_debut->toDateString(),
+        'date_fin' => $alerte->date_fin->toDateString(), 'publiee' => '0',
+    ])->assertRedirect();
+    expect($alerte->fresh()->publiee)->toBeFalse();
+});
+

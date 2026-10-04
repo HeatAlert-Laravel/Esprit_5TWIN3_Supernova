@@ -56,3 +56,32 @@ test('admin can see a neighborhood alert count and its related alerts', function
         ->assertSee('Relation heat alert')
         ->assertSee(route('admin.alertes-meteo.show', $alerte));
 });
+
+test('guest is redirected from neighborhood pages', function () {
+    $quartier = Quartier::factory()->create();
+
+    $this->get(route('admin.quartiers.index'))->assertRedirect(route('login'));
+    $this->get(route('admin.quartiers.show', $quartier))->assertRedirect(route('login'));
+});
+
+test('neighborhood list shows an empty state and handles an unknown filter', function () {
+    $admin = User::factory()->create(['role' => 'ADMIN']);
+
+    $this->actingAs($admin)->get(route('admin.quartiers.index'))
+        ->assertOk()
+        ->assertSee('No neighborhoods found');
+    $this->get(route('admin.quartiers.index', ['q' => 'does-not-exist']))
+        ->assertOk()
+        ->assertSee('No neighborhoods found');
+});
+
+test('deleting a neighborhood cascades to its weather alerts', function () {
+    $admin = User::factory()->create(['role' => 'ADMIN']);
+    $quartier = Quartier::factory()->create();
+    $alerte = AlerteMeteo::factory()->for($quartier)->create();
+
+    $this->actingAs($admin)->delete(route('admin.quartiers.destroy', $quartier))
+        ->assertRedirect(route('admin.quartiers.index'));
+    $this->assertDatabaseMissing('quartiers', ['id' => $quartier->id]);
+    $this->assertDatabaseMissing('alerte_meteos', ['id' => $alerte->id]);
+});

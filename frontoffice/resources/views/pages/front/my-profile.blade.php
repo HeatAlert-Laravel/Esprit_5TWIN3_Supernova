@@ -97,7 +97,7 @@
                         <x-ha.preparedness :equipment="$item" />
                         <div class="ha-device__actions">
                             <a href="{{ route('profile.equipment.edit', $item) }}" class="ha-btn ha-btn--outline ha-btn--sm" aria-label="Edit {{ $item->name }}"><x-ha.icon name="pencil" size="sm" />Edit</a>
-                            <form method="POST" action="{{ route('profile.equipment.destroy', $item) }}" onsubmit="return confirm('Delete this equipment?')">
+                            <form method="POST" action="{{ route('profile.equipment.destroy', $item) }}" data-confirm="Delete this equipment? This cannot be undone.">
                                 @csrf
                                 @method('DELETE')
                                 <button class="ha-btn ha-btn--danger-soft ha-btn--sm" aria-label="Remove {{ $item->name }}"><x-ha.icon name="trash" size="sm" />Remove</button>

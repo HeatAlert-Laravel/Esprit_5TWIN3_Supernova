@@ -232,6 +232,14 @@ a { color: var(--ha-ember-700); }
 .ha-alert ul { margin: var(--ha-s-1) 0 0; padding-left: var(--ha-s-5); list-style: disc; }
 .ha-alert__title { font-weight: 600; }
 
+.ha-confirm-modal { position: fixed; inset: 0; z-index: 100000; display: grid; place-items: center; padding: var(--ha-s-5); }
+.ha-confirm-modal[hidden] { display: none; }
+.ha-confirm-modal__backdrop { position: absolute; inset: 0; background: rgba(15, 61, 62, .42); backdrop-filter: blur(4px); }
+.ha-confirm-modal__panel { position: relative; width: min(100%, 440px); padding: var(--ha-s-6); border: 1px solid var(--ha-border); border-radius: var(--ha-r-lg); background: var(--ha-surface); box-shadow: 0 24px 70px rgba(28, 26, 23, .22); }
+.ha-confirm-modal__panel h2 { margin: var(--ha-s-4) 0 var(--ha-s-2); font-size: 1.25rem; font-weight: 700; color: var(--ha-ink); }
+.ha-confirm-modal__panel p { margin: 0; color: var(--ha-ink-2); line-height: 1.5; }
+.ha-confirm-modal__actions { display: flex; justify-content: flex-end; gap: var(--ha-s-3); margin-top: var(--ha-s-6); }
+
 .ha-empty { text-align: center; padding: var(--ha-s-12) var(--ha-s-6); }
 .ha-empty .ha-icon-chip { width: 56px; height: 56px; border-radius: var(--ha-r-lg); margin-bottom: var(--ha-s-4); }
 .ha-empty h3 { font-size: 1.125rem; font-weight: 600; margin: 0 0 var(--ha-s-2); }

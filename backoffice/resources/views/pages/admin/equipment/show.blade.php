@@ -12,7 +12,7 @@
     </x-slot:badges>
     <x-slot:actions>
         <a href="{{ route('admin.equipment.edit', $equipment) }}" class="ha-btn ha-btn--primary"><x-ha.icon name="pencil" size="sm" />Edit</a>
-        <form method="POST" action="{{ route('admin.equipment.destroy', $equipment) }}" onsubmit="return confirm('Delete this equipment?')">
+        <form method="POST" action="{{ route('admin.equipment.destroy', $equipment) }}" data-confirm="Delete this equipment? This cannot be undone.">
             @csrf @method('DELETE')
             <button class="ha-btn ha-btn--danger-soft"><x-ha.icon name="trash" size="sm" />Delete equipment</button>
         </form>

@@ -6,7 +6,7 @@
     <x-slot:actions><a href="{{ route('admin.quartiers.create') }}" class="ha-btn ha-btn--primary"><x-ha.icon name="plus" size="sm" />Add neighborhood</a></x-slot:actions>
 </x-ha.page-header>
 
-<form method="GET" action="{{ route('admin.quartiers.index') }}" class="ha-filter" role="search" aria-label="Filter neighborhoods">
+<form method="GET" action="{{ route('admin.quartiers.index') }}" class="ha-filter" role="search" aria-label="Filter neighborhoods" data-auto-filter>
     <div class="ha-field ha-field--grow">
         <label class="ha-label" for="q">Neighborhood, city or postal code</label>
         <input class="ha-input" id="q" name="q" type="search" value="{{ $search }}" placeholder="Search neighborhoods">
@@ -33,7 +33,7 @@
                         <td class="ha-actions-cell">
                             <a href="{{ route('admin.quartiers.show', $quartier) }}" class="ha-btn ha-btn--outline ha-btn--sm"><x-ha.icon name="eye" size="sm" />View</a>
                             <a href="{{ route('admin.quartiers.edit', $quartier) }}" class="ha-btn ha-btn--ghost ha-btn--sm"><x-ha.icon name="pencil" size="sm" />Edit</a>
-                            <form method="POST" action="{{ route('admin.quartiers.destroy', $quartier) }}" onsubmit="return confirm('Delete this neighborhood?')" class="inline">
+                            <form method="POST" action="{{ route('admin.quartiers.destroy', $quartier) }}" data-confirm="Delete this neighborhood and its {{ $quartier->alerte_meteos_count }} weather alert(s)? This cannot be undone." class="inline">
                                 @csrf @method('DELETE')
                                 <button class="ha-btn ha-btn--danger-soft ha-btn--sm"><x-ha.icon name="trash" size="sm" />Delete</button>
                             </form>

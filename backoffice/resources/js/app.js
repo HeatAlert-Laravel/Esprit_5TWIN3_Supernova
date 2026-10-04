@@ -22,6 +22,36 @@ Alpine.start();
 
 // Initialize components on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
+    const confirmDialog = document.querySelector('[data-confirm-dialog]');
+    let pendingForm = null;
+
+    if (confirmDialog) {
+        const message = confirmDialog.querySelector('[data-confirm-message]');
+        const close = () => {
+            pendingForm = null;
+            confirmDialog.hidden = true;
+        };
+
+        document.addEventListener('submit', (event) => {
+            const form = event.target.closest('form[data-confirm]');
+            if (!form || form.dataset.confirmed === 'true') return;
+
+            event.preventDefault();
+            pendingForm = form;
+            message.textContent = form.dataset.confirm;
+            confirmDialog.hidden = false;
+            confirmDialog.querySelector('[data-confirm-submit]').focus();
+        });
+
+        confirmDialog.querySelectorAll('[data-confirm-cancel]').forEach((button) => button.addEventListener('click', close));
+        confirmDialog.querySelector('[data-confirm-submit]').addEventListener('click', () => {
+            if (!pendingForm) return;
+            pendingForm.dataset.confirmed = 'true';
+            HTMLFormElement.prototype.submit.call(pendingForm);
+            close();
+        });
+    }
+
     // Map imports
     if (document.querySelector('#mapOne')) {
         import('./components/map').then(module => module.initMap());
