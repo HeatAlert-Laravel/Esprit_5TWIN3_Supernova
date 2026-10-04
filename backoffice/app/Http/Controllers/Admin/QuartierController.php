@@ -57,6 +57,11 @@ class QuartierController extends Controller
 
     public function destroy(Quartier $quartier): RedirectResponse
     {
+        if (\App\Models\Coupure::where('quartier_id', $quartier->id)->exists()) {
+            return redirect()->route('admin.quartiers.index')
+                ->with('error', __('Delete the outages associated with this neighborhood first.'));
+        }
+
         $quartier->delete();
 
         return redirect()->route('admin.quartiers.index')->with('status', 'Neighborhood deleted.');

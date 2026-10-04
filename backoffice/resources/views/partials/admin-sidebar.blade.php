@@ -10,11 +10,13 @@
             ['route' => 'admin.type-equipements.index', 'match' => 'admin.type-equipements.*', 'label' => 'Equipment types', 'icon' => 'thermometer', 'count' => $sidebarCounts['types'] ?? null],
         ],
         'Heat planning' => [
+            ['route' => 'admin.coupures.index', 'match' => 'admin.coupures.*', 'label' => __('Outages'), 'icon' => 'zap'],
+            ['route' => 'admin.signalements.index', 'match' => 'admin.signalements.*', 'label' => __('Reports'), 'icon' => 'alert-triangle'],
             ['route' => 'admin.quartiers.index', 'match' => 'admin.quartiers.*', 'label' => 'Neighborhoods', 'icon' => 'map-pin'],
             ['route' => 'admin.alertes-meteo.index', 'match' => 'admin.alertes-meteo.*', 'label' => 'Weather alerts', 'icon' => 'alert-triangle'],
         ],
     ];
-    $plannedModules = [['Alerts', 'alert-triangle'], ['Outages', 'zap'], ['Cooling points', 'snowflake']];
+    $plannedModules = [['Alerts', 'alert-triangle'], ['Cooling points', 'snowflake']];
 @endphp
 <aside id="sidebar" class="ha-sidebar" aria-label="Admin sidebar"
     x-data="{ get open() { return $store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen } }"

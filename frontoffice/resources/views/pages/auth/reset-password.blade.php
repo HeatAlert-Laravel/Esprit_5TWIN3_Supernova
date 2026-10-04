@@ -5,7 +5,7 @@
     <x-logo variant="light" :size="28" :href="route('home')" class="ha-auth__logo" />
     <h1>Reset your password</h1>
     <p>Choose a new password for your HeatAlert account.</p>
-    <form method="POST" action="{{ route('password.update') }}" class="ha-form-grid">
+    <form novalidate method="POST" action="{{ route('password.update') }}" class="ha-form-grid">
         @csrf
         <input type="hidden" name="token" value="{{ $token }}">
         @error('token')<div role="alert" class="ha-alert ha-alert--error"><x-ha.icon name="alert-triangle" /><div>{{ $message }}</div></div>@enderror

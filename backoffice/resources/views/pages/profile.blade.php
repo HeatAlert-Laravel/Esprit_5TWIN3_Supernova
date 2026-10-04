@@ -333,7 +333,7 @@
                     Update your details to keep your profile up-to-date.
                 </p>
             </div>
-            <form class="flex flex-col">
+            <form novalidate class="flex flex-col">
                 <div class="custom-scrollbar h-[450px] overflow-y-auto px-2">
                     <div>
                         <h4 class="mb-6 text-lg font-medium text-gray-800 dark:text-white/90">
@@ -492,7 +492,7 @@
                     Update your details to keep your profile up-to-date.
                 </p>
             </div>
-            <form class="flex flex-col">
+            <form novalidate class="flex flex-col">
                 <div class="px-2 overflow-y-auto custom-scrollbar">
                     <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                         <div>

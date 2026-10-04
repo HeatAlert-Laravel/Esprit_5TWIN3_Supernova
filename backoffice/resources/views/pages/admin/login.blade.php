@@ -17,7 +17,7 @@
             </div>
             <div class="ha-card">
                 <x-ha.error-summary />
-                <form method="POST" action="{{ route('login') }}" class="ha-form-grid">
+                <form novalidate method="POST" action="{{ route('login') }}" class="ha-form-grid">
                     @csrf
                     <x-ha.input name="email" label="Email" type="email" autocomplete="username" :value="old('email')" required autofocus />
                     <x-ha.input name="password" label="Password" type="password" autocomplete="current-password" required />

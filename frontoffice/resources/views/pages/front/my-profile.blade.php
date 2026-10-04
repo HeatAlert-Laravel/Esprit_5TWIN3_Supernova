@@ -28,7 +28,7 @@
         <div class="ha-card__head"><h2 class="ha-card__title ha-card__title--with-icon" id="details-title"><span class="ha-icon-chip"><x-ha.icon name="home" /></span>Household details</h2></div>
         <p class="ha-muted">Keep these details up to date so your household information is complete for local heat planning.</p>
         <x-ha.error-summary />
-        <form method="POST" action="{{ route('my-profile.update') }}">
+        <form novalidate method="POST" action="{{ route('my-profile.update') }}">
             @csrf
             @method('PUT')
             <x-ha.divider>Contact</x-ha.divider>
@@ -97,7 +97,7 @@
                         <x-ha.preparedness :equipment="$item" />
                         <div class="ha-device__actions">
                             <a href="{{ route('profile.equipment.edit', $item) }}" class="ha-btn ha-btn--outline ha-btn--sm" aria-label="Edit {{ $item->name }}"><x-ha.icon name="pencil" size="sm" />Edit</a>
-                            <form method="POST" action="{{ route('profile.equipment.destroy', $item) }}" onsubmit="return confirm('Delete this equipment?')">
+                            <form novalidate method="POST" action="{{ route('profile.equipment.destroy', $item) }}" onsubmit="return confirm('Delete this equipment?')">
                                 @csrf
                                 @method('DELETE')
                                 <button class="ha-btn ha-btn--danger-soft ha-btn--sm" aria-label="Remove {{ $item->name }}"><x-ha.icon name="trash" size="sm" />Remove</button>

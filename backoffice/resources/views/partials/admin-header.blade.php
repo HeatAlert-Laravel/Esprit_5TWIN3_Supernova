@@ -13,7 +13,7 @@
                 <span>{{ ucfirst(strtolower(auth()->user()->role)) }}</span>
             </div>
         </div>
-        <form method="POST" action="{{ route('logout') }}">
+        <form novalidate method="POST" action="{{ route('logout') }}">
             @csrf
             <button class="ha-btn ha-btn--outline ha-btn--sm"><x-ha.icon name="log-out" size="sm" /><span class="ha-btn-label-sm">Log out</span></button>
         </form>

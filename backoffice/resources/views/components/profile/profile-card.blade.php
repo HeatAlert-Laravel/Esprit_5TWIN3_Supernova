@@ -89,7 +89,7 @@
                     Update your details to keep your profile up-to-date.
                 </p>
             </div>
-            <form class="flex flex-col">
+            <form novalidate class="flex flex-col">
                 <div class="custom-scrollbar h-[450px] overflow-y-auto px-2">
                     <div>
                         <h4 class="mb-6 text-lg font-medium text-gray-800 dark:text-white/90">

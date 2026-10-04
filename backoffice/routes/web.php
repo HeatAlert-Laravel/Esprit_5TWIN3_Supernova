@@ -22,4 +22,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('profiles', ProfileController::class);
     Route::resource('type-equipements', TypeEquipementController::class)->parameters(['type-equipements' => 'typeEquipement']);
     Route::resource('equipment', SensitiveEquipmentController::class);
+    Route::resource('coupures', \App\Http\Controllers\Admin\CoupureController::class);
+    Route::patch('signalements/{signalement}/statut', [\App\Http\Controllers\Admin\SignalementController::class, 'statut'])->name('signalements.statut');
+    Route::resource('signalements', \App\Http\Controllers\Admin\SignalementController::class);
 });
