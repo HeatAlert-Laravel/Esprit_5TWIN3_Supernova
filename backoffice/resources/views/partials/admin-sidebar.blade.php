@@ -14,7 +14,11 @@
             ['route' => 'admin.alertes-meteo.index', 'match' => 'admin.alertes-meteo.*', 'label' => 'Weather alerts', 'icon' => 'alert-triangle'],
         ],
     ];
-    $plannedModules = [['Alerts', 'alert-triangle'], ['Outages', 'zap'], ['Cooling points', 'snowflake']];
+    $plannedModules = [
+        // ['Alerts', 'alert-triangle'], // temporarily hidden; uncomment to restore
+        ['Outages', 'zap'],
+        ['Cooling points', 'snowflake'],
+    ];
 @endphp
 <aside id="sidebar" class="ha-sidebar" aria-label="Admin sidebar"
     x-data="{ get open() { return $store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen } }"
