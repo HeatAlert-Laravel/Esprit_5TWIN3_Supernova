@@ -27,5 +27,8 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call([QuartierSeeder::class, AlerteMeteoSeeder::class, ProfileSeeder::class, TypeEquipementSeeder::class, SensitiveEquipmentSeeder::class]);
+
+        // Membre 3 : après QuartierSeeder (clé étrangère quartier_id), parent avant enfant.
+        $this->call([TypePointSeeder::class, PointFraicheurSeeder::class]);
     }
 }

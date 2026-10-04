@@ -26,11 +26,13 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(base_path('../shared/database/migrations'));
 
-        // Display-only counts for the admin sidebar badges (real data, three COUNT queries).
+        // Display-only counts for the admin sidebar badges (real data).
         View::composer('partials.admin-sidebar', fn ($view) => $view->with('sidebarCounts', [
             'profiles' => Profile::count(),
             'equipment' => SensitiveEquipment::count(),
             'types' => TypeEquipement::count(),
+            'cooling_points' => \App\Models\PointFraicheur::count(),
+            'point_types' => \App\Models\TypePoint::count(),
         ]));
 
         // Force HTTPS in production

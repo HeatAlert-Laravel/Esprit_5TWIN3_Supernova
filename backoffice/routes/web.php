@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\QuartierController;
 use App\Http\Controllers\Admin\SensitiveEquipmentController;
 use App\Http\Controllers\Admin\TypeEquipementController;
+use App\Http\Controllers\Admin\TypePointController;
+use App\Http\Controllers\Admin\PointFraicheurController;
 use App\Http\Controllers\AdminAuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,4 +27,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('coupures', \App\Http\Controllers\Admin\CoupureController::class);
     Route::patch('signalements/{signalement}/statut', [\App\Http\Controllers\Admin\SignalementController::class, 'statut'])->name('signalements.statut');
     Route::resource('signalements', \App\Http\Controllers\Admin\SignalementController::class);
+    Route::resource('type-points', TypePointController::class)->parameters(['type-points' => 'typePoint']);
+    Route::resource('point-fraicheurs', PointFraicheurController::class)->parameters(['point-fraicheurs' => 'pointFraicheur']);
+    Route::patch('point-fraicheurs/{pointFraicheur}/toggle-status', [PointFraicheurController::class, 'toggleStatus'])->name('point-fraicheurs.toggle-status');
 });
+
