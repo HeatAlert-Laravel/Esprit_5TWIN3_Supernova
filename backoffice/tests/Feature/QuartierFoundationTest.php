@@ -90,17 +90,30 @@ test('neighborhood form rejects bad postal codes and duplicate names in the same
     $admin = User::factory()->create(['role' => 'ADMIN']);
     Quartier::factory()->create(['nom' => 'Centre Urbain Nord', 'ville' => 'Tunis', 'code_postal' => '1082']);
 
-    // Postal code must be digits only, and 4 or 5 of them.
+    // Postal code must be digits only, and exactly 4 of them.
     $this->actingAs($admin)->post(route('admin.quartiers.store'), [
         'nom' => 'Bab Souika', 'ville' => 'Tunis', 'code_postal' => 'ABCD',
     ])->assertSessionHasErrors('code_postal');
     $this->post(route('admin.quartiers.store'), [
         'nom' => 'Bab Souika', 'ville' => 'Tunis', 'code_postal' => '123',
     ])->assertSessionHasErrors('code_postal');
+    // Tunisian postal codes are 4 digits long: a fifth digit is a typo, not a longer code.
+    $this->post(route('admin.quartiers.store'), [
+        'nom' => 'Bab Souika', 'ville' => 'Tunis', 'code_postal' => '10530',
+    ])->assertSessionHasErrors('code_postal');
+    $this->post(route('admin.quartiers.store'), [
+        'nom' => 'Bab Souika', 'ville' => 'Tunis', 'code_postal' => '10 53',
+    ])->assertSessionHasErrors('code_postal');
     $this->post(route('admin.quartiers.store'), [
         'nom' => 'Bab Souika', 'ville' => 'Tunis', 'code_postal' => '',
     ])->assertSessionHasErrors('code_postal');
     $this->assertDatabaseMissing('quartiers', ['nom' => 'Bab Souika']);
+
+    // Four digits are accepted, even with a leading zero: the code stays a string.
+    $this->post(route('admin.quartiers.store'), [
+        'nom' => 'Bab Souika', 'ville' => 'Tunis', 'code_postal' => '0700',
+    ])->assertRedirect(route('admin.quartiers.index'));
+    expect(Quartier::where('nom', 'Bab Souika')->firstOrFail()->code_postal)->toBe('0700');
 
     // The name must be unique within the same city...
     $this->post(route('admin.quartiers.store'), [

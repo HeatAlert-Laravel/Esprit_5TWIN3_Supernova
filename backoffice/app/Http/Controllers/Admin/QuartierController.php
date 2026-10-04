@@ -77,7 +77,7 @@ class QuartierController extends Controller
         return $request->validate([
             'nom' => ['required', 'string', 'max:255', Rule::unique('quartiers', 'nom')->ignore($request->route('quartier'))->where('ville', $request->input('ville'))],
             'ville' => ['required', 'string', 'max:255'],
-            'code_postal' => ['required', 'string', 'regex:/^\d{4,5}$/'],
+            'code_postal' => ['required', 'string', 'regex:/^\d{4}$/'],
         ], [], [
             'nom' => 'name',
             'ville' => 'city',
