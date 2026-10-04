@@ -154,7 +154,7 @@
         @include('partials.admin-sidebar')
 
         {{-- transition-all duration-300 ease-in-out --}}
-        <div class="flex-1 min-w-0 ml-0ltr:xl:ml-[90px] rtl:xl:ml-0 rtl:xl:mr-[90px] [.sidebar-expanded_&]:ltr:xl:ml-[290px] [.sidebar-expanded_&]:rtl:xl:ml-0 [.sidebar-expanded_&]:rtl:xl:mr-[290px] transition-all duration-300 ease-in-out">
+        <div class="ha-admin-content flex-1 min-w-0 transition-all duration-300 ease-in-out">
             <!-- app header start -->
             @include('partials.admin-header')
             <!-- app header end -->

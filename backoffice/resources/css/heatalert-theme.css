@@ -467,6 +467,10 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
 .ha-sidebar :where(a, button):focus-visible { box-shadow: 0 0 0 2px var(--ha-shade-800), 0 0 0 4px #fff; }
 
 /* ---- 14. Main area + topbar ----------------------------------------- */
+@media (min-width: 1280px) {
+    .ha-admin-content { margin-inline-start: 90px; }
+    .sidebar-expanded .ha-admin-content { margin-inline-start: 290px; }
+}
 .ha-topbar {
     position: sticky; top: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: var(--ha-s-4);
     min-height: 64px; padding: var(--ha-s-2) var(--ha-s-4);

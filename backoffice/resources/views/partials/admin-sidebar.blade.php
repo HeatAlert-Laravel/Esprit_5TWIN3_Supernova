@@ -1,4 +1,3 @@
-```php
 @php
     // Real counts supplied by the view composer in AppServiceProvider (two cheap COUNT queries).
     $navGroups = [
