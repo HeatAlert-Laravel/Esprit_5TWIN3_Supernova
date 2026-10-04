@@ -11,8 +11,8 @@
     <x-ha.field name="resume" :label="__('Short summary')" :help="__('A clear introduction shown on the advice card. Up to 300 characters.')">
         <textarea id="resume" name="resume" class="ha-textarea" rows="2" maxlength="300" required aria-describedby="resume-help @error('resume') resume-error @enderror" @error('resume') aria-invalid="true" @enderror>{{ old('resume', $conseil->resume) }}</textarea>
     </x-ha.field>
-    <x-ha.field name="contenu" :label="__('Full advice')" :help="__('Write simple, practical steps. Separate paragraphs with a blank line. Text only.')">
-        <textarea id="contenu" name="contenu" class="ha-textarea" rows="10" maxlength="15000" required aria-describedby="contenu-help @error('contenu') contenu-error @enderror" @error('contenu') aria-invalid="true" @enderror>{{ old('contenu', $conseil->contenu) }}</textarea>
+    <x-ha.field name="contenu" :label="__('Full advice')" :help="__('Use headings and lists to make practical steps easy to follow.')">
+        <x-advice.editor :conseil="$conseil" />
     </x-ha.field>
     <div class="ha-form-grid ha-form-grid--2">
         <x-ha.field name="public_cible" :label="__('Who is it for?')">

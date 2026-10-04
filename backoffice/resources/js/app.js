@@ -22,6 +22,9 @@ Alpine.start();
 
 // Initialize components on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('[data-advice-editor]')) {
+        import('./advice-editor').then(({ initAdviceEditors }) => initAdviceEditors());
+    }
     const confirmDialog = document.querySelector('[data-confirm-dialog]');
     let pendingForm = null;
 

@@ -609,3 +609,43 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
     .ha-advice-article { min-width: 0; }
     .ha-advice-details { margin-block-start: var(--ha-s-4); }
 }
+
+
+/* Structured article typography is shared by the editor, admin review and resident reader. */
+@layer components {
+    .ha-article-content { font-family: var(--ha-font-body); font-size: 1rem; line-height: 1.85; color: var(--ha-ink); overflow-wrap: anywhere; }
+    .ha-article-content p { white-space: pre-wrap; }
+    .ha-article-content p + p { margin-block-start: var(--ha-s-4); }
+    .ha-article-editor textarea[hidden] { display: none; }
+    .ha-article-content > * + * { margin-block-start: var(--ha-s-4); }
+    .ha-article-content h2, .ha-article-content h3 { font-family: var(--ha-font-heading); color: var(--ha-shade-800); font-weight: 600; line-height: 1.4; }
+    .ha-article-content h2 { font-size: 1.35rem; margin-block-start: var(--ha-s-8); }
+    .ha-article-content h3 { font-size: 1.125rem; margin-block-start: var(--ha-s-6); }
+    .ha-article-content > :first-child { margin-block-start: 0; }
+    .ha-article-content ul, .ha-article-content ol { padding-inline-start: var(--ha-s-6); }
+    .ha-article-content ul { list-style: disc; }
+    .ha-article-content ol { list-style: decimal; }
+    .ha-article-content li + li { margin-block-start: var(--ha-s-2); }
+    .ha-article-content strong { font-weight: 700; }
+    .ha-article-content em { font-style: italic; }
+    .ha-article-editor { border: 1px solid var(--ha-border-strong); border-radius: var(--ha-r-md); overflow: hidden; background: var(--ha-surface); }
+    .ha-article-editor:focus-within { border-color: var(--ha-shade-600); }
+    .ha-editor-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: var(--ha-s-1); padding: var(--ha-s-2); border-block-end: 1px solid var(--ha-border); background: var(--ha-surface-2); }
+    .ha-editor-toolbar[hidden], .ha-editor-footer[hidden], [data-editor-surface][hidden] { display: none; }
+    .ha-editor-style { width: auto; min-width: 150px; font-size: .8125rem; }
+    .ha-editor-tool { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; min-height: 40px; border-radius: var(--ha-r-sm); color: var(--ha-ink-2); font-size: 1rem; cursor: pointer; }
+    .ha-editor-tool:hover { background: var(--ha-shade-100); color: var(--ha-shade-800); }
+    .ha-editor-tool[aria-pressed="true"] { background: var(--ha-shade-100); color: var(--ha-shade-800); }
+    .ha-article-editor .ql-container { border: 0; font-family: var(--ha-font-body); font-size: 1rem; }
+    .ha-article-editor .ql-editor { min-height: 300px; padding: var(--ha-s-5); line-height: 1.85; }
+    .ha-editor-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--ha-s-2); padding: var(--ha-s-3); border-block-start: 1px solid var(--ha-border); font-size: .75rem; color: var(--ha-ink-2); background: var(--ha-surface-2); }
+    .ha-article-editor .ha-error { padding: var(--ha-s-3); }
+    .ha-advice-save-row { display: flex; justify-content: flex-end; margin-block-start: calc(-1 * var(--ha-s-2)); }
+    .ha-bookmark-form { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--ha-s-2); }
+    .ha-bookmark-feedback:empty { display: none; }
+    .ha-bookmark-feedback { flex-basis: 100%; max-width: 32ch; font-size: .75rem; color: var(--ha-ink-2); }
+    [data-bookmark-icon][hidden], [data-bookmark-check][hidden] { display: none; }
+    .ha-bookmark-button[aria-pressed="true"] { background: var(--ha-shade-100); border-color: var(--ha-shade-600); color: var(--ha-shade-800); }
+    .ha-advice-results { font-size: .875rem; font-weight: 600; color: var(--ha-ink-2); margin-block-end: var(--ha-s-5); }
+    .ha-advice-back { display: flex; flex-wrap: wrap; gap: var(--ha-s-2); }
+}

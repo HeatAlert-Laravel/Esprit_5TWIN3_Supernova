@@ -66,11 +66,16 @@ class ConseilSeeder extends Seeder
 
         foreach ($articles as [$categoryName, $title, $summary, $content, $audience, $situation, $published]) {
             $category = CategorieConseil::where('nom', $categoryName)->firstOrFail();
-            if (! Conseil::where('categorie_conseil_id', $category->id)->where('titre', $title)->exists()) {
+            $existing = Conseil::where('categorie_conseil_id', $category->id)->where('titre', $title)->first();
+            $document = AdviceArticleContent::document($title);
+            if (! $existing) {
                 Conseil::factory()->create([
                     'categorie_conseil_id' => $category->id, 'titre' => $title, 'resume' => $summary,
-                    'contenu' => $content, 'public_cible' => $audience, 'situation' => $situation, 'actif' => $published,
+                    'contenu' => $content, 'contenu_formate' => $document, 'public_cible' => $audience, 'situation' => $situation, 'actif' => $published,
                 ]);
+            } elseif ($existing->contenu_formate === null && $existing->contenu === $content) {
+                // Upgrade only an untouched original example. Never overwrite an administrator's text.
+                $existing->update(['contenu_formate' => $document]);
             }
         }
     }

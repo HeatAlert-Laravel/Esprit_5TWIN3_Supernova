@@ -8,7 +8,7 @@
 <div class="ha-grid ha-grid--main">
     <article class="ha-card ha-advice-article">
         <p class="ha-advice-summary">{{ $conseil->resume }}</p>
-        <div class="ha-advice-body">@foreach($conseil->paragraphs() as $paragraph)<p>{{ $paragraph }}</p>@endforeach</div>
+        <div class="ha-advice-body ha-article-content">{!! $conseil->bodyHtml() !!}</div>
     </article>
     <aside class="ha-stack">
         <section class="ha-card">
