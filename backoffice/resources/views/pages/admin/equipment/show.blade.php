@@ -33,13 +33,13 @@
         </dl>
         <x-ha.divider>Record metadata</x-ha.divider>
         <dl class="ha-dl ha-dl--2">
-            <div><dt>Equipment ID</dt><dd class="ha-mono">{{ $equipment->id }}</dd></div>
+            <div><dt>Created</dt><dd class="ha-mono">{{ $equipment->created_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
             <div><dt>Last updated</dt><dd class="ha-mono">{{ $equipment->updated_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
         </dl>
     </section>
 
     <section class="ha-card" aria-labelledby="equipment-owner">
-        <div class="ha-card__head"><h2 class="ha-card__title ha-card__title--with-icon" id="equipment-owner"><span class="ha-icon-chip"><x-ha.icon name="home" /></span>Owner</h2></div>
+        <div class="ha-card__head"><h2 class="ha-card__title ha-card__title--with-icon" id="equipment-owner"><span class="ha-icon-chip"><x-ha.icon name="home" /></span>Resident</h2></div>
         <div class="ha-cell-person">
             <x-ha.avatar :name="$owner->user->name" size="lg" />
             <div class="min-w-0">

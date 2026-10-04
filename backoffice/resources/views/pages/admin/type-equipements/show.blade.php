@@ -24,7 +24,6 @@
         </dl>
         <x-ha.divider>Record metadata</x-ha.divider>
         <dl class="ha-dl ha-dl--2">
-            <div><dt>Type ID</dt><dd class="ha-mono">{{ $type->id }}</dd></div>
             <div><dt>Created</dt><dd class="ha-mono">{{ $type->created_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
             <div><dt>Last updated</dt><dd class="ha-mono">{{ $type->updated_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
         </dl>

@@ -1,6 +1,6 @@
 @csrf
 @if(isset($equipment)) @method('PUT') @endif
-<x-ha.divider>Owner</x-ha.divider>
+<x-ha.divider>Resident</x-ha.divider>
 <x-ha.field name="profile_id" label="Household profile" help="The resident household this equipment belongs to.">
     <select id="profile_id" name="profile_id" required class="ha-select" @error('profile_id') aria-invalid="true" @enderror aria-describedby="profile_id-help @error('profile_id')profile_id-error @enderror">
         <option value="">Choose a profile</option>

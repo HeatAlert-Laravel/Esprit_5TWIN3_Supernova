@@ -26,6 +26,7 @@ class DashboardController extends Controller
             'incompleteProfilesCount' => $incompleteCount,
             'completeProfilesCount' => $profilesCount - $incompleteCount,
             'equipmentStats' => $this->equipmentStats(),
+            'typesCount' => TypeEquipement::count(),
             // [risk_level => count], read from the TypeEquipement each equipment belongs to.
             'equipmentByRisk' => SensitiveEquipment::query()
                 ->join('type_equipements', 'type_equipements.id', '=', 'sensitive_equipments.type_equipement_id')

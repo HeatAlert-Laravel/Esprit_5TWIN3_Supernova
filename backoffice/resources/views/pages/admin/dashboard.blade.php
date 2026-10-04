@@ -24,14 +24,13 @@
         <x-ha.badge :variant="$incompleteProfilesCount > 0 ? 'warning' : 'neutral'">{{ $incompleteProfilesCount }} incomplete</x-ha.badge>
     </x-ha.kpi-card>
     <x-ha.kpi-card label="Sensitive equipment" :value="$equipmentCount" icon="plug">
-        <x-ha.badge variant="critical">{{ $riskRows['critical'][1] }} critical</x-ha.badge>
-        <x-ha.badge variant="danger">{{ $riskRows['high'][1] }} high</x-ha.badge>
-        <x-ha.badge variant="warning">{{ $riskRows['medium'][1] }} medium</x-ha.badge>
-        <x-ha.badge variant="cool">{{ $riskRows['low'][1] }} low</x-ha.badge>
+        @foreach($riskRows as $level => [, $total])
+            <x-ha.badge :variant="\App\Models\TypeEquipement::riskVariant($level)">{{ $total }} {{ $level }}</x-ha.badge>
+        @endforeach
     </x-ha.kpi-card>
 </section>
 
-<section aria-label="Equipment key figures" class="ha-grid ha-grid--3 mt-5">
+<section aria-label="Equipment key figures" class="ha-grid ha-grid--4 mt-5">
     <x-ha.kpi-card label="High or critical risk" :value="$equipmentStats['high_risk']" icon="alert-triangle">
         <span>of {{ $equipmentCount }} equipment</span>
     </x-ha.kpi-card>
@@ -40,6 +39,9 @@
     </x-ha.kpi-card>
     <x-ha.kpi-card label="Outage-sensitive equipment" :value="$equipmentStats['outage']" icon="zap">
         <span>according to equipment type</span>
+    </x-ha.kpi-card>
+    <x-ha.kpi-card label="Equipment types" :value="$typesCount" icon="thermometer">
+        <a href="{{ route('admin.type-equipements.index') }}">Manage types</a>
     </x-ha.kpi-card>
 </section>
 

@@ -480,6 +480,8 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
 .ha-bars__head { display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; font-weight: 600; }
 .ha-bars__track { height: 10px; border-radius: 999px; background: var(--ha-surface-2); overflow: hidden; }
 .ha-bars__fill { height: 100%; border-radius: 999px; background: var(--ha-shade-600); }
+@media (min-width: 640px) { .ha-grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1280px) { .ha-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .ha-bars__fill--critical { background: var(--ha-ember-800); }
 .ha-bars__fill--high { background: var(--ha-ember-600); }
 .ha-bars__fill--medium { background: var(--ha-sun-400); }
