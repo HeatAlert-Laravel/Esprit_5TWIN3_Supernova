@@ -74,6 +74,13 @@ class AlerteMeteoController extends Controller
             'date_debut' => ['required', 'date'],
             'date_fin' => ['required', 'date', 'after_or_equal:date_debut'],
             'publiee' => ['sometimes', 'boolean'],
+        ], [], [
+            'quartier_id' => 'neighborhood',
+            'titre' => 'title',
+            'niveau' => 'level',
+            'temperature_max' => 'maximum temperature',
+            'date_debut' => 'start date',
+            'date_fin' => 'end date',
         ]) + ['publiee' => $request->boolean('publiee')];
     }
 }

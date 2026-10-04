@@ -85,3 +85,50 @@ test('alert seeder is idempotent and covers every level, draft and expired alert
         ->and(AlerteMeteo::where('publiee', false)->exists())->toBeTrue()
         ->and(AlerteMeteo::whereDate('date_fin', '<', now())->exists())->toBeTrue();
 });
+
+test('weather alert validation runs on the server and reports errors inline, in English', function () {
+    $admin = User::factory()->create(['role' => 'ADMIN']);
+    $quartier = Quartier::factory()->create();
+    $alerte = AlerteMeteo::factory()->create();
+
+    $this->actingAs($admin)->get(route('admin.alertes-meteo.create'))
+        ->assertOk()
+        ->assertDontSee('min="-50"', false)
+        ->assertDontSee('max="60"', false)
+        ->assertDontSee('step="1"', false)
+        ->assertDontSee('required', false)
+        ->assertSee('step="any"', false)
+        ->assertSee('Decimals are allowed, for example 32.5.')
+        ->assertSee('Must be on or after the start date.');
+    $this->get(route('admin.alertes-meteo.edit', $alerte))
+        ->assertOk()
+        ->assertDontSee('min="-50"', false)
+        ->assertDontSee('step="1"', false)
+        ->assertSee('step="any"', false)
+        ->assertDontSee('required', false);
+
+    $this->actingAs($admin)
+        ->from(route('admin.alertes-meteo.create'))
+        ->followingRedirects()
+        ->post(route('admin.alertes-meteo.store'), validAlert($quartier, ['temperature_max' => 99]))
+        ->assertOk()
+        ->assertSee('id="temperature_max-error"', false)
+        ->assertSee('The maximum temperature field must be between -50 and 60.')
+        ->assertDontSee('Please correct the highlighted fields.');
+});
+
+test('a decimal maximum temperature is accepted, kept and displayed without rounding', function () {
+    $admin = User::factory()->create(['role' => 'ADMIN']);
+    $quartier = Quartier::factory()->create();
+
+    $this->actingAs($admin)
+        ->post(route('admin.alertes-meteo.store'), validAlert($quartier, ['temperature_max' => 32.5]))
+        ->assertRedirect(route('admin.alertes-meteo.index'));
+
+    $alerte = AlerteMeteo::firstOrFail();
+
+    expect($alerte->temperature_max)->toBe(32.5);
+
+    $this->get(route('admin.alertes-meteo.show', $alerte))->assertOk()->assertSee('32.5 °C');
+    $this->get(route('admin.alertes-meteo.index'))->assertOk()->assertSee('32.5 °C');
+});

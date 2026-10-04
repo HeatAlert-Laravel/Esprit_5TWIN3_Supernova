@@ -31,9 +31,11 @@ test('weather alert period status distinguishes current upcoming and expired ale
     $quartier = Quartier::factory()->create();
 
     $current = AlerteMeteo::factory()->for($quartier)->create([
+        'niveau' => 'vert',
         'date_debut' => today()->subDay(), 'date_fin' => today()->addDay(),
     ]);
     $upcoming = AlerteMeteo::factory()->for($quartier)->create([
+        'niveau' => 'jaune',
         'date_debut' => today()->addDay(), 'date_fin' => today()->addDays(2),
     ]);
     $expired = AlerteMeteo::factory()->for($quartier)->create([

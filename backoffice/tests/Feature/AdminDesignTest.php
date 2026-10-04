@@ -154,6 +154,6 @@ test('equipment detail shows owner and type context and the form has a type sele
 test('admin shell shows real sidebar counts and planned modules as coming soon', function () {
     Profile::factory()->count(2)->create();
     $this->actingAs($this->admin)->get(route('admin.profiles.index'))->assertOk()
-        ->assertSee('Residents')->assertSee('Modules')->assertSee('Alerts')->assertSee('Soon')
+        ->assertSee('Residents')->assertSee('Modules')->assertSee('Outages')->assertSee('Soon')
         ->assertSee('aria-current="page"', false)->assertSee('Log out');
 });

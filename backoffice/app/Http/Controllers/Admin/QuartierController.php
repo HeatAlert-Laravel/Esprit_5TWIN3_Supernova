@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Quartier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class QuartierController extends Controller
@@ -74,9 +75,13 @@ class QuartierController extends Controller
     private function validated(Request $request): array
     {
         return $request->validate([
-            'nom' => ['required', 'string', 'max:255'],
+            'nom' => ['required', 'string', 'max:255', Rule::unique('quartiers', 'nom')->ignore($request->route('quartier'))->where('ville', $request->input('ville'))],
             'ville' => ['required', 'string', 'max:255'],
-            'code_postal' => ['required', 'string', 'max:10'],
+            'code_postal' => ['required', 'string', 'regex:/^\d{4,5}$/'],
+        ], [], [
+            'nom' => 'name',
+            'ville' => 'city',
+            'code_postal' => 'postal code',
         ]);
     }
 }

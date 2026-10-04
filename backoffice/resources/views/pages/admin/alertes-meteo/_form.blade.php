@@ -3,24 +3,24 @@
 
 <div class="ha-form-grid ha-form-grid--2">
     <x-ha.field name="quartier_id" label="Neighborhood">
-        <select id="quartier_id" name="quartier_id" class="ha-select" required>
+        <select id="quartier_id" name="quartier_id" class="ha-select">
             <option value="">Choose a neighborhood</option>
             @foreach($quartiers as $quartier)
                 <option value="{{ $quartier->id }}" @selected((string) old('quartier_id', $alerte?->quartier_id) === (string) $quartier->id)>{{ $quartier->nom }} - {{ $quartier->ville }}</option>
             @endforeach
         </select>
     </x-ha.field>
-    <x-ha.input name="titre" label="Title" :value="old('titre', $alerte?->titre)" required maxlength="255" />
+    <x-ha.input name="titre" label="Title" :value="old('titre', $alerte?->titre)" />
     <x-ha.field name="niveau" label="Level">
-        <select id="niveau" name="niveau" class="ha-select" required>
+        <select id="niveau" name="niveau" class="ha-select">
             @foreach(['vert' => 'Green', 'jaune' => 'Yellow', 'orange' => 'Orange', 'rouge' => 'Red'] as $value => $label)
                 <option value="{{ $value }}" @selected(old('niveau', $alerte?->niveau) === $value)>{{ $label }}</option>
             @endforeach
         </select>
     </x-ha.field>
-    <x-ha.input name="temperature_max" label="Maximum temperature (°C)" type="number" step="0.1" :value="old('temperature_max', $alerte?->temperature_max)" required />
-    <x-ha.input name="date_debut" label="Start date" type="date" :value="old('date_debut', $alerte?->date_debut?->format('Y-m-d'))" required />
-    <x-ha.input name="date_fin" label="End date" type="date" :value="old('date_fin', $alerte?->date_fin?->format('Y-m-d'))" required />
+    <x-ha.input name="temperature_max" label="Maximum temperature (°C)" type="number" step="any" :value="old('temperature_max', $alerte?->temperature_max)" help="Decimals are allowed, for example 32.5." />
+    <x-ha.input name="date_debut" label="Start date" type="date" :value="old('date_debut', $alerte?->date_debut?->format('Y-m-d'))" />
+    <x-ha.input name="date_fin" label="End date" type="date" :value="old('date_fin', $alerte?->date_fin?->format('Y-m-d'))" help="Must be on or after the start date." />
 </div>
 <div class="ha-field">
     <label class="ha-check"><input type="hidden" name="publiee" value="0"><input type="checkbox" name="publiee" value="1" @checked(old('publiee', $alerte?->publiee))><span class="ha-check__text">Publish this alert</span></label>
