@@ -53,9 +53,15 @@ test('ADMIN can create, view, update and delete a profile with related equipment
         'user_id' => $resident->id, 'phone' => '12345678', 'address' => '11 Main Street', 'neighborhood' => 'Carthage', 'has_fragile_person' => '0',
     ])->assertRedirect();
     expect($profile->fresh()->address)->toBe('11 Main Street');
+    // A profile that still owns equipment cannot be deleted: its equipment is kept.
+    $this->delete(route('admin.profiles.destroy', $profile))->assertRedirect(route('admin.profiles.show', $profile))
+        ->assertSessionHas('error', 'This profile still has 1 sensitive equipment record. Delete or reassign them before deleting the profile.');
+    $this->assertDatabaseHas('profiles', ['id' => $profile->id]);
+    $this->assertDatabaseCount('sensitive_equipments', 1);
+
+    SensitiveEquipment::query()->delete();
     $this->delete(route('admin.profiles.destroy', $profile))->assertRedirect(route('admin.profiles.index'));
     $this->assertDatabaseMissing('profiles', ['id' => $profile->id]);
-    $this->assertDatabaseCount('sensitive_equipments', 0);
 });
 
 test('ADMIN can complete equipment CRUD and sees the linked profile', function () {

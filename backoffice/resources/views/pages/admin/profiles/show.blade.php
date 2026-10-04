@@ -12,7 +12,7 @@
     </x-slot:badges>
     <x-slot:actions>
         <a href="{{ route('admin.profiles.edit', $profile) }}" class="ha-btn ha-btn--primary"><x-ha.icon name="pencil" size="sm" />Edit</a>
-        <form method="POST" action="{{ route('admin.profiles.destroy', $profile) }}" onsubmit="return confirm('Delete this profile and all its equipment?')">
+        <form method="POST" action="{{ route('admin.profiles.destroy', $profile) }}" onsubmit="return confirm('Delete this profile?')">
             @csrf @method('DELETE')
             <button class="ha-btn ha-btn--danger-soft"><x-ha.icon name="trash" size="sm" />Delete profile</button>
         </form>
@@ -71,8 +71,6 @@
         <section class="ha-card ha-card--compact" aria-labelledby="meta-title">
             <h2 class="ha-card__title mb-3" id="meta-title">Record metadata</h2>
             <dl class="ha-dl">
-                <div><dt>Profile ID</dt><dd class="ha-mono">{{ $profile->id }}</dd></div>
-                <div><dt>User ID</dt><dd class="ha-mono">{{ $profile->user_id }}</dd></div>
                 <div><dt>Created</dt><dd class="ha-mono">{{ $profile->created_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
                 <div><dt>Last updated</dt><dd class="ha-mono">{{ $profile->updated_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
             </dl>

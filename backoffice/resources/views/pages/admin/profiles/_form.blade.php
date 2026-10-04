@@ -1,7 +1,7 @@
 @csrf
 @if(isset($profile)) @method('PUT') @endif
 <x-ha.divider>Resident</x-ha.divider>
-<x-ha.field name="user_id" label="Resident account" help="Each resident account can have one household profile.">
+<x-ha.field name="user_id" label="Resident account" help="{{ $users->isEmpty() ? 'Every resident account already has a household profile.' : 'Each resident account can have one household profile.' }}">
     <select id="user_id" name="user_id" required class="ha-select" @error('user_id') aria-invalid="true" @enderror aria-describedby="user_id-help @error('user_id')user_id-error @enderror">
         <option value="">Choose a user</option>
         @foreach($users as $user)

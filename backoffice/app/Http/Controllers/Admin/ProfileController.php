@@ -71,6 +71,14 @@ class ProfileController extends Controller
 
     public function destroy(Profile $profile): RedirectResponse
     {
+        $equipmentCount = $profile->sensitiveEquipments()->count();
+
+        // Resident equipment is never deleted silently: remove or reassign it first.
+        if ($equipmentCount > 0) {
+            return redirect()->route('admin.profiles.show', $profile)
+                ->with('error', "This profile still has {$equipmentCount} sensitive equipment ".\Illuminate\Support\Str::plural('record', $equipmentCount).'. Delete or reassign them before deleting the profile.');
+        }
+
         $profile->delete();
 
         return redirect()->route('admin.profiles.index')->with('status', 'Profile deleted.');
@@ -86,7 +94,7 @@ class ProfileController extends Controller
     {
         $data = $request->validate([
             'user_id' => ['required', Rule::exists('users', 'id'), Rule::unique('profiles', 'user_id')->ignore($profile?->id)],
-            'phone' => ['required', 'string', 'max:20'],
+            'phone' => ['required', 'string', 'max:20', 'regex:/^\+?[0-9\s().-]{6,20}$/'],
             'address' => ['required', 'string', 'max:255'],
             'neighborhood' => ['required', 'string', 'max:100'],
             'has_fragile_person' => ['sometimes', 'boolean'],

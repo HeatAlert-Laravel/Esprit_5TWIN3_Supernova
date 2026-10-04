@@ -7,7 +7,7 @@
     <x-slot:actions><a href="{{ route('admin.profiles.create') }}" class="ha-btn ha-btn--primary"><x-ha.icon name="plus" size="sm" />Add profile</a></x-slot:actions>
 </x-ha.page-header>
 
-<form method="GET" action="{{ route('admin.profiles.index') }}" class="ha-filter" role="search" aria-label="Filter profiles">
+<form method="GET" action="{{ route('admin.profiles.index') }}" class="ha-filter" data-auto-filter role="search" aria-label="Filter profiles">
     <div class="ha-field ha-field--grow">
         <label class="ha-label" for="q">Resident</label>
         <input class="ha-input" id="q" name="q" type="search" value="{{ $filters['q'] }}" placeholder="Search by name or email">
@@ -20,8 +20,8 @@
         </select>
     </div>
     <div class="ha-filter__actions">
-        <button class="ha-btn ha-btn--secondary"><x-ha.icon name="search" size="sm" />Filter</button>
-        @if($isFiltered)<a href="{{ route('admin.profiles.index') }}" class="ha-btn ha-btn--ghost">Reset</a>@endif
+        <noscript><button class="ha-btn ha-btn--secondary">Apply filters</button></noscript>
+        @if($isFiltered)<a href="{{ route('admin.profiles.index') }}" class="ha-btn ha-btn--ghost">Reset filters</a>@endif
     </div>
 </form>
 
@@ -74,6 +74,10 @@
                         <td class="ha-actions-cell">
                             <a href="{{ route('admin.profiles.show', $profile) }}" class="ha-btn ha-btn--outline ha-btn--sm" aria-label="View {{ $profile->user->name }}"><x-ha.icon name="eye" size="sm" />View</a>
                             <a href="{{ route('admin.profiles.edit', $profile) }}" class="ha-btn ha-btn--ghost ha-btn--sm" aria-label="Edit {{ $profile->user->name }}"><x-ha.icon name="pencil" size="sm" />Edit</a>
+                            <form method="POST" action="{{ route('admin.profiles.destroy', $profile) }}" onsubmit="return confirm('Delete this profile?')" class="inline">
+                                @csrf @method('DELETE')
+                                <button class="ha-btn ha-btn--danger-soft ha-btn--sm" aria-label="Delete {{ $profile->user->name }}"><x-ha.icon name="trash" size="sm" />Delete</button>
+                            </form>
                         </td>
                     </tr>
                 @endforeach

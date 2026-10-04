@@ -18,7 +18,7 @@ class ResidentProfileController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'phone' => ['required', 'string', 'max:20'],
+            'phone' => ['required', 'string', 'max:20', 'regex:/^\+?[0-9\s().-]{6,20}$/'],
             'address' => ['required', 'string', 'max:255'],
             'neighborhood' => ['required', 'string', 'max:100'],
             'has_fragile_person' => ['sometimes', 'boolean'],
