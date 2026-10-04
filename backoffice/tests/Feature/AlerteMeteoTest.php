@@ -42,6 +42,9 @@ test('weather alert period status distinguishes current upcoming and expired ale
 
     expect($current->temporalStatus())->toBe('current')
         ->and($upcoming->temporalStatus())->toBe('upcoming')
-        ->and($expired->temporalStatus())->toBe('expired');
+        ->and($expired->temporalStatus())->toBe('expired')
+        ->and($current->levelBadgeVariant())->toBe('level-green')
+        ->and($upcoming->levelBadgeVariant())->toBe('level-yellow')
+        ->and($expired->temporalStatusBadgeVariant())->toBe('neutral');
 });
 

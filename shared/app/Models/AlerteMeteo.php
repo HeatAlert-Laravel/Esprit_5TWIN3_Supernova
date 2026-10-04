@@ -41,4 +41,25 @@ class AlerteMeteo extends Model
             default => 'current',
         };
     }
+
+    public function levelBadgeVariant(): string
+    {
+        return match ($this->niveau) {
+            'vert' => 'level-green',
+            'jaune' => 'level-yellow',
+            'orange' => 'level-orange',
+            'rouge' => 'level-red',
+            default => 'neutral',
+        };
+    }
+
+    public function temporalStatusBadgeVariant(): string
+    {
+        return match ($this->temporalStatus()) {
+            'current' => 'success',
+            'upcoming' => 'info',
+            'expired' => 'neutral',
+            default => 'neutral',
+        };
+    }
 }
