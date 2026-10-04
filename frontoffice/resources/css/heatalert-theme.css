@@ -578,7 +578,7 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
 .ha-live-module__head { display: flex; align-items: center; justify-content: space-between; gap: var(--ha-s-3); width: 100%; }
 .ha-live-module h3 { font-size: 1.0625rem; font-weight: 600; margin: 0; }
 .ha-live-module p { margin: 0; color: var(--ha-ink-2); font-size: 0.9375rem; line-height: 1.5; }
-.ha-live-module__link { display: inline-flex; align-items: center; gap: var(--ha-s-2); font-size: 0.875rem; font-weight: 600; color: var(--ha-ember-700); }
+.ha-live-module__link { display: inline-flex; align-items: center; gap: var(--ha-s-2); margin-block-start: auto; font-size: 0.875rem; font-weight: 600; color: var(--ha-ember-700); }
 
 }
 
@@ -640,7 +640,13 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
     .ha-article-editor .ql-editor { min-height: 300px; padding: var(--ha-s-5); line-height: 1.85; }
     .ha-editor-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--ha-s-2); padding: var(--ha-s-3); border-block-start: 1px solid var(--ha-border); font-size: .75rem; color: var(--ha-ink-2); background: var(--ha-surface-2); }
     .ha-article-editor .ha-error { padding: var(--ha-s-3); }
-    .ha-advice-save-row { display: flex; justify-content: flex-end; margin-block-start: calc(-1 * var(--ha-s-2)); }
+    .ha-advice-card-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: var(--ha-s-2); }
+    .ha-advice-card-head .ha-advice-title { margin: 0; padding-block-start: var(--ha-s-2); }
+    .ha-advice-card-tags .ha-badge { max-width: 100%; white-space: normal; }
+    .ha-advice-card-head .ha-bookmark-form { display: contents; }
+    .ha-advice-card-head .ha-bookmark-button { grid-column: 2; grid-row: 1; }
+    .ha-advice-card-head .ha-bookmark-feedback { grid-column: 1 / -1; }
+    .ha-bookmark-button--icon { width: 40px; height: 40px; padding: 0; flex-shrink: 0; }
     .ha-bookmark-form { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--ha-s-2); }
     .ha-bookmark-feedback:empty { display: none; }
     .ha-bookmark-feedback { flex-basis: 100%; max-width: 32ch; font-size: .75rem; color: var(--ha-ink-2); }

@@ -21,8 +21,8 @@
 
 <section class="ha-section" aria-labelledby="modules-title">
     <div class="ha-section__head">
-        <h2 id="modules-title">More on the way</h2>
-        <p>Heat alerts are live. The rest of the team is still building Outages and Cooling Points — no outage or cooling data appears here yet.</p>
+        <h2 id="modules-title">{{ __('Know what is happening nearby') }}</h2>
+        <p>{{ __('Check neighborhood alerts, plan around power interruptions, and find a place to cool down.') }}</p>
     </div>
     <div class="ha-grid ha-grid--3">
         <a href="{{ route('weather-alerts') }}" class="ha-card ha-card--interactive ha-live-module" aria-label="Open weather alerts">
@@ -34,21 +34,41 @@
             <p>Real heat alerts for your neighborhood — check the level, the forecast maximum and the advice to follow.</p>
             <span class="ha-live-module__link">View alerts<x-ha.icon name="arrow-right" size="sm" /></span>
         </a>
-        <x-ha.module-slot title="Outages" description="Find updates during power interruptions." icon="zap" :href="route('outages')" />
-        <x-ha.module-slot title="Cooling Points" description="Locate nearby spaces to cool down." icon="snowflake" :href="route('cooling-points')" />
+        <a href="{{ route('outages') }}" class="ha-card ha-card--interactive ha-live-module" aria-label="{{ __('Open outages') }}">
+            <div class="ha-live-module__head">
+                <span class="ha-icon-chip ha-icon-chip--ember"><x-ha.icon name="zap" /></span>
+                <x-ha.badge variant="success" :dot="false">{{ __('Available') }}</x-ha.badge>
+            </div>
+            <h3>{{ __('Outages') }}</h3>
+            <p>{{ __('Check reported and planned power interruptions in your neighborhood.') }}</p>
+            <span class="ha-live-module__link">{{ __('View outages') }}<x-ha.icon name="arrow-right" size="sm" class="rtl:rotate-180" /></span>
+        </a>
+        <a href="{{ route('cooling-points') }}" class="ha-card ha-card--interactive ha-live-module" aria-label="{{ __('Open cooling points') }}">
+            <div class="ha-live-module__head">
+                <span class="ha-icon-chip"><x-ha.icon name="snowflake" /></span>
+                <x-ha.badge variant="success" :dot="false">{{ __('Available') }}</x-ha.badge>
+            </div>
+            <h3>{{ __('Cooling Points') }}</h3>
+            <p>{{ __('Explore the map and check opening hours, accessibility, and available facilities.') }}</p>
+            <span class="ha-live-module__link">{{ __('Find cooling points') }}<x-ha.icon name="arrow-right" size="sm" class="rtl:rotate-180" /></span>
+        </a>
     </div>
 </section>
 
 <section class="ha-section" aria-labelledby="guidance-title">
     <div class="ha-section__head">
         <h2 id="guidance-title">Simple ways to prepare</h2>
-        <p>General habits that help during hot weather.</p>
+        <p>{{ __('Practical steps for hot days and power outages, from our published advice.') }}</p>
         <a href="{{ route('advice') }}" class="ha-btn ha-btn--outline">{{ __('Explore practical advice') }}<x-ha.icon name="arrow-right" size="sm" class="rtl:rotate-180" /></a>
     </div>
-    <div class="ha-grid ha-grid--3">
-        <div class="ha-card ha-tip"><span class="ha-icon-chip"><x-ha.icon name="sun" /></span><div><h3>Plan for hot days</h3><p>Keep water within reach and avoid the hottest hours when you can.</p></div></div>
-        <div class="ha-card ha-tip"><span class="ha-icon-chip"><x-ha.icon name="users" /></span><div><h3>Look out for neighbors</h3><p>Check in on people who may find the heat harder to handle.</p></div></div>
-        <div class="ha-card ha-tip"><span class="ha-icon-chip"><x-ha.icon name="plug" /></span><div><h3>List your key devices</h3><p>Note equipment that needs power or cooling so your household is easier to support.</p></div></div>
-    </div>
+    @if($featuredAdvice->isNotEmpty())
+        <div class="ha-grid ha-grid--3">
+            @foreach($featuredAdvice as $conseil)
+                <x-advice.card :conseil="$conseil" />
+            @endforeach
+        </div>
+    @else
+        <div class="ha-card"><x-ha.empty-state icon="lightbulb" :title="__('Advice is on its way')" :description="__('Practical advice will appear here as articles are published. You can already explore alerts, outages, and cooling points above.')" /></div>
+    @endif
 </section>
 @endsection

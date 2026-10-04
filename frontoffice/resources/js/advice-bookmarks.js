@@ -27,6 +27,7 @@ function initAdviceBookmarks() {
                 const result = await response.json();
                 button.setAttribute('aria-pressed', String(result.saved));
                 button.setAttribute('aria-label', result.saved ? form.dataset.removeLabel : form.dataset.saveLabel);
+                if (button.hasAttribute('title')) button.title = result.saved ? form.dataset.removeLabel : form.dataset.saveLabel;
                 form.querySelector('[data-bookmark-label]').textContent = result.saved ? form.dataset.savedText : form.dataset.saveText;
                 form.querySelector('[data-bookmark-icon]').hidden = result.saved;
                 form.querySelector('[data-bookmark-check]').hidden = !result.saved;

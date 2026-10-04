@@ -33,6 +33,7 @@ test('x-logo variants use the approved colors and wordmark rules', function () {
 });
 
 test('home navbar and auth pages show the Shelter logo, not the old warning triangle', function () {
+    $this->artisan('migrate', ['--force' => true]);
     $home = $this->get('/')->assertOk();
     $home->assertSee('aria-label="HeatAlert home"', false)->assertSee('href="'.route('home').'"', false)
         ->assertSee('rel="icon" href="/favicon.svg"', false)->assertSee('href="/favicon-32.png"', false)
