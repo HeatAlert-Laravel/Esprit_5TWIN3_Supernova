@@ -12,8 +12,8 @@ beforeEach(function () {
     $this->artisan('migrate', ['--force' => true]);
     // Target this module explicitly: teammates may add newer shared migrations.
     $this->artisan('migrate:rollback', ['--path' => [
-        'shared/database/migrations/2026_10_05_000003_finalize_sensitive_equipment_type_normalization.php',
-        'shared/database/migrations/2026_10_05_000002_add_type_equipement_id_to_sensitive_equipments_table.php',
+        'database/migrations/2026_10_05_000003_finalize_sensitive_equipment_type_normalization.php',
+        'database/migrations/2026_10_05_000002_add_type_equipement_id_to_sensitive_equipments_table.php',
     ], '--force' => true])->assertExitCode(0);
 });
 
@@ -60,7 +60,7 @@ test('the finalize migration refuses to drop legacy columns while a row is unmap
     $profileId = App\Models\Profile::factory()->create()->id;
     $this->artisan('migrate', ['--force' => true]);
     $this->artisan('migrate:rollback', ['--path' => [
-        'shared/database/migrations/2026_10_05_000003_finalize_sensitive_equipment_type_normalization.php',
+        'database/migrations/2026_10_05_000003_finalize_sensitive_equipment_type_normalization.php',
     ], '--force' => true])->assertExitCode(0); // undo finalize only: legacy columns are back
     legacyEquipment($profileId, 'Unmapped', 'household', 'low'); // has no type_equipement_id
 

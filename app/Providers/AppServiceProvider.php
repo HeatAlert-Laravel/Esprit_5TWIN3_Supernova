@@ -27,8 +27,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadMigrationsFrom(base_path('shared/database/migrations'));
-
         // Display-only counts for the admin sidebar badges (real data).
         View::composer('partials.admin-sidebar', fn ($view) => $view->with('sidebarCounts', [
             'profiles' => Profile::count(),
