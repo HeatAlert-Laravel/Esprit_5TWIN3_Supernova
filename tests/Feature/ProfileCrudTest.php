@@ -4,7 +4,7 @@ use App\Models\Profile;
 use App\Models\SensitiveEquipment;
 use App\Models\User;
 
-// Back Office Profile management (supporting functionality of Module 5). In-memory SQLite.
+// Admin profile management (supporting functionality of Module 5). In-memory SQLite.
 beforeEach(function () {
     $this->artisan('migrate', ['--force' => true]);
     $this->admin = User::factory()->create(['role' => 'ADMIN']);

@@ -22,8 +22,6 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 
-frontoffice/database/*.sqlite
-frontoffice/database/*.sqlite-*
 agent/
 
 # Local database dumps

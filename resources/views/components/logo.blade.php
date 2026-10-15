@@ -8,7 +8,6 @@
     label     accessible name of the link (default "HeatAlert home")
 
     Presentation lives in .ha-logo (heatalert-theme.css). Extra attributes (class, x-show, ...) go on the outer element.
-    This component is intentionally duplicated in frontoffice/ and backoffice/ (separate apps); keep both copies identical.
 --}}
 @props(['variant' => 'light', 'size' => 36, 'wordmark' => true, 'href' => null, 'label' => 'HeatAlert home'])
 @php

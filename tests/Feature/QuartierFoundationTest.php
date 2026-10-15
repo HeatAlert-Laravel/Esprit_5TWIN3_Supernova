@@ -23,7 +23,7 @@ test('quartier seeder creates the shared demo neighborhoods idempotently', funct
         ->and(Quartier::where('nom', 'La Marsa')->where('ville', 'Tunis')->exists())->toBeTrue();
 });
 
-test('admin can manage neighborhoods from the themed back office', function () {
+test('admin can manage neighborhoods from the themed admin area', function () {
     $admin = User::factory()->create(['role' => 'ADMIN']);
 
     $this->actingAs($admin)->get(route('admin.quartiers.index'))->assertOk()->assertSee('Neighborhoods');

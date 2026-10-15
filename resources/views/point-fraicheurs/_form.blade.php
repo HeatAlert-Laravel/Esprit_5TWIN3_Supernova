@@ -57,7 +57,7 @@
             <input type="checkbox" name="actif" value="1" @checked(old('actif', $point?->actif ?? true))>
             <span class="ha-check__text">
                 Active / open location
-                <small>Visible to residents on the Front Office when checked.</small>
+                <small>Visible to residents on the public site when checked.</small>
             </span>
         </label>
         @error('actif')<p class="ha-error"><x-ha.icon name="alert-triangle" size="sm" />{{ $message }}</p>@enderror

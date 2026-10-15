@@ -9,11 +9,12 @@
  *   Sand         = page background              White      = cards, forms, surfaces
  *
  * Fonts: Outfit (headings), Public Sans (body), IBM Plex Mono (codes / dates).
- * They are requested from Google Fonts, the same approach the Back Office template
+ * They are requested from Google Fonts, the same approach the TailAdmin admin template
  * already used for Outfit. Every stack has a system fallback, so pages render
  * correctly without network access.
  *
- * Section 1-12 are identical in both applications (frontoffice / backoffice).
+ * This file is loaded by both layouts (layouts.app and layouts.admin): sections 1-12
+ * are shared, followed by the admin-area and resident-page sections.
  */
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap');
 
