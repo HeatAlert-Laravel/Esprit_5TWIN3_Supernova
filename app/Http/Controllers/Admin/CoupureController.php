@@ -13,12 +13,12 @@ class CoupureController extends Controller
 {
     public function index(): View
     {
-        return view('pages.admin.coupures.index', ['coupures' => Coupure::with('quartier')->withCount('signalements')->latest()->paginate(10)]);
+        return view('coupures.index', ['coupures' => Coupure::with('quartier')->withCount('signalements')->latest()->paginate(10)]);
     }
 
     public function create(): View
     {
-        return view('pages.admin.coupures.create', $this->options());
+        return view('coupures.create', $this->options());
     }
 
     public function store(CoupureRequest $request): RedirectResponse
@@ -30,12 +30,12 @@ class CoupureController extends Controller
 
     public function show(Coupure $coupure): View
     {
-        return view('pages.admin.coupures.show', ['coupure' => $coupure->load(['quartier', 'signalements.user'])]);
+        return view('coupures.show', ['coupure' => $coupure->load(['quartier', 'signalements.user'])]);
     }
 
     public function edit(Coupure $coupure): View
     {
-        return view('pages.admin.coupures.edit', ['coupure' => $coupure] + $this->options());
+        return view('coupures.edit', ['coupure' => $coupure] + $this->options());
     }
 
     public function update(CoupureRequest $request, Coupure $coupure): RedirectResponse

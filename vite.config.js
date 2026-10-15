@@ -16,7 +16,14 @@ export default defineConfig({
     },
     plugins: [
         laravel({
-            input: ["resources/css/app.css", "resources/css/heatalert-theme.css", "resources/js/app.js"],
+            // app.* = resident pages (layouts/app), admin.* = TailAdmin-based admin area (layouts/admin).
+            input: [
+                "resources/css/app.css",
+                "resources/js/app.js",
+                "resources/css/admin.css",
+                "resources/js/admin.js",
+                "resources/css/heatalert-theme.css",
+            ],
             refresh: true,
         }),
         tailwindcss(),

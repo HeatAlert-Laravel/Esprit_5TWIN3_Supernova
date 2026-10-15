@@ -24,7 +24,7 @@ class ProfileController extends Controller
             ->when($neighborhood !== '', fn ($query) => $query->where('neighborhood', $neighborhood))
             ->latest()->paginate(10)->withQueryString();
 
-        return view('pages.admin.profiles.index', [
+        return view('profiles.index', [
             'profiles' => $profiles,
             'neighborhoods' => $this->neighborhoods(),
             'filters' => ['q' => $search, 'neighborhood' => $neighborhood],
@@ -34,7 +34,7 @@ class ProfileController extends Controller
 
     public function create(): View
     {
-        return view('pages.admin.profiles.create', [
+        return view('profiles.create', [
             'users' => User::doesntHave('profile')->orderBy('name')->get(),
             'neighborhoods' => $this->neighborhoods(),
         ]);
@@ -50,12 +50,12 @@ class ProfileController extends Controller
 
     public function show(Profile $profile): View
     {
-        return view('pages.admin.profiles.show', ['profile' => $profile->load('user', 'sensitiveEquipments.typeEquipement')]);
+        return view('profiles.show', ['profile' => $profile->load('user', 'sensitiveEquipments.typeEquipement')]);
     }
 
     public function edit(Profile $profile): View
     {
-        return view('pages.admin.profiles.edit', [
+        return view('profiles.edit', [
             'profile' => $profile,
             'users' => User::whereDoesntHave('profile')->orWhere('id', $profile->user_id)->orderBy('name')->get(),
             'neighborhoods' => $this->neighborhoods(),

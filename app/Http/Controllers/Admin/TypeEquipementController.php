@@ -22,7 +22,7 @@ class TypeEquipementController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('pages.admin.type-equipements.index', [
+        return view('type-equipements.index', [
             'types' => $types,
             'search' => $search,
             'totalTypes' => TypeEquipement::count(),
@@ -31,7 +31,7 @@ class TypeEquipementController extends Controller
 
     public function create(): View
     {
-        return view('pages.admin.type-equipements.create');
+        return view('type-equipements.create');
     }
 
     public function store(Request $request): RedirectResponse
@@ -46,12 +46,12 @@ class TypeEquipementController extends Controller
         // The hasMany relation, eager loading the owner so the list does not trigger N+1 queries.
         $typeEquipement->load(['sensitiveEquipments' => fn ($query) => $query->with('profile.user')->latest()]);
 
-        return view('pages.admin.type-equipements.show', ['type' => $typeEquipement]);
+        return view('type-equipements.show', ['type' => $typeEquipement]);
     }
 
     public function edit(TypeEquipement $typeEquipement): View
     {
-        return view('pages.admin.type-equipements.edit', ['type' => $typeEquipement]);
+        return view('type-equipements.edit', ['type' => $typeEquipement]);
     }
 
     public function update(Request $request, TypeEquipement $typeEquipement): RedirectResponse

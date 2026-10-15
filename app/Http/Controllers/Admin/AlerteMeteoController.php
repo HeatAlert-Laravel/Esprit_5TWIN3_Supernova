@@ -15,7 +15,7 @@ class AlerteMeteoController extends Controller
     {
         $quartierId = (string) $request->query('quartier_id', '');
 
-        return view('pages.admin.alertes-meteo.index', [
+        return view('alertes-meteo.index', [
             'alertes' => AlerteMeteo::with('quartier')->when($quartierId !== '', fn ($query) => $query->where('quartier_id', $quartierId))->latest('date_debut')->paginate(10)->withQueryString(),
             'quartiers' => Quartier::orderBy('ville')->orderBy('nom')->get(),
             'quartierId' => $quartierId,
@@ -25,7 +25,7 @@ class AlerteMeteoController extends Controller
 
     public function create(): View
     {
-        return view('pages.admin.alertes-meteo.create', ['quartiers' => $this->quartiers()]);
+        return view('alertes-meteo.create', ['quartiers' => $this->quartiers()]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -37,12 +37,12 @@ class AlerteMeteoController extends Controller
 
     public function show(AlerteMeteo $alerte): View
     {
-        return view('pages.admin.alertes-meteo.show', ['alerte' => $alerte->load('quartier')]);
+        return view('alertes-meteo.show', ['alerte' => $alerte->load('quartier')]);
     }
 
     public function edit(AlerteMeteo $alerte): View
     {
-        return view('pages.admin.alertes-meteo.edit', ['alerte' => $alerte, 'quartiers' => $this->quartiers()]);
+        return view('alertes-meteo.edit', ['alerte' => $alerte, 'quartiers' => $this->quartiers()]);
     }
 
     public function update(Request $request, AlerteMeteo $alerte): RedirectResponse

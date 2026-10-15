@@ -27,7 +27,7 @@ class QuartierController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('pages.admin.quartiers.index', [
+        return view('quartiers.index', [
             'quartiers' => $quartiers,
             'search' => $search,
             'totalQuartiers' => Quartier::count(),
@@ -36,12 +36,12 @@ class QuartierController extends Controller
 
     public function create(): View
     {
-        return view('pages.admin.quartiers.create');
+        return view('quartiers.create');
     }
 
     public function show(Quartier $quartier): View
     {
-        return view('pages.admin.quartiers.show', [
+        return view('quartiers.show', [
             'quartier' => $quartier->load(['alerteMeteos' => fn ($query) => $query->latest('date_debut')]),
         ]);
     }
@@ -55,7 +55,7 @@ class QuartierController extends Controller
 
     public function edit(Quartier $quartier): View
     {
-        return view('pages.admin.quartiers.edit', ['quartier' => $quartier]);
+        return view('quartiers.edit', ['quartier' => $quartier]);
     }
 
     public function update(Request $request, Quartier $quartier): RedirectResponse

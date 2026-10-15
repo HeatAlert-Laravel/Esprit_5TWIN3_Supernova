@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin login | HeatAlert</title>
     @include('partials.brand-head')
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/heatalert-theme.css'])
+    @vite(['resources/css/admin.css', 'resources/js/admin.js', 'resources/css/heatalert-theme.css'])
 </head>
 <body>
     <main class="ha-login">

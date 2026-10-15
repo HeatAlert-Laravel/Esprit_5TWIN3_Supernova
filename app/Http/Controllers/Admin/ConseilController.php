@@ -30,7 +30,7 @@ class ConseilController extends Controller
             ->latest()->paginate(10)->withQueryString();
         $categories = CategorieConseil::orderBy('nom')->get();
 
-        return view('pages.admin.conseils.index', compact('conseils', 'categories', 'search', 'categoryId', 'status'));
+        return view('conseils.index', compact('conseils', 'categories', 'search', 'categoryId', 'status'));
     }
 
     public function create(Request $request): View
@@ -41,7 +41,7 @@ class ConseilController extends Controller
             'public_cible' => 'everyone', 'situation' => 'both', 'actif' => false,
         ]);
 
-        return view('pages.admin.conseils.create', ['conseil' => $conseil, 'categories' => CategorieConseil::orderBy('nom')->get()]);
+        return view('conseils.create', ['conseil' => $conseil, 'categories' => CategorieConseil::orderBy('nom')->get()]);
     }
 
     public function store(SaveConseilRequest $request): RedirectResponse
@@ -53,12 +53,12 @@ class ConseilController extends Controller
 
     public function show(Conseil $conseil): View
     {
-        return view('pages.admin.conseils.show', ['conseil' => $conseil->load('categorieConseil')]);
+        return view('conseils.show', ['conseil' => $conseil->load('categorieConseil')]);
     }
 
     public function edit(Conseil $conseil): View
     {
-        return view('pages.admin.conseils.edit', ['conseil' => $conseil, 'categories' => CategorieConseil::orderBy('nom')->get()]);
+        return view('conseils.edit', ['conseil' => $conseil, 'categories' => CategorieConseil::orderBy('nom')->get()]);
     }
 
     public function update(SaveConseilRequest $request, Conseil $conseil): RedirectResponse

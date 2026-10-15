@@ -20,12 +20,12 @@ class CategorieConseilController extends Controller
             ->when($search !== '', fn ($query) => $query->where('nom', 'like', "%{$search}%"))
             ->orderBy('nom')->paginate(10)->withQueryString();
 
-        return view('pages.admin.categorie-conseils.index', compact('categories', 'search'));
+        return view('categorie-conseils.index', compact('categories', 'search'));
     }
 
     public function create(): View
     {
-        return view('pages.admin.categorie-conseils.create', ['categorieConseil' => new CategorieConseil(['icone' => 'lightbulb'])]);
+        return view('categorie-conseils.create', ['categorieConseil' => new CategorieConseil(['icone' => 'lightbulb'])]);
     }
 
     public function store(SaveCategorieConseilRequest $request): RedirectResponse
@@ -39,12 +39,12 @@ class CategorieConseilController extends Controller
     {
         $conseils = $categorieConseil->conseils()->orderBy('titre')->paginate(10);
 
-        return view('pages.admin.categorie-conseils.show', compact('categorieConseil', 'conseils'));
+        return view('categorie-conseils.show', compact('categorieConseil', 'conseils'));
     }
 
     public function edit(CategorieConseil $categorieConseil): View
     {
-        return view('pages.admin.categorie-conseils.edit', compact('categorieConseil'));
+        return view('categorie-conseils.edit', compact('categorieConseil'));
     }
 
     public function update(SaveCategorieConseilRequest $request, CategorieConseil $categorieConseil): RedirectResponse

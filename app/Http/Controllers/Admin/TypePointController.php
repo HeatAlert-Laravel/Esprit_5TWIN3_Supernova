@@ -22,7 +22,7 @@ class TypePointController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('pages.admin.type-points.index', [
+        return view('type-points.index', [
             'types' => $types,
             'search' => $search,
             'totalTypes' => TypePoint::count(),
@@ -31,7 +31,7 @@ class TypePointController extends Controller
 
     public function create(): View
     {
-        return view('pages.admin.type-points.create');
+        return view('type-points.create');
     }
 
     public function store(Request $request): RedirectResponse
@@ -45,12 +45,12 @@ class TypePointController extends Controller
     {
         $typePoint->load(['pointFraicheurs' => fn ($query) => $query->with('quartier')->latest()]);
 
-        return view('pages.admin.type-points.show', ['type' => $typePoint]);
+        return view('type-points.show', ['type' => $typePoint]);
     }
 
     public function edit(TypePoint $typePoint): View
     {
-        return view('pages.admin.type-points.edit', ['type' => $typePoint]);
+        return view('type-points.edit', ['type' => $typePoint]);
     }
 
     public function update(Request $request, TypePoint $typePoint): RedirectResponse

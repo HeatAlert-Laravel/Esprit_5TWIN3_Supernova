@@ -19,7 +19,7 @@ class DashboardController extends Controller
         $profilesCount = Profile::count();
         $incompleteCount = Profile::incomplete()->count();
 
-        return view('pages.admin.dashboard', [
+        return view('dashboard.index', [
             'usersCount' => User::count(),
             'residentsWithoutProfile' => User::where('role', 'USER')->doesntHave('profile')->count(),
             'profilesCount' => $profilesCount,

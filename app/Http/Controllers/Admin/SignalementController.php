@@ -15,12 +15,12 @@ class SignalementController extends Controller
 {
     public function index(): View
     {
-        return view('pages.admin.signalements.index', ['signalements' => Signalement::with(['user', 'coupure.quartier'])->latest()->paginate(10)]);
+        return view('signalements.index', ['signalements' => Signalement::with(['user', 'coupure.quartier'])->latest()->paginate(10)]);
     }
 
     public function create(): View
     {
-        return view('pages.admin.signalements.create', $this->options());
+        return view('signalements.create', $this->options());
     }
 
     public function store(SignalementRequest $request): RedirectResponse
@@ -32,12 +32,12 @@ class SignalementController extends Controller
 
     public function show(Signalement $signalement): View
     {
-        return view('pages.admin.signalements.show', ['signalement' => $signalement->load(['user', 'coupure.quartier'])]);
+        return view('signalements.show', ['signalement' => $signalement->load(['user', 'coupure.quartier'])]);
     }
 
     public function edit(Signalement $signalement): View
     {
-        return view('pages.admin.signalements.edit', ['signalement' => $signalement] + $this->options());
+        return view('signalements.edit', ['signalement' => $signalement] + $this->options());
     }
 
     public function update(SignalementRequest $request, Signalement $signalement): RedirectResponse

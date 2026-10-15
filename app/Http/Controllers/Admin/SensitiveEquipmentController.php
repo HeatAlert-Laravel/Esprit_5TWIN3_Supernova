@@ -34,7 +34,7 @@ class SensitiveEquipmentController extends Controller
             ->when($filters['outage'] === '1', fn ($query) => $query->whereHas('typeEquipement', fn ($type) => $type->where('sensitive_to_outage', true)))
             ->latest()->paginate(10)->withQueryString();
 
-        return view('pages.admin.equipment.index', [
+        return view('sensitive-equipments.index', [
             'equipment' => $equipment,
             'types' => TypeEquipement::orderBy('name')->get(['id', 'name']),
             'filters' => $filters,
@@ -44,7 +44,7 @@ class SensitiveEquipmentController extends Controller
 
     public function create(): View
     {
-        return view('pages.admin.equipment.create', $this->formData());
+        return view('sensitive-equipments.create', $this->formData());
     }
 
     public function store(Request $request): RedirectResponse
@@ -56,12 +56,12 @@ class SensitiveEquipmentController extends Controller
 
     public function show(SensitiveEquipment $equipment): View
     {
-        return view('pages.admin.equipment.show', ['equipment' => $equipment->load(['profile.user', 'typeEquipement'])]);
+        return view('sensitive-equipments.show', ['equipment' => $equipment->load(['profile.user', 'typeEquipement'])]);
     }
 
     public function edit(SensitiveEquipment $equipment): View
     {
-        return view('pages.admin.equipment.edit', ['equipment' => $equipment] + $this->formData());
+        return view('sensitive-equipments.edit', ['equipment' => $equipment] + $this->formData());
     }
 
     public function update(Request $request, SensitiveEquipment $equipment): RedirectResponse

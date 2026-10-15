@@ -44,7 +44,7 @@ class PointFraicheurController extends Controller
 
         $points = $query->latest()->paginate(10)->withQueryString();
 
-        return view('pages.admin.point-fraicheurs.index', [
+        return view('point-fraicheurs.index', [
             'points' => $points,
             'types' => TypePoint::orderBy('nom')->get(),
             'quartiers' => Quartier::orderBy('nom')->get(),
@@ -58,7 +58,7 @@ class PointFraicheurController extends Controller
 
     public function create(): View
     {
-        return view('pages.admin.point-fraicheurs.create', [
+        return view('point-fraicheurs.create', [
             'types' => TypePoint::orderBy('nom')->get(),
             'quartiers' => Quartier::orderBy('nom')->get(),
         ]);
@@ -75,12 +75,12 @@ class PointFraicheurController extends Controller
     {
         $pointFraicheur->load(['typePoint', 'quartier']);
 
-        return view('pages.admin.point-fraicheurs.show', ['point' => $pointFraicheur]);
+        return view('point-fraicheurs.show', ['point' => $pointFraicheur]);
     }
 
     public function edit(PointFraicheur $pointFraicheur): View
     {
-        return view('pages.admin.point-fraicheurs.edit', [
+        return view('point-fraicheurs.edit', [
             'point' => $pointFraicheur,
             'types' => TypePoint::orderBy('nom')->get(),
             'quartiers' => Quartier::orderBy('nom')->get(),

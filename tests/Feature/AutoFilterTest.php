@@ -44,9 +44,11 @@ test('the Filter button only exists as a no-JavaScript fallback and Reset goes t
 
 test('the auto-filter script debounces search and applies selects and checkboxes on change', function () {
     $js = file_get_contents(base_path('resources/js/auto-filter.js'));
-    $app = file_get_contents(base_path('resources/js/app.js'));
+    $admin = file_get_contents(base_path('resources/js/admin.js'));
+    $resident = file_get_contents(base_path('resources/js/app.js'));
 
-    expect($app)->toContain("import './auto-filter'")
+    expect($admin)->toContain("import './auto-filter'")
+        ->and($resident)->toContain("import './auto-filter'")
         ->and($js)->toContain('DEBOUNCE_MS = 400')
         ->and($js)->toContain("input[type=\"search\"]")
         ->and($js)->toContain('select, input[type="checkbox"], input[type="radio"]')
