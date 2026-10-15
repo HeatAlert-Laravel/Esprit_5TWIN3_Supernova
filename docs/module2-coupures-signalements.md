@@ -1,5 +1,7 @@
 # Livraison — Coupures & Signalements
 
+> Note historique : cette livraison date de l'ancienne organisation en deux applications. Depuis, le projet est une seule application Laravel : `shared/app/Models` → `app/Models`, `shared/database` → `database/`, `backoffice/app/Http/Controllers/Admin` et `frontoffice/app/Http/Controllers` → `app/Http/Controllers`, vues → `resources/views/coupures` et `resources/views/signalements`. Toutes les commandes se lancent depuis la racine du dépôt.
+
 Branche : `feature/module2-coupure-Signalement`.
 La branche distante a été récupérée ; elle était déjà à jour.
 Aucun commit ni push effectué.
