@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\PointFraicheur;
 use App\Models\Profile;
 use App\Models\SensitiveEquipment;
 use App\Models\TypeEquipement;
+use App\Models\TypePoint;
+use App\Support\Readiness;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -31,9 +34,12 @@ class AppServiceProvider extends ServiceProvider
             'profiles' => Profile::count(),
             'equipment' => SensitiveEquipment::count(),
             'types' => TypeEquipement::count(),
-            'cooling_points' => \App\Models\PointFraicheur::count(),
-            'point_types' => \App\Models\TypePoint::count(),
+            'cooling_points' => PointFraicheur::count(),
+            'point_types' => TypePoint::count(),
         ]));
+
+        // Display-only readiness checklist (see App\Support\Readiness) for the home page and My Profile.
+        View::composer('partials.readiness-card', fn ($view) => $view->with('readiness', Readiness::for(auth()->user())));
 
         // Force HTTPS in production
         if (config('app.env') === 'production') {

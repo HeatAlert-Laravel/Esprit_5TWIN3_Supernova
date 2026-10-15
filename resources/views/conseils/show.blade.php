@@ -3,7 +3,7 @@
 @section('content')
 <x-ha.page-header :title="$conseil->titre" :breadcrumbs="[[__('Dashboard'), route('admin.dashboard')], [__('Advice'), route('admin.conseils.index')], [$conseil->titre, null]]">
     <x-slot:badges><x-ha.badge :variant="$conseil->actif ? 'success' : 'neutral'">{{ $conseil->actif ? __('Published') : __('Draft') }}</x-ha.badge></x-slot:badges>
-    <x-slot:actions><a class="ha-btn ha-btn--outline" href="{{ rtrim(config('app.frontoffice_url'), '/') }}/advice/{{ $conseil->id }}/preview" target="_blank" rel="noopener"><x-ha.icon name="eye" size="sm" />{{ __('Preview as resident') }}<span class="sr-only">{{ __('(opens in a new tab)') }}</span></a><a class="ha-btn ha-btn--primary" href="{{ route('admin.conseils.edit', $conseil) }}"><x-ha.icon name="pencil" size="sm" />{{ __('Edit advice') }}</a></x-slot:actions>
+    <x-slot:actions><a class="ha-btn ha-btn--outline" href="{{ route('advice.preview', $conseil) }}" target="_blank" rel="noopener"><x-ha.icon name="eye" size="sm" />{{ __('Preview as resident') }}<span class="sr-only">{{ __('(opens in a new tab)') }}</span></a><a class="ha-btn ha-btn--primary" href="{{ route('admin.conseils.edit', $conseil) }}"><x-ha.icon name="pencil" size="sm" />{{ __('Edit advice') }}</a></x-slot:actions>
 </x-ha.page-header>
 <div class="ha-grid ha-grid--main">
     <article class="ha-card ha-advice-article">

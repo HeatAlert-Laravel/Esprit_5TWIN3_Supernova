@@ -7,23 +7,37 @@ use Illuminate\Support\Facades\Blade;
 beforeEach(fn () => $this->artisan('migrate', ['--force' => true]));
 
 test('x-logo renders a unique mask id per instance and links each sun to its own mask', function () {
-    $html = Blade::render('<x-logo variant="dark" /><x-logo variant="dark" :wordmark="false" /><x-logo />');
+    $renders = [
+        Blade::render('<x-logo variant="dark" /><x-logo variant="dark" :wordmark="false" /><x-logo />'),
+        Blade::render('<x-logo /><x-logo variant="dark" :size="96" :wordmark="false" /><x-logo variant="mono" :size="28" />'),
+    ];
 
-    preg_match_all('/<mask id="(ha-cut-[a-z0-9]+)"/', $html, $masks);
-    preg_match_all('/mask="url\(#(ha-cut-[a-z0-9]+)\)"/', $html, $refs);
+    foreach ($renders as $html) {
+        preg_match_all('/<mask id="(ha-cut-[a-z0-9]+)"/', $html, $masks);
+        preg_match_all('/mask="url\(#(ha-cut-[a-z0-9]+)\)"/', $html, $refs);
 
-    expect($masks[1])->toHaveCount(3)->and(array_unique($masks[1]))->toHaveCount(3)
-        ->and($refs[1])->toBe($masks[1])
-        ->and($html)->not->toContain('id="ha-cut"')->and($html)->not->toContain('<img');
+        expect($masks[1])->toHaveCount(3)->and(array_unique($masks[1]))->toHaveCount(3)
+            ->and($refs[1])->toBe($masks[1])
+            ->and($html)->not->toContain('id="ha-cut"')->and($html)->not->toContain('<img');
+    }
 });
 
 test('x-logo variants use the approved colors and wordmark rules', function () {
+    $light = Blade::render('<x-logo />');
+    expect($light)->toContain('fill="#E8590C"')->toContain('fill="#0F3D3E"')->toContain('color: #0F3D3E')
+        ->toContain('HeatAlert')->toContain('--ha-logo-size: 36px')->toContain('aria-hidden="true"');
+
     $dark = Blade::render('<x-logo variant="dark" :size="32" />');
     expect($dark)->toContain('fill="#E8590C"')->toContain('fill="#DCEFEC"')->toContain('color: #FFFFFF')
         ->toContain('--ha-logo-size: 32px')->toContain('aria-hidden="true"');
 
-    expect(Blade::render('<x-logo />'))->toContain('fill="#0F3D3E"')->toContain('color: #0F3D3E');
-    expect(Blade::render('<x-logo variant="mono" />'))->toContain('fill="currentColor"')->not->toContain('#E8590C');
+    $mono = Blade::render('<x-logo variant="mono" />');
+    expect($mono)->toContain('fill="currentColor"')->not->toContain('#E8590C');
+
+    $iconOnly = Blade::render('<x-logo :wordmark="false" />');
+    expect($iconOnly)->not->toContain('ha-logo__word')->toContain('aria-label="HeatAlert"');
+
+    // The icon never shrinks below the 16px brand minimum.
     expect(Blade::render('<x-logo :size="4" />'))->toContain('--ha-logo-size: 16px');
 });
 
@@ -39,10 +53,29 @@ test('admin sidebar logo links to the dashboard and the layout declares the favi
             ->assertSee('name="theme-color" content="#0F3D3E"', false)
             ->assertDontSee('heat-alert-mark', false);
     }
-    $this->post(route('logout'));
+    $this->post(route('logout'))->assertRedirect(route('home'));
 
-    $this->get(route('login'))->assertOk()->assertSee('aria-label="HeatAlert administration"', false)
-        ->assertSee('rel="icon" href="/favicon.svg"', false)->assertSee('Admin login');
+    // Administrators sign in through the same login page as residents.
+    $this->get(route('login'))->assertOk()->assertSee('rel="icon" href="/favicon.svg"', false)
+        ->assertDontSee('aria-label="HeatAlert administration"', false);
+});
+
+test('home navbar and auth pages show the Shelter logo, not the old warning triangle', function () {
+    $home = $this->get('/')->assertOk();
+    $home->assertSee('aria-label="HeatAlert home"', false)->assertSee('href="'.route('home').'"', false)
+        ->assertSee('rel="icon" href="/favicon.svg"', false)->assertSee('href="/favicon-32.png"', false)
+        ->assertSee('rel="apple-touch-icon" href="/apple-touch-icon.png"', false)
+        ->assertSee('name="theme-color" content="#0F3D3E"', false)
+        ->assertDontSee('heat-alert-mark', false)->assertDontSee('#f97316', false);
+    expect(substr_count($home->getContent(), 'rel="icon"'))->toBe(2);
+
+    foreach (['login', 'register'] as $page) {
+        $html = $this->get(route($page))->assertOk()->getContent();
+        // light lockup above the form + dark mark-only on the Shade panel
+        expect(substr_count($html, 'class="ha-logo'))->toBeGreaterThanOrEqual(3)->and($html)->toContain('--ha-logo-size: 96px');
+    }
+    $this->get(route('password.request'))->assertOk()->assertSee('--ha-logo-size: 28px', false);
+    $this->get(route('password.reset', ['token' => 'x', 'email' => 'a@b.c']))->assertOk()->assertSee('--ha-logo-size: 28px', false);
 });
 
 test('brand and favicon files exist and are valid in public', function () {

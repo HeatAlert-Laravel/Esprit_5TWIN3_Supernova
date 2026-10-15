@@ -68,7 +68,7 @@
     </nav>
 
     <div class="ha-sidebar__foot">
-        <a href="{{ config('app.frontoffice_url') }}"
+        <a href="{{ route('home') }}"
            title="Public site"
            class="ha-nav-item">
 

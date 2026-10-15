@@ -2,7 +2,7 @@
 @section('title', $conseil->titre)
 @section('content')
 @if($preview)
-    <div class="ha-alert ha-alert--warning" role="status"><x-ha.icon name="eye" /><div><strong>{{ __('Administrator preview') }}</strong><p>{{ $conseil->actif ? __('This article is published. You are viewing the resident layout.') : __('This article is a draft. Residents cannot see it yet.') }}</p><a href="{{ rtrim(config('app.backoffice_url'), '/') }}/admin/conseils/{{ $conseil->id }}/edit" class="ha-btn ha-btn--ghost ha-btn--sm">{{ __('Back to editing') }}</a></div></div>
+    <div class="ha-alert ha-alert--warning" role="status"><x-ha.icon name="eye" /><div><strong>{{ __('Administrator preview') }}</strong><p>{{ $conseil->actif ? __('This article is published. You are viewing the resident layout.') : __('This article is a draft. Residents cannot see it yet.') }}</p><a href="{{ route('admin.conseils.edit', $conseil) }}" class="ha-btn ha-btn--ghost ha-btn--sm">{{ __('Back to editing') }}</a></div></div>
 @endif
 <x-ha.page-header :title="$conseil->titre" :eyebrow="$conseil->categorieConseil->nom" :breadcrumbs="[[__('Home'), route('home')], [__('Advice'), route('advice')], [$conseil->titre, null]]">
     <x-slot:badges><x-ha.badge variant="cool">{{ $conseil->situationLabel() }}</x-ha.badge><x-ha.badge variant="neutral">{{ $conseil->audienceLabel() }}</x-ha.badge></x-slot:badges>

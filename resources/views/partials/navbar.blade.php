@@ -10,7 +10,7 @@
                     @endforeach
                     @auth
                         <li><a href="{{ route('my-profile') }}" class="ha-nav__link" @if(request()->routeIs('my-profile*', 'profile.equipment.*')) aria-current="page" @endif>My Profile</a></li>
-                        @if(auth()->user()->role === 'ADMIN')<li><a href="{{ rtrim(config('app.backoffice_url'), '/') }}/admin" class="ha-nav__link">Admin</a></li>@endif
+                        @if(auth()->user()->role === 'ADMIN')<li><a href="{{ route('admin.dashboard') }}" class="ha-nav__link">Admin</a></li>@endif
                     @endauth
                 </ul>
             </nav>
