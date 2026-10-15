@@ -71,6 +71,11 @@ class QuartierController extends Controller
                 ->with('error', __('Delete the outages associated with this neighborhood first.'));
         }
 
+        if ($quartier->pointFraicheurs()->exists()) {
+            return redirect()->route('admin.quartiers.index')
+                ->with('error', __('Delete or reassign the cooling points associated with this neighborhood first.'));
+        }
+
         $quartier->delete();
 
         return redirect()->route('admin.quartiers.index')->with('status', 'Neighborhood deleted.');
