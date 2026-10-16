@@ -9,7 +9,6 @@ export function initAdviceEditors() {
         const toolbar = wrapper.querySelector('[data-editor-toolbar]');
         const heading = wrapper.querySelector('[data-editor-heading]');
         const counter = wrapper.querySelector('[data-editor-counter]');
-        const error = wrapper.querySelector('[data-editor-error]');
         const form = wrapper.closest('form');
         const quill = new Quill(surface, {
             formats: ['bold', 'italic', 'header', 'list'],
@@ -29,8 +28,9 @@ export function initAdviceEditors() {
         quill.root.setAttribute('role', 'textbox');
         quill.root.setAttribute('aria-multiline', 'true');
         quill.root.setAttribute('aria-required', 'true');
-        quill.root.setAttribute('aria-describedby', form.querySelector('#contenu_formate-error')
-            ? 'contenu-help contenu_formate-error' : 'contenu-help');
+        quill.root.setAttribute('aria-describedby', ['contenu-help', 'contenu-error', 'contenu_formate-error']
+            .filter((id) => form.querySelector('#' + id)).join(' '));
+        if (wrapper.dataset.invalid === 'true') quill.root.setAttribute('aria-invalid', 'true');
         const label = form.querySelector('label[for="contenu"]');
         label.id = 'contenu-label';
         quill.root.setAttribute('aria-labelledby', label.id);
@@ -42,10 +42,6 @@ export function initAdviceEditors() {
             const words = textarea.value.trim() ? textarea.value.trim().split(/\s+/u).length : 0;
             counter.textContent = wrapper.dataset.counter
                 .replace(':words', words).replace(':minutes', Math.max(1, Math.ceil(words / 200)));
-            if (!error.hidden) {
-                error.hidden = true;
-                quill.root.removeAttribute('aria-invalid');
-            }
         };
         const updateToolbar = () => {
             const range = quill.getSelection() || lastRange;
@@ -88,17 +84,8 @@ export function initAdviceEditors() {
             updateToolbar();
         });
         quill.on('text-change', () => { sync(); updateToolbar(); });
-        form.addEventListener('submit', (event) => {
-            sync();
-            const text = textarea.value;
-            if (!text.trim() || Array.from(text).length > 15000) {
-                event.preventDefault();
-                error.textContent = !text.trim() ? wrapper.dataset.emptyMessage : wrapper.dataset.lengthMessage;
-                error.hidden = false;
-                quill.root.setAttribute('aria-invalid', 'true');
-                quill.focus();
-            }
-        });
+        // Laravel validates the complete form and returns the shared inline errors.
+        form.addEventListener('submit', sync);
         sync();
     });
 }

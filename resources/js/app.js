@@ -66,3 +66,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 import './advice-bookmarks';
+import './advice-reader';

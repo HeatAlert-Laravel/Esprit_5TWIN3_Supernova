@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdviceAudioController;
 use App\Http\Controllers\AdviceBookmarkController;
 use App\Http\Controllers\AdviceController;
 use App\Http\Controllers\AlerteMeteoController;
@@ -35,6 +36,10 @@ Route::get('/weather-alerts', [WeatherAlertController::class, 'index'])->name('w
 Route::get('/outages', [OutageController::class, 'index'])->name('outages');
 Route::get('/cooling-points', [CoolingPointController::class, 'index'])->name('cooling-points');
 Route::get('/advice', [AdviceController::class, 'index'])->name('advice');
+Route::post('/advice/{conseil}/audio/{voice}', [AdviceAudioController::class, 'store'])
+    ->whereIn('voice', ['female', 'male'])->middleware('throttle:6,1')->name('advice.audio.store');
+Route::get('/advice/{conseil}/audio/{voice}/{version}', [AdviceAudioController::class, 'show'])
+    ->whereIn('voice', ['female', 'male'])->where('version', '[a-f0-9]{64}')->name('advice.audio.show');
 
 /*
 |--------------------------------------------------------------------------

@@ -157,6 +157,41 @@ test('validation preserves typed article values and gives a clear path when no c
     $this->get(route('admin.conseils.create'))->assertOk()->assertSee('value="My typed title"', false);
 });
 
+test('advice and category forms use inline Laravel validation on create and edit', function () {
+    $category = CategorieConseil::factory()->create();
+    $article = Conseil::factory()->for($category, 'categorieConseil')->create();
+    $this->actingAs($this->admin);
+    foreach ([
+        route('admin.conseils.create'), route('admin.conseils.edit', $article),
+        route('admin.categorie-conseils.create'), route('admin.categorie-conseils.edit', $category),
+    ] as $url) {
+        $this->get($url)->assertOk()->assertSee('<form novalidate method="POST"', false);
+    }
+
+    foreach ([
+        ['post', route('admin.conseils.store'), route('admin.conseils.create')],
+        ['put', route('admin.conseils.update', $article), route('admin.conseils.edit', $article)],
+    ] as [$method, $action, $form]) {
+        $this->from($form)->{$method}($action, [
+            'contenu_formate' => json_encode(['ops' => [['insert' => "\n"]]]),
+        ])->assertSessionHasErrors(['titre', 'categorie_conseil_id', 'resume', 'contenu']);
+        $this->get($form)->assertOk()->assertSee('Please correct the highlighted fields.')
+            ->assertSee('aria-invalid="true"', false)->assertSee('id="titre-error"', false)
+            ->assertSee('id="resume-error"', false)->assertSee('id="categorie_conseil_id-error"', false)
+            ->assertSee('id="contenu-error"', false)->assertSee('data-invalid="true"', false)
+            ->assertDontSee('The article formatting is invalid or the article is too long.');
+    }
+    foreach ([
+        ['post', route('admin.categorie-conseils.store'), route('admin.categorie-conseils.create')],
+        ['put', route('admin.categorie-conseils.update', $category), route('admin.categorie-conseils.edit', $category)],
+    ] as [$method, $action, $form]) {
+        $this->from($form)->{$method}($action, ['nom' => '', 'icone' => 'sun'])->assertSessionHasErrors('nom');
+        $this->get($form)->assertOk()->assertSee('Please correct the highlighted fields.')
+            ->assertSee('id="nom-error"', false)->assertSee('aria-invalid="true"', false);
+    }
+    expect($article->fresh()->titre)->toBe($article->titre)->and($category->fresh()->nom)->toBe($category->nom);
+});
+
 test('admin advice filters compose and preserve query parameters across pages', function () {
     $category = CategorieConseil::factory()->create();
     Conseil::factory()->count(11)->for($category, 'categorieConseil')->published()->create(['titre' => 'Contact planning']);

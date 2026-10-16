@@ -2,6 +2,10 @@
 {{-- One icon family (Lucide-style outline paths, inlined: no CDN, no extra package). Decorative by default. --}}
 @php
     $paths = [
+        'play' => '<path d="m8 5 11 7-11 7z"/>',
+        'pause' => '<path d="M8 5v14M16 5v14"/>',
+        'stop' => '<rect x="6" y="6" width="12" height="12" rx="1"/>',
+        'sliders' => '<path d="M4 7h9m4 0h3M4 17h3m4 0h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
         'sun' => '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-15.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
         'thermometer' => '<path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>',
         'zap' => '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',

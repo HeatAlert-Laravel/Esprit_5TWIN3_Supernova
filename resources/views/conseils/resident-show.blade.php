@@ -9,7 +9,11 @@
     <x-slot:actions>@unless($preview)<x-advice.bookmark :conseil="$conseil" :return-to="$returnTo" :on-article="true" />@endunless</x-slot:actions>
 </x-ha.page-header>
 <article class="ha-card ha-advice-reading">
-    <div class="ha-advice-meta ha-advice-reading-meta"><span><x-ha.icon name="clock" size="sm" />{{ __(':minutes min read', ['minutes' => $conseil->readingMinutes()]) }}</span><span>{{ __('Updated :date', ['date' => $conseil->updated_at->format('d M Y')]) }}</span></div>
+    <div class="ha-advice-meta ha-advice-reading-meta">
+        <span><x-ha.icon name="clock" size="sm" />{{ __(':minutes min read', ['minutes' => $conseil->readingMinutes()]) }}</span>
+        <span>{{ __('Updated :date', ['date' => $conseil->updated_at->format('d M Y')]) }}</span>
+        @unless($preview)<x-advice.reader :conseil="$conseil" />@endunless
+    </div>
     <p class="ha-advice-summary">{{ $conseil->resume }}</p>
     <div class="ha-advice-body ha-article-content">{!! $conseil->bodyHtml() !!}</div>
 </article>

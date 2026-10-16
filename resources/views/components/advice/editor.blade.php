@@ -7,8 +7,7 @@
     }
 @endphp
 <div class="ha-article-editor" data-advice-editor
-    data-empty-message="{{ __('Write some advice before saving.') }}"
-    data-length-message="{{ __('Keep the article under 15000 characters.') }}"
+    @if($errors->hasAny(['contenu', 'contenu_formate'])) data-invalid="true" @endif
     data-counter="{{ __(':words words · :minutes min read') }}">
     <div class="ha-editor-toolbar" role="toolbar" aria-label="{{ __('Article formatting') }}" hidden data-editor-toolbar>
         <label class="sr-only" for="article-style">{{ __('Text style') }}</label>
@@ -28,7 +27,6 @@
     <textarea id="contenu" name="contenu" class="ha-textarea" rows="10" maxlength="15000" @if($document) readonly @else required @endif aria-describedby="contenu-help @error('contenu') contenu-error @enderror" @error('contenu') aria-invalid="true" @enderror>{{ old('contenu', $conseil->contenu) }}</textarea>
     <input type="hidden" name="contenu_formate" data-editor-document value="{{ $document ? json_encode($document, JSON_UNESCAPED_UNICODE) : '' }}">
     <div class="ha-editor-footer" hidden data-editor-footer><span data-editor-counter></span><span>{{ __('Short sections and lists work best.') }}</span></div>
-    <p class="ha-error" role="alert" hidden data-editor-error></p>
     <noscript><p class="ha-help">{{ __('Enable JavaScript to edit article formatting. Existing formatting will be preserved.') }}</p></noscript>
 </div>
 @error('contenu_formate')<p class="ha-error" id="contenu_formate-error">{{ $message }}</p>@enderror

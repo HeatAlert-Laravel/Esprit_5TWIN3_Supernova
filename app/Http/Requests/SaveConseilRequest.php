@@ -46,6 +46,7 @@ class SaveConseilRequest extends FormRequest
                 $this->merge(['contenu_formate' => $document, 'contenu' => AdviceDocument::text($document)]);
             } catch (InvalidArgumentException) {
                 $this->invalidDocument = true;
+                $this->merge(['contenu_formate' => null]);
             }
         } else {
             $this->merge(['contenu_formate' => null]);
@@ -55,7 +56,7 @@ class SaveConseilRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
-            if ($this->invalidDocument) {
+            if ($this->invalidDocument && ! $validator->errors()->has('contenu')) {
                 $validator->errors()->add('contenu_formate', __('The article formatting is invalid or the article is too long.'));
             }
         });

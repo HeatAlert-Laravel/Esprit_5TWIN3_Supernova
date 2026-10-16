@@ -197,6 +197,16 @@ Residents browse published articles at `/advice`, grouped by category, with sear
 
 Signed-in residents can save articles from cards or the reading page and find them at `/advice/saved`. Bookmarks belong only to their account. Guests get a sign-in prompt. Saving is never triggered by a GET request. Result counts update with filters; Back to results preserves filters and pagination, including when opening an article from saved advice.
 
+### Article audio reader
+
+Published article reading pages have a compact Gemini-powered reader on the metadata row, beside the updated date and above the summary. Listing cards have no audio controls. An icon toggles play/pause; stop and elapsed time appear once audio is ready. A small settings menu contains Kore (female) or Charon (male), playback speed and a seek slider. Changing voice stops the previous recording. Nothing plays on page load.
+
+Set GEMINI_API_KEY in the ignored local .env. Optional settings are GEMINI_TTS_MODEL (default gemini-3.8-flash-lite-tts) and GEMINI_TTS_DAILY_LIMIT (default 30 new recordings in a rolling 24-hour period). No new package or database migration is required. After changing settings, run php artisan config:clear; after pulling frontend changes, run npm ci and npm run build from the repository root.
+
+Only the article title, summary and plain-text content are sent to Google. Audio is cached privately under storage/app/private/advice-audio, separately for each voice and article version. Editing text invalidates the old recording; unpublishing an article immediately blocks its audio endpoint. GET requests only serve existing recordings; explicit POST requests generate audio, with CSRF protection, per-client throttling and a shared generation budget. The API key and upstream error details never reach the browser. Rate limits and account quotas still apply; cached audio can be reused without another generation request. Missing configuration and provider failures show reader-friendly messages while the article remains readable.
+
+The free Gemini tier may use submitted content to improve Google's products. Keep draft/private content out of generation. Each teammate configures their own local key; do not commit .env, keys, generated audio or local database data.
+
 Optional example content (4 categories, 11 published articles, 1 draft):
 
 ```powershell

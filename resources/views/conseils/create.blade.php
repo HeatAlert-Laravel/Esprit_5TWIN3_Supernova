@@ -6,7 +6,7 @@
 @if($categories->isEmpty())
     <div class="ha-card"><x-ha.empty-state icon="lightbulb" :title="__('Start with a category')" :description="__('Create a category first, then add your advice article.')"><a class="ha-btn ha-btn--primary" href="{{ route('admin.categorie-conseils.create') }}">{{ __('Add category') }}</a></x-ha.empty-state></div>
 @else
-<form method="POST" action="{{ route('admin.conseils.store') }}" class="ha-form">
+<form novalidate method="POST" action="{{ route('admin.conseils.store') }}" class="ha-form">
     <div class="ha-card">@include('conseils._form')</div>
 </form>
 @endif

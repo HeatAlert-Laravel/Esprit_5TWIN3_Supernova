@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'tts_model' => env('GEMINI_TTS_MODEL', 'gemini-3.8-flash-lite-tts'),
+        'tts_daily_limit' => (int) env('GEMINI_TTS_DAILY_LIMIT', 30),
+    ],
 
     /*
     |--------------------------------------------------------------------------
