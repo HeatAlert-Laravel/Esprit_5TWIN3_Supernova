@@ -698,6 +698,63 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
     .ha-advice-foot { margin-block-start: auto; display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: var(--ha-s-2); border-block-start: 1px solid var(--ha-border); padding-block-start: var(--ha-s-3); }
     .ha-advice-reading { max-width: 800px; margin-inline: auto; padding: clamp(24px, 4vw, 48px); }
     .ha-advice-reading-meta { padding-block-end: var(--ha-s-4); margin-block-end: var(--ha-s-5); border-block-end: 1px solid var(--ha-border); }
+    .ha-assistant-dock { position: fixed; z-index: 40; right: max(var(--ha-s-5), env(safe-area-inset-right)); bottom: max(var(--ha-s-5), env(safe-area-inset-bottom)); width: min(480px, calc(100vw - 40px)); display: flex; flex-direction: column; align-items: flex-end; gap: var(--ha-s-3); pointer-events: none; }
+    .ha-assistant-dock > * { pointer-events: auto; }
+    .ha-assistant-toggle { min-height: 48px; border-radius: 999px; padding-inline: var(--ha-s-5); box-shadow: var(--ha-shadow-hover); }
+    .ha-assistant-toggle[aria-expanded="true"] { background: var(--ha-ember-700); }
+    .ha-article-assistant { width: 100%; min-width: 0; height: min(640px, calc(100dvh - 120px)); display: flex; flex-direction: column; overflow: hidden; background: var(--ha-surface); border: 1px solid var(--ha-border); border-radius: var(--ha-r-lg); box-shadow: var(--ha-shadow-hover); }
+    .ha-article-assistant[hidden], .ha-article-assistant [hidden] { display: none; }
+    .ha-assistant-head, .ha-assistant-shortcuts, .ha-assistant-question { display: flex; align-items: center; gap: var(--ha-s-2); }
+    .ha-assistant-head { justify-content: space-between; padding: var(--ha-s-4) var(--ha-s-5); border-bottom: 1px solid var(--ha-border); }
+    .ha-assistant-head > div { min-width: 0; flex: 1; }
+    .ha-assistant-context { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin-block-start: var(--ha-s-1); }
+    .ha-article-assistant form { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+    .ha-assistant-conversation { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--ha-s-5); background: var(--ha-bg); }
+    .ha-assistant-welcome { padding-block: var(--ha-s-6); text-align: center; color: var(--ha-ink-2); }
+    .ha-assistant-welcome > span { display: block; color: var(--ha-ember-600); font-size: 1.75rem; margin-block-end: var(--ha-s-3); }
+    .ha-assistant-welcome h3 { color: var(--ha-ink); font-size: 1rem; margin-block-end: var(--ha-s-2); }
+    .ha-assistant-welcome p { font-size: .875rem; line-height: 1.7; max-width: 34ch; margin-inline: auto; }
+    .ha-chat-thread { display: flex; flex-direction: column; gap: var(--ha-s-5); }
+    .ha-chat-message { display: flex; align-items: flex-start; gap: var(--ha-s-2); }
+    .ha-chat-message--user { flex-direction: row-reverse; }
+    .ha-chat-avatar { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; font-size: .8125rem; font-weight: 600; }
+    .ha-chat-avatar--ai { color: var(--ha-ember-700); background: var(--ha-ember-50); }
+    .ha-chat-avatar--user { color: var(--ha-shade-800); background: var(--ha-shade-100); }
+    .ha-chat-content { min-width: 0; max-width: calc(100% - 38px); }
+    .ha-chat-message--user .ha-chat-content { max-width: calc(92% - 38px); }
+    .ha-chat-name { display: block; color: var(--ha-ink-2); font-size: .6875rem; font-weight: 500; margin-block-end: var(--ha-s-1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ha-chat-message--user .ha-chat-name { text-align: end; }
+    .ha-chat-bubble { background: var(--ha-surface); border: 1px solid var(--ha-border); border-radius: 0 var(--ha-r-lg) var(--ha-r-lg); padding: var(--ha-s-3); font-size: .875rem; line-height: 1.7; overflow-wrap: anywhere; }
+    .ha-chat-message--user .ha-chat-bubble { background: var(--ha-ember-50); border-color: transparent; border-radius: var(--ha-r-lg) 0 var(--ha-r-lg) var(--ha-r-lg); }
+    .ha-chat-bubble p { white-space: pre-wrap; }
+    .ha-chat-bubble ul { list-style: disc; padding-inline-start: var(--ha-s-5); margin-block-start: var(--ha-s-2); }
+    .ha-chat-bubble li + li { margin-block-start: var(--ha-s-2); }
+    .ha-chat-bubble .ha-assistant-checklist { padding: 0; list-style: none; }
+    .ha-chat-thinking { color: var(--ha-ink-2); }
+    .ha-chat-bubble .ha-btn { margin-block-start: var(--ha-s-2); }
+    .ha-assistant-composer { flex-shrink: 0; padding: var(--ha-s-4) var(--ha-s-5); border-top: 1px solid var(--ha-border); }
+    .ha-assistant-composer .ha-label { font-size: .8125rem; font-weight: 500; margin-block-end: var(--ha-s-2); }
+    .ha-assistant-note { font-size: .6875rem; margin-block-start: var(--ha-s-2); }
+    .ha-assistant-head [data-assistant-close] { min-width: 40px; min-height: 40px; font-size: 1.25rem; }
+    .ha-assistant-head h2, .ha-assistant-answer h3 { font-size: .9375rem; font-weight: 600; margin: 0; }
+    .ha-assistant-shortcuts { flex-wrap: wrap; padding: var(--ha-s-3) var(--ha-s-5); }
+    .ha-assistant-question { align-items: flex-start; }
+    .ha-assistant-question .ha-input { box-sizing: border-box; min-width: 0; flex: 1; resize: none; height: 44px; min-height: 44px; padding: 10px 12px; font: inherit; font-size: .875rem; line-height: 22px; border-radius: var(--ha-r-md); }
+    .ha-assistant-question .ha-btn { box-sizing: border-box; flex-shrink: 0; width: 44px; height: 44px; min-height: 44px; padding: 0; border-radius: var(--ha-r-md); }
+    .ha-assistant-question .ha-btn svg { width: 18px; height: 18px; }
+    .ha-assistant-question [aria-invalid="true"] { border-color: var(--ha-error-ink); }
+    .ha-assistant-error { color: var(--ha-error-ink); font-size: .8125rem; margin-block-start: var(--ha-s-2); }
+    .ha-assistant-status:empty { display: none; }
+    .ha-assistant-status { margin-block: var(--ha-s-3) 0; }
+    .ha-assistant-answer { background: var(--ha-surface); border: 1px solid var(--ha-border); border-radius: var(--ha-r-md); padding: var(--ha-s-4); font-size: .9375rem; line-height: 1.75; overflow-wrap: anywhere; }
+    .ha-assistant-answer h3 { margin-block-end: var(--ha-s-2); }
+    .ha-assistant-answer p { white-space: pre-line; }
+    .ha-assistant-answer ul { list-style: disc; padding-inline-start: var(--ha-s-5); }
+    .ha-assistant-answer li + li { margin-block-start: var(--ha-s-2); }
+    .ha-assistant-answer .ha-assistant-checklist { padding: 0; list-style: none; }
+    .ha-assistant-checklist label { display: flex; align-items: baseline; gap: var(--ha-s-2); cursor: pointer; }
+    .ha-assistant-checklist input { accent-color: var(--ha-ember-600); }
+    .ha-assistant-checklist input:checked + span { text-decoration: line-through; color: var(--ha-ink-2); }
     .ha-advice-summary { font-size: 1.125rem; line-height: 1.7; color: var(--ha-shade-800); margin-block-end: var(--ha-s-6); overflow-wrap: anywhere; }
     .ha-advice-body { color: var(--ha-ink); line-height: 1.85; overflow-wrap: anywhere; }
     .ha-advice-body p { white-space: pre-line; }

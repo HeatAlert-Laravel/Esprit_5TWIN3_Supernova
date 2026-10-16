@@ -6,6 +6,12 @@ return [
         'tts_model' => env('GEMINI_TTS_MODEL', 'gemini-3.8-flash-lite-tts'),
         'tts_daily_limit' => (int) env('GEMINI_TTS_DAILY_LIMIT', 30),
     ],
+    'groq' => [
+        'key' => env('GROQ_API_KEY'),
+        'assistant_model' => env('GROQ_ASSISTANT_MODEL', 'openai/gpt-oss-20b'),
+        'assistant_fallback_models' => array_values(array_filter(array_map('trim', explode(',', env('GROQ_ASSISTANT_FALLBACK_MODELS', 'openai/gpt-oss-120b'))))),
+        'assistant_daily_limit' => (int) env('GROQ_ASSISTANT_DAILY_LIMIT', 100),
+    ],
 
     /*
     |--------------------------------------------------------------------------

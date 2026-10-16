@@ -68,3 +68,4 @@ document.addEventListener('DOMContentLoaded', () => {
 import './advice-bookmarks';
 import './advice-reader';
 import './advice-votes';
+import './advice-assistant';

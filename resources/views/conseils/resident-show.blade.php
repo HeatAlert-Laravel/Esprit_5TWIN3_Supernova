@@ -22,6 +22,12 @@
     <p class="ha-advice-summary">{{ $conseil->resume }}</p>
     <div class="ha-advice-body ha-article-content">{!! $conseil->bodyHtml() !!}</div>
 </article>
+@unless($preview)
+    <div class="ha-assistant-dock" data-article-assistant>
+        <x-advice.assistant :conseil="$conseil" />
+        <button type="button" class="ha-btn ha-btn--primary ha-assistant-toggle" disabled data-assistant-toggle aria-expanded="false" aria-controls="article-assistant"><span aria-hidden="true">✦</span>{{ __('Ask AI') }}</button>
+    </div>
+@endunless
 <div class="ha-advice-back"><a class="ha-btn ha-btn--outline" href="{{ $backUrl }}"><x-ha.icon name="arrow-left" size="sm" class="rtl:rotate-180" />{{ __('Back to results') }}</a><a class="ha-btn ha-btn--ghost" href="{{ route('advice', ['category' => $conseil->categorie_conseil_id]) }}">{{ __('More in :category', ['category' => $conseil->categorieConseil->nom]) }}</a></div>
 @if($related->isNotEmpty())
     <section aria-labelledby="related-heading"><div class="ha-advice-category-head"><h2 id="related-heading">{{ __('You might also find these useful') }}</h2></div><div class="ha-grid ha-grid--3">@foreach($related as $article)<x-advice.card :conseil="$article" :return-to="$returnTo" />@endforeach</div></section>
