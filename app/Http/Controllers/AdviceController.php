@@ -59,6 +59,8 @@ class AdviceController extends Controller
     private function article(Conseil $conseil, bool $preview): View
     {
         $conseil->load('categorieConseil');
+        $conseil->loadVoteCounts();
+        $currentVote = auth()->check() ? (int) $conseil->votes()->where('user_id', auth()->id())->value('value') : 0;
         if (auth()->check()) {
             $conseil->loadExists(['savedByUsers as is_saved' => fn ($users) => $users->where('users.id', auth()->id())]);
         }
@@ -68,6 +70,6 @@ class AdviceController extends Controller
             ->when(auth()->check(), fn ($query) => $query->withExists(['savedByUsers as is_saved' => fn ($users) => $users->where('users.id', auth()->id())]))
             ->whereKeyNot($conseil->id)->orderBy('titre')->limit(3)->get();
 
-        return view('conseils.resident-show', compact('conseil', 'related', 'preview', 'backUrl', 'returnTo'));
+        return view('conseils.resident-show', compact('conseil', 'related', 'preview', 'backUrl', 'returnTo', 'currentVote'));
     }
 }

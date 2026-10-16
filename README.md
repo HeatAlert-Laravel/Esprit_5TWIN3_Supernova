@@ -215,6 +215,12 @@ php artisan db:seed --class=ConseilSeeder
 
 Reseeding upgrades untouched sample articles to structured content while preserving administrator edits.
 
+### Article usefulness votes
+
+Published reading pages show a compact upvote / score / downvote control beside the bookmark in the article header. Each signed-in account has one vote per article; clicking the selected arrow removes it and choosing the opposite arrow switches it. The score is upvotes minus downvotes. Guests can see the score and sign in to vote. Administrators see both counts on the article detail page; drafts cannot receive votes.
+
+Votes are stored in `conseil_votes`, with a unique user/article pair and cascading foreign keys. Teammates should run `php artisan migrate` after pulling, then rebuild assets with `npm ci` and `npm run build`. No vote seeder is needed: feedback comes from users, and each local database keeps its own votes.
+
 ## Credits
 
 The admin layout is built on [TailAdmin Free Laravel](https://tailadmin.com/laravel) (MIT license, see `docs/TailAdmin-LICENSE.txt`).

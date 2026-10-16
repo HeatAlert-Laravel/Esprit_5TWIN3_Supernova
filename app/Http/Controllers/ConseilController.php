@@ -52,7 +52,7 @@ class ConseilController extends Controller
 
     public function show(Conseil $conseil): View
     {
-        return view('conseils.show', ['conseil' => $conseil->load('categorieConseil')]);
+        return view('conseils.show', ['conseil' => $conseil->load('categorieConseil')->loadVoteCounts()]);
     }
 
     public function edit(Conseil $conseil): View

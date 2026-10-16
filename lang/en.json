@@ -267,5 +267,20 @@
     "Stop narration": "Stop narration",
     "Narration settings": "Narration settings",
     "Voice and speed": "Voice and speed",
-    "Playback position": "Playback position"
+    "Playback position": "Playback position",
+    "Vote removed.": "Vote removed.",
+    "Thanks for your feedback.": "Thanks for your feedback.",
+    "Reader feedback": "Reader feedback",
+    "Upvotes": "Upvotes",
+    "Downvotes": "Downvotes",
+    "Usefulness score": "Usefulness score",
+    "Your vote could not be saved. Please try again.": "Your vote could not be saved. Please try again.",
+    "Please wait a moment before voting again.": "Please wait a moment before voting again.",
+    "Was this advice useful?": "Was this advice useful?",
+    "Upvote this advice": "Upvote this advice",
+    "Upvote · Click again to remove": "Upvote · Click again to remove",
+    "Downvote this advice": "Downvote this advice",
+    "Downvote · Click again to remove": "Downvote · Click again to remove",
+    "Sign in to upvote": "Sign in to upvote",
+    "Sign in to downvote": "Sign in to downvote"
 }

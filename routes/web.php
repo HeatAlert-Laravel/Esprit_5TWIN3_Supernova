@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdviceAudioController;
 use App\Http\Controllers\AdviceBookmarkController;
 use App\Http\Controllers\AdviceController;
+use App\Http\Controllers\AdviceVoteController;
 use App\Http\Controllers\AlerteMeteoController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategorieConseilController;
@@ -84,6 +85,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/outages/report', [OutageController::class, 'store'])->name('outages.report.store');
 
     Route::get('/advice/saved', [AdviceController::class, 'index'])->name('advice.saved');
+    Route::get('/advice/{conseil}/vote', [AdviceController::class, 'show'])->name('advice.vote.prompt');
+    Route::put('/advice/{conseil}/vote', [AdviceVoteController::class, 'update'])
+        ->middleware('throttle:30,1')->name('advice.vote.update');
     Route::get('/advice/{conseil}/save', [AdviceController::class, 'show'])->name('advice.save-prompt');
     Route::put('/advice/{conseil}/bookmark', [AdviceBookmarkController::class, 'store'])->name('advice.bookmark.store');
     Route::delete('/advice/{conseil}/bookmark', [AdviceBookmarkController::class, 'destroy'])->name('advice.bookmark.destroy');

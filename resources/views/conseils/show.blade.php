@@ -12,6 +12,14 @@
     </article>
     <aside class="ha-stack">
         <section class="ha-card">
+            <h2 class="ha-card__title">{{ __('Reader feedback') }}</h2>
+            <dl class="ha-dl ha-advice-details">
+                <div><dt>{{ __('Upvotes') }}</dt><dd>{{ $conseil->upvotes_count }}</dd></div>
+                <div><dt>{{ __('Downvotes') }}</dt><dd>{{ $conseil->downvotes_count }}</dd></div>
+                <div><dt>{{ __('Usefulness score') }}</dt><dd>{{ $conseil->voteScore() }}</dd></div>
+            </dl>
+        </section>
+        <section class="ha-card">
             <h2 class="ha-card__title">{{ __('Article details') }}</h2>
             <dl class="ha-dl ha-advice-details">
                 <div><dt>{{ __('Category') }}</dt><dd><a href="{{ route('admin.categorie-conseils.show', $conseil->categorieConseil) }}">{{ $conseil->categorieConseil->nom }}</a></dd></div>

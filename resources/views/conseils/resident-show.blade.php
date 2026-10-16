@@ -6,7 +6,12 @@
 @endif
 <x-ha.page-header :title="$conseil->titre" :eyebrow="$conseil->categorieConseil->nom" :breadcrumbs="[[__('Home'), route('home')], [__('Advice'), route('advice')], [$conseil->titre, null]]">
     <x-slot:badges><x-ha.badge variant="cool">{{ $conseil->situationLabel() }}</x-ha.badge><x-ha.badge variant="neutral">{{ $conseil->audienceLabel() }}</x-ha.badge></x-slot:badges>
-    <x-slot:actions>@unless($preview)<x-advice.bookmark :conseil="$conseil" :return-to="$returnTo" :on-article="true" />@endunless</x-slot:actions>
+    <x-slot:actions>
+        @unless($preview)
+            <x-advice.votes :conseil="$conseil" :current-vote="$currentVote" :return-to="$returnTo" />
+            <x-advice.bookmark :conseil="$conseil" :return-to="$returnTo" :on-article="true" />
+        @endunless
+    </x-slot:actions>
 </x-ha.page-header>
 <article class="ha-card ha-advice-reading">
     <div class="ha-advice-meta ha-advice-reading-meta">

@@ -223,8 +223,9 @@ test('the shared seeder includes all modules with parent records available', fun
     }
 });
 
-test('both advice migrations can roll back in child before parent order', function () {
+test('advice migrations can roll back in child before parent order', function () {
     $this->artisan('migrate:rollback', ['--path' => [
+        'database/migrations/2026_10_16_000001_create_conseil_votes_table.php',
         'database/migrations/2026_10_07_000003_add_formatted_content_and_advice_bookmarks.php',
         'database/migrations/2026_10_07_000002_create_conseils_table.php',
         'database/migrations/2026_10_07_000001_create_categorie_conseils_table.php',

@@ -2,6 +2,8 @@
 {{-- One icon family (Lucide-style outline paths, inlined: no CDN, no extra package). Decorative by default. --}}
 @php
     $paths = [
+        'arrow-up' => '<path d="M9 21v-9H4l8-9 8 9h-5v9z"/>',
+        'arrow-down' => '<path d="M9 3v9H4l8 9 8-9h-5V3z"/>',
         'play' => '<path d="m8 5 11 7-11 7z"/>',
         'pause' => '<path d="M8 5v14M16 5v14"/>',
         'stop' => '<rect x="6" y="6" width="12" height="12" rx="1"/>',

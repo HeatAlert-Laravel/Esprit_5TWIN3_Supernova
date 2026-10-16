@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Conseil extends Model
 {
@@ -46,6 +47,24 @@ class Conseil extends Model
     public function savedByUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->withTimestamps();
+    }
+
+    public function votes(): HasMany
+    {
+        return $this->hasMany(ConseilVote::class);
+    }
+
+    public function loadVoteCounts(): static
+    {
+        return $this->loadCount([
+            'votes as upvotes_count' => fn ($query) => $query->where('value', 1),
+            'votes as downvotes_count' => fn ($query) => $query->where('value', -1),
+        ]);
+    }
+
+    public function voteScore(): int
+    {
+        return (int) $this->upvotes_count - (int) $this->downvotes_count;
     }
 
     public function bodyHtml(): string

@@ -750,6 +750,17 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
     .ha-bookmark-button[aria-pressed="true"] { background: var(--ha-shade-100); border-color: var(--ha-shade-600); color: var(--ha-shade-800); }
     .ha-advice-results { font-size: .875rem; font-weight: 600; color: var(--ha-ink-2); margin-block-end: var(--ha-s-5); }
     .ha-advice-back { display: flex; flex-wrap: wrap; gap: var(--ha-s-2); }
+    .ha-advice-feedback { display: flex; align-items: center; flex-wrap: wrap; gap: var(--ha-s-2); }
+    .ha-vote-pill { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--ha-border); border-radius: 999px; background: var(--ha-surface-2); }
+    .ha-vote-button { display: inline-flex; justify-content: center; align-items: center; width: 34px; height: 34px; padding: 0; border-radius: 50%; background: transparent; color: var(--ha-ink-2); cursor: pointer; transition: background-color .15s, color .15s; }
+    .ha-vote-button--up:hover, .ha-vote-button--up[aria-pressed="true"] { color: var(--ha-ember-700); background: var(--ha-ember-50); }
+    .ha-vote-button--up[aria-pressed="true"] svg { fill: var(--ha-ember-600); stroke: var(--ha-ember-600); }
+    .ha-vote-button--down:hover, .ha-vote-button--down[aria-pressed="true"] { color: var(--ha-info-ink); background: var(--ha-info-bg); }
+    .ha-vote-button:disabled { cursor: wait; opacity: .6; }
+    .ha-vote-score { min-width: 24px; text-align: center; font-size: .875rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ha-ink); }
+    .ha-vote-score[data-vote="1"] { color: var(--ha-ember-700); }
+    .ha-vote-score[data-vote="-1"] { color: var(--ha-info-ink); }
+    .ha-vote-feedback:not(.sr-only) { flex-basis: 100%; font-size: .8125rem; color: var(--ha-error-ink); }
     .ha-audio-reader { position: relative; display: inline-flex; align-items: center; gap: var(--ha-s-1); margin-inline-start: auto; }
     .ha-audio-reader form { display: flex; margin: 0; }
     .ha-reader-icon { width: 34px; height: 34px; min-height: 34px; padding: 0; border-radius: var(--ha-r-sm); }
