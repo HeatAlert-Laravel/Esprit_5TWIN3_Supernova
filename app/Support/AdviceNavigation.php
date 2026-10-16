@@ -15,6 +15,7 @@ final class AdviceNavigation
             'category' => ['nullable', 'integer', 'exists:categorie_conseils,id'],
             'audience' => ['nullable', Rule::in(array_keys(Conseil::AUDIENCES))],
             'situation' => ['nullable', Rule::in(['heatwave', 'outage'])],
+            'sort' => ['nullable', Rule::in(['category', 'helpful'])],
             'page' => ['nullable', 'integer', 'min:1', 'max:10000'],
         ];
     }

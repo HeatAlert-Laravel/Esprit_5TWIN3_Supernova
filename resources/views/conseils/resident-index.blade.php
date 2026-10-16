@@ -14,13 +14,18 @@
     <div class="ha-field ha-field--grow"><label class="ha-label" for="q">{{ __('Search') }}</label><input id="q" name="q" type="search" class="ha-input" maxlength="100" value="{{ $search }}" placeholder="{{ __('What would you like help with?') }}"></div>
     <div class="ha-field"><label class="ha-label" for="category">{{ __('Category') }}</label><select id="category" name="category" class="ha-select"><option value="">{{ __('All categories') }}</option>@foreach($categories as $category)<option value="{{ $category->id }}" @selected((string) $categoryId === (string) $category->id)>{{ $category->nom }}</option>@endforeach</select></div>
     <div class="ha-field"><label class="ha-label" for="audience">{{ __('Who is it for?') }}</label><select id="audience" name="audience" class="ha-select"><option value="">{{ __('All audiences') }}</option>@foreach(\App\Models\Conseil::AUDIENCES as $value => $label)<option value="{{ $value }}" @selected($audience === $value)>{{ __($label) }}</option>@endforeach</select></div>
-    <div class="ha-filter__actions"><noscript><button class="ha-btn ha-btn--secondary">{{ __('Apply filters') }}</button></noscript>@if($search !== '' || $categoryId !== '' || $audience !== '' || $situation !== '')<a href="{{ route($indexRoute) }}" class="ha-btn ha-btn--ghost">{{ __('Reset filters') }}</a>@endif</div>
+    <div class="ha-field"><label class="ha-label" for="sort">{{ __('Sort by') }}</label><select id="sort" name="sort" class="ha-select"><option value="category" @selected($sort === 'category')>{{ __('Category') }}</option><option value="helpful" @selected($sort === 'helpful')>{{ __('Most helpful') }}</option></select></div>
+    <div class="ha-filter__actions"><noscript><button class="ha-btn ha-btn--secondary">{{ __('Apply filters') }}</button></noscript>@if($search !== '' || $categoryId !== '' || $audience !== '' || $situation !== '' || $sort !== 'category')<a href="{{ route($indexRoute) }}" class="ha-btn ha-btn--ghost">{{ __('Reset filters') }}</a>@endif</div>
 </form>
 @if($audience !== '')<p class="ha-help ha-advice-filter-note">{{ __('Also includes advice for everyone.') }}</p>@endif
 <p class="ha-advice-results" role="status">{{ $conseils->total() === 1 ? __('1 article') : __(':count articles', ['count' => $conseils->total()]) }}</p>
 @if($conseils->isEmpty())
     <div class="ha-card"><x-ha.empty-state :icon="$onlySaved ? 'bookmark' : 'lightbulb'" :title="$onlySaved && $search === '' && $categoryId === '' && $audience === '' && $situation === '' ? __('No saved advice yet') : __('No advice found just yet')" :description="$onlySaved ? __('Save useful articles while browsing. They will appear here when published.') : __('Try another search or reset your filters to explore all available advice.')"><a class="ha-btn ha-btn--outline" href="{{ route('advice') }}">{{ __('Explore all advice') }}</a></x-ha.empty-state></div>
 @else
+    @if($sort === 'helpful')
+        <p class="ha-help">{{ __('Ranked by upvotes minus downvotes. Reader feedback reflects usefulness, not expert review.') }}</p>
+        <div class="ha-grid ha-grid--3">@foreach($conseils as $conseil)<x-advice.card :conseil="$conseil" :return-to="$returnTo" />@endforeach</div>
+    @else
     <div class="ha-stack">
         @foreach($conseils->getCollection()->groupBy('categorie_conseil_id') as $group)
             @php($category = $group->first()->categorieConseil)
@@ -30,6 +35,7 @@
             </section>
         @endforeach
     </div>
+    @endif
     <div class="ha-pagination">{{ $conseils->links() }}</div>
 @endif
 @endsection

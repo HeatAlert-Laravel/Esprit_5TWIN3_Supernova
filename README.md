@@ -221,6 +221,10 @@ Published reading pages show a compact upvote / score / downvote control beside 
 
 Votes are stored in `conseil_votes`, with a unique user/article pair and cascading foreign keys. Teammates should run `php artisan migrate` after pulling, then rebuild assets with `npm ci` and `npm run build`. No vote seeder is needed: feedback comes from users, and each local database keeps its own votes.
 
+The advice and saved-advice indexes offer “Most helpful” sorting across categories: net score descending, then upvote count, title and ID for stable pagination. Unrated articles have score zero; search and filters still apply, and returning from an article preserves the sort. The default grouped category view remains available.
+
+The admin advice list shows separate vote counts and offers feedback filters for ranked voted articles, articles receiving downvotes, and published articles without votes. Its expandable feedback overview lists up to three positive-score articles and three articles with downvotes, matching the search, category and visibility filters. Downvotes invite review; they do not automatically unpublish content. Drafts are excluded from feedback filters and overview lists, while any historical votes remain visible on their table rows and detail pages. No additional migration is needed for sorting or insights.
+
 ## Credits
 
 The admin layout is built on [TailAdmin Free Laravel](https://tailadmin.com/laravel) (MIT license, see `docs/TailAdmin-LICENSE.txt`).

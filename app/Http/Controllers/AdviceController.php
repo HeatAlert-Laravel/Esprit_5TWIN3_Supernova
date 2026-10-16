@@ -21,15 +21,17 @@ class AdviceController extends Controller
         $categoryId = $filters['category'] ?? '';
         $audience = $filters['audience'] ?? '';
         $situation = $filters['situation'] ?? '';
-        $conseils = Conseil::published()->with('categorieConseil')
+        $sort = $filters['sort'] ?? 'category';
+        $conseils = Conseil::published()->with('categorieConseil')->withFeedback()
             ->when($onlySaved, fn ($query) => $query->whereHas('savedByUsers', fn ($users) => $users->where('users.id', auth()->id())))
             ->when(auth()->check(), fn ($query) => $query->withExists(['savedByUsers as is_saved' => fn ($users) => $users->where('users.id', auth()->id())]))
             ->when($search !== '', fn ($query) => $query->where(fn ($q) => $q->where('titre', 'like', "%{$search}%")->orWhere('resume', 'like', "%{$search}%")->orWhere('contenu', 'like', "%{$search}%")))
             ->when($categoryId !== '', fn ($query) => $query->where('categorie_conseil_id', $categoryId))
             ->when($audience !== '', fn ($query) => $query->whereIn('public_cible', ['everyone', $audience]))
             ->when($situation !== '', fn ($query) => $query->whereIn('situation', [$situation, 'both']))
-            ->orderBy(CategorieConseil::select('nom')->whereColumn('categorie_conseils.id', 'conseils.categorie_conseil_id'))
-            ->orderBy('titre')->paginate(12)->withQueryString();
+            ->when($sort === 'helpful', fn ($query) => $query->orderByDesc('vote_score')->orderByDesc('upvotes_count'),
+                fn ($query) => $query->orderBy(CategorieConseil::select('nom')->whereColumn('categorie_conseils.id', 'conseils.categorie_conseil_id')))
+            ->orderBy('titre')->orderBy('id')->paginate(12)->withQueryString();
         $categories = CategorieConseil::whereHas('conseils', fn ($query) => $query->published()
             ->when($onlySaved, fn ($articles) => $articles->whereHas('savedByUsers', fn ($users) => $users->where('users.id', auth()->id()))))
             ->orderBy('nom')->get();
@@ -39,7 +41,7 @@ class AdviceController extends Controller
                 ->with('status', $request->session()->get('status'));
         }
 
-        return view('conseils.resident-index', compact('conseils', 'categories', 'search', 'categoryId', 'audience', 'situation', 'onlySaved', 'indexRoute', 'returnTo'));
+        return view('conseils.resident-index', compact('conseils', 'categories', 'search', 'categoryId', 'audience', 'situation', 'sort', 'onlySaved', 'indexRoute', 'returnTo'));
     }
 
     public function show(Conseil $conseil): View
@@ -66,7 +68,7 @@ class AdviceController extends Controller
         }
         $backUrl = AdviceNavigation::returnUrl(request()->query('return'));
         $returnTo = AdviceNavigation::relative($backUrl);
-        $related = $preview ? collect() : $conseil->categorieConseil->conseils()->published()
+        $related = $preview ? collect() : $conseil->categorieConseil->conseils()->published()->withFeedback()
             ->when(auth()->check(), fn ($query) => $query->withExists(['savedByUsers as is_saved' => fn ($users) => $users->where('users.id', auth()->id())]))
             ->whereKeyNot($conseil->id)->orderBy('titre')->limit(3)->get();
 

@@ -282,5 +282,19 @@
     "Downvote this advice": "Downvote this advice",
     "Downvote · Click again to remove": "Downvote · Click again to remove",
     "Sign in to upvote": "Sign in to upvote",
-    "Sign in to downvote": "Sign in to downvote"
+    "Sign in to downvote": "Sign in to downvote",
+    "All feedback": "All feedback",
+    "Most helpful": "Most helpful",
+    "Received downvotes": "Received downvotes",
+    "No feedback yet": "No feedback yet",
+    "Reader feedback overview": "Reader feedback overview",
+    "Published articles matching your search, category and visibility filters. Votes are reader opinions, not a quality verdict.": "Published articles matching your search, category and visibility filters. Votes are reader opinions, not a quality verdict.",
+    "Score :score": "Score :score",
+    "No positive feedback yet.": "No positive feedback yet.",
+    "Worth reviewing": "Worth reviewing",
+    ":up upvotes · :down downvotes": ":up upvotes · :down downvotes",
+    "No downvotes on these articles.": "No downvotes on these articles.",
+    "Sort by": "Sort by",
+    "Ranked by upvotes minus downvotes. Reader feedback reflects usefulness, not expert review.": "Ranked by upvotes minus downvotes. Reader feedback reflects usefulness, not expert review.",
+    "Score :score · :up upvotes · :down downvotes. Open article to vote.": "Score :score · :up upvotes · :down downvotes. Open article to vote."
 }

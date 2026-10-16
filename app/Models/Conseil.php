@@ -62,6 +62,15 @@ class Conseil extends Model
         ]);
     }
 
+    public function scopeWithFeedback(Builder $query): Builder
+    {
+        return $query->withCount([
+            'votes as upvotes_count' => fn ($votes) => $votes->where('value', 1),
+            'votes as downvotes_count' => fn ($votes) => $votes->where('value', -1),
+        ])->selectSub(ConseilVote::selectRaw('COALESCE(SUM(value), 0)')
+            ->whereColumn('conseil_votes.conseil_id', 'conseils.id'), 'vote_score');
+    }
+
     public function voteScore(): int
     {
         return (int) $this->upvotes_count - (int) $this->downvotes_count;

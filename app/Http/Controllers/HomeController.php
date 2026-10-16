@@ -10,7 +10,7 @@ class HomeController extends Controller
 {
     public function index(Request $request): View
     {
-        $featuredAdvice = Conseil::published()->with('categorieConseil')
+        $featuredAdvice = Conseil::published()->with('categorieConseil')->withFeedback()
             ->when($request->user(), fn ($query) => $query->withExists([
                 'savedByUsers as is_saved' => fn ($users) => $users->where('users.id', $request->user()->id),
             ]))

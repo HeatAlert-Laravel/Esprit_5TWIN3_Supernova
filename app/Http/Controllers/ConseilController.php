@@ -18,18 +18,30 @@ class ConseilController extends Controller
             'q' => ['nullable', 'string', 'max:100'],
             'category' => ['nullable', 'integer', 'exists:categorie_conseils,id'],
             'status' => ['nullable', Rule::in(['published', 'draft'])],
+            'feedback' => ['nullable', Rule::in(['helpful', 'downvotes', 'unrated'])],
         ]);
         $search = trim($filters['q'] ?? '');
         $categoryId = $filters['category'] ?? '';
         $status = $filters['status'] ?? '';
-        $conseils = Conseil::with('categorieConseil')
+        $feedback = $filters['feedback'] ?? '';
+        $query = Conseil::with('categorieConseil')->withFeedback()
             ->when($search !== '', fn ($query) => $query->where(fn ($q) => $q->where('titre', 'like', "%{$search}%")->orWhere('resume', 'like', "%{$search}%")))
             ->when($categoryId !== '', fn ($query) => $query->where('categorie_conseil_id', $categoryId))
-            ->when($status !== '', fn ($query) => $query->where('actif', $status === 'published'))
-            ->latest()->paginate(10)->withQueryString();
+            ->when($status !== '', fn ($query) => $query->where('actif', $status === 'published'));
+        $published = (clone $query)->published();
+        $mostHelpful = (clone $published)->whereHas('votes')->orderByDesc('vote_score')->orderByDesc('upvotes_count')->orderBy('id')->limit(3)->get()
+            ->filter(fn ($article) => $article->voteScore() > 0);
+        $reviewFeedback = (clone $published)->whereHas('votes', fn ($votes) => $votes->where('value', -1))
+            ->orderByDesc('downvotes_count')->orderBy('vote_score')->orderBy('id')->limit(3)->get();
+        $conseils = $query
+            ->when($feedback !== '', fn ($query) => $query->published())
+            ->when($feedback === 'downvotes', fn ($query) => $query->whereHas('votes', fn ($votes) => $votes->where('value', -1))->orderByDesc('downvotes_count'))
+            ->when($feedback === 'helpful', fn ($query) => $query->whereHas('votes')->orderByDesc('vote_score')->orderByDesc('upvotes_count'))
+            ->when($feedback === 'unrated', fn ($query) => $query->whereDoesntHave('votes'))
+            ->latest()->orderBy('id')->paginate(10)->withQueryString();
         $categories = CategorieConseil::orderBy('nom')->get();
 
-        return view('conseils.index', compact('conseils', 'categories', 'search', 'categoryId', 'status'));
+        return view('conseils.index', compact('conseils', 'categories', 'search', 'categoryId', 'status', 'feedback', 'mostHelpful', 'reviewFeedback'));
     }
 
     public function create(Request $request): View
