@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             $admin = User::firstOrNew(['email' => env('DEMO_ADMIN_EMAIL')]);
             $admin->name = 'HeatAlert Admin';
             $admin->role = 'ADMIN';
+            // Only the explicitly configured local demo admin is pre-verified.
+            $admin->email_verified_at ??= now();
 
             if (! $admin->exists || ! Hash::check(env('DEMO_ADMIN_PASSWORD'), $admin->password)) {
                 $admin->password = Hash::make(env('DEMO_ADMIN_PASSWORD'));

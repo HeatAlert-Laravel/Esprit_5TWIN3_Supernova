@@ -129,7 +129,7 @@ test('invalid reset token and password confirmation mismatch are rejected', func
         'email' => $user->email,
         'password' => 'new-password-123',
         'password_confirmation' => 'new-password-123',
-    ])->assertSessionHasErrors('token');
+    ])->assertSessionHasErrors('email');
 
     $this->post(route('password.update'), [
         'token' => $token,

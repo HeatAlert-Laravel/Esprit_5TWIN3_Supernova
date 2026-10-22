@@ -846,3 +846,32 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
     @keyframes ha-reader-pulse { from { opacity: .5; } to { opacity: 1; } }
     @media (prefers-reduced-motion: reduce) { .ha-reader-icon[aria-busy="true"] { animation: none; } }
 }
+
+/* Account identity and security settings */
+@layer components {
+    .ha-account-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; }
+    .ha-account-heading h1 { font-size: 1.875rem; font-weight: 600; margin: 0; }
+    .ha-account-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+    .ha-account-section { padding: clamp(1.25rem, 3vw, 2rem); min-width: 0; }
+    .ha-account-section h2 { margin: 0 0 .75rem; font-size: 1.25rem; font-weight: 600; }
+    .ha-account-section h3 { font-size: 1.125rem; font-weight: 600; }
+    .ha-account-section p { margin: .75rem 0 1rem; }
+    .ha-account-section form { margin-top: 1rem; }
+    .ha-account-section .ha-form-grid { grid-template-columns: minmax(0, 1fr); }
+    .ha-account-section input[type="file"] { min-width: 0; max-width: 100%; width: 100%; }
+    .ha-account-section p, .ha-account-section .ha-check { overflow-wrap: anywhere; }
+    .ha-account-wide { grid-column: 1 / -1; }
+    .ha-account-avatar { margin: 1rem 0; }
+    .ha-avatar { object-fit: cover; flex-shrink: 0; }
+    .ha-account-avatar .ha-avatar { width: 5rem; height: 5rem; font-size: 1.5rem; }
+    .ha-two-factor-setup { display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 1.5rem; align-items: flex-start; }
+    .ha-two-factor-setup > div:last-child { flex: 1; min-width: min(100%, 16rem); }
+    .ha-two-factor-qr { background: white; padding: 1rem; border-radius: .75rem; }
+    .ha-two-factor-qr svg { width: 192px; height: 192px; max-width: 100%; }
+    .ha-account-secret { display: block; padding: 1rem; overflow-wrap: anywhere; }
+    .ha-recovery-codes ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; padding: 1rem; background: var(--ha-surface-2); border-radius: .75rem; }
+    .ha-account-danger { border-color: var(--ha-error); }
+    .ha-account-danger h2 { color: var(--ha-error); }
+    .ha-account-section summary { cursor: pointer; color: var(--ha-shade-600); font-weight: 600; }
+    @media (max-width: 720px) { .ha-account-grid { grid-template-columns: 1fr; } }
+}

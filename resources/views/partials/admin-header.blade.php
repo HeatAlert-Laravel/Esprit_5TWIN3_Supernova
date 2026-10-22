@@ -7,7 +7,7 @@
     </div>
     <div class="ha-topbar__right">
         <div class="ha-topbar__user">
-            <x-ha.avatar :name="auth()->user()->name" />
+            <a href="{{ route('account.edit') }}" aria-label="Account settings"><x-ha.avatar :name="auth()->user()->name" :src="auth()->user()->avatar_path ? Storage::disk('public')->url(auth()->user()->avatar_path) : null" /></a>
             <div class="ha-topbar__who">
                 <strong>{{ auth()->user()->name }}</strong>
                 <span>{{ ucfirst(strtolower(auth()->user()->role)) }}</span>

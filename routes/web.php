@@ -1,12 +1,12 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdviceAssistantController;
 use App\Http\Controllers\AdviceAudioController;
 use App\Http\Controllers\AdviceBookmarkController;
 use App\Http\Controllers\AdviceController;
 use App\Http\Controllers\AdviceVoteController;
 use App\Http\Controllers\AlerteMeteoController;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategorieConseilController;
 use App\Http\Controllers\ConseilController;
 use App\Http\Controllers\CoolingPointController;
@@ -14,7 +14,6 @@ use App\Http\Controllers\CoupureController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OutageController;
-use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PointFraicheurController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuartierController;
@@ -47,21 +46,18 @@ Route::get('/advice/{conseil}/audio/{voice}/{version}', [AdviceAudioController::
 
 /*
 |--------------------------------------------------------------------------
-| Authentication (guests only)
+| Authentication is registered once by Laravel Fortify.
 |--------------------------------------------------------------------------
-| One login for everyone: AuthController sends ADMIN users to the admin
-| dashboard and USER accounts to their profile.
+| Its response sends verified ADMIN users to the dashboard and USER users
+| to their profile; unverified users go to the verification notice.
 */
 
-Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::get('/forgot-password', [PasswordResetController::class, 'requestForm'])->name('password.request');
-    Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
-    Route::get('/reset-password/{token}', [PasswordResetController::class, 'resetForm'])->name('password.reset');
-    Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
+Route::middleware(['auth', \App\Http\Middleware\PrivateAccountResponse::class])->group(function () {
+    Route::get('/account', [AccountController::class, 'edit'])->name('account.edit');
+    Route::get('/account/security', [AccountController::class, 'edit'])->middleware('password.confirm')->name('account.security');
+    Route::post('/account/avatar', [AccountController::class, 'updateAvatar'])->name('account.avatar.update');
+    Route::delete('/account/avatar', [AccountController::class, 'deleteAvatar'])->name('account.avatar.destroy');
+    Route::delete('/account', [AccountController::class, 'destroy'])->middleware('password.confirm')->name('account.destroy');
 });
 
 /*
@@ -70,9 +66,7 @@ Route::middleware('guest')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/my-profile', [ResidentProfileController::class, 'show'])->name('my-profile');
     Route::put('/my-profile', [ResidentProfileController::class, 'update'])->name('my-profile.update');
 
@@ -109,7 +103,7 @@ Route::get('/advice/{conseil}', [AdviceController::class, 'show'])->name('advice
 | 403 to any signed-in user whose role is not ADMIN.
 */
 
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Neighborhoods and weather alerts

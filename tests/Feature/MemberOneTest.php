@@ -130,10 +130,12 @@ test('public pages render and protected pages require login', function () {
 });
 
 test('registration creates a USER, login rotates the session, and logout ends it', function () {
+    \Illuminate\Support\Facades\Notification::fake();
     $this->post(route('register'), [
         'name' => 'Nadia', 'email' => 'nadia@example.test', 'password' => 'strongpass123', 'password_confirmation' => 'strongpass123',
-    ])->assertRedirect(route('my-profile'));
+    ])->assertRedirect(route('verification.notice'));
     $user = User::where('email', 'nadia@example.test')->firstOrFail();
+    $user->markEmailAsVerified();
     expect($user->role)->toBe('USER');
     $this->assertAuthenticatedAs($user);
     $this->post(route('logout'))->assertRedirect(route('home'));
