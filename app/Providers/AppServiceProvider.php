@@ -39,8 +39,11 @@ class AppServiceProvider extends ServiceProvider
         // Display-only readiness checklist (see App\Support\Readiness) for the home page and My Profile.
         View::composer('partials.readiness-card', fn ($view) => $view->with('readiness', Readiness::for(auth()->user())));
 
-        // Force HTTPS in production
-        if (config('app.env') === 'production') {
+        // Match the canonical URL; the private lab runs production over HTTP.
+        if (
+            config('app.env') === 'production'
+            && str_starts_with((string) config('app.url'), 'https://')
+        ) {
             URL::forceScheme('https');
         }
     }
