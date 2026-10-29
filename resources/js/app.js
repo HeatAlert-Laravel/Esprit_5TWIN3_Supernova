@@ -3,6 +3,10 @@
 import './auto-filter';
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('[data-wx-map], [data-wx-tabs]')) {
+        import('./weather-map').then(({ initWeatherPages }) => initWeatherPages());
+    }
+
     const confirmDialog = document.querySelector('[data-confirm-dialog]');
     let pendingForm = null;
 

@@ -141,3 +141,106 @@ test('alert cards link to the neighborhood page', function () {
 
     $this->get(route('weather-alerts'))->assertSee(route('neighborhoods.show', $quartier), false);
 });
+
+test('the alert list is paginated and keeps the filters across pages', function () {
+    $quartier = Quartier::factory()->create();
+    foreach (range(1, 12) as $number) {
+        publishedAlert($quartier, 'orange', "Heat number {$number}");
+    }
+
+    $first = $this->get(route('weather-alerts', ['niveau' => 'orange']))->assertOk();
+    expect($first->viewData('alertes')->total())->toBe(12)
+        ->and($first->viewData('alertes')->count())->toBe(9);
+    $first->assertSee('niveau=orange', false)->assertSee('page=2', false);
+
+    $second = $this->get(route('weather-alerts', ['niveau' => 'orange', 'page' => 2]))->assertOk();
+    expect($second->viewData('alertes')->count())->toBe(3);
+});
+
+test('there is no pagination when everything fits on one page', function () {
+    publishedAlert(Quartier::factory()->create(), 'rouge', 'Only alert');
+
+    $this->get(route('weather-alerts'))->assertOk()->assertDontSee('page=2', false);
+});
+
+test('active alerts come first, then upcoming, then ended', function () {
+    $quartier = Quartier::factory()->create();
+    publishedAlert($quartier, 'rouge', 'Ended red', -9, -7);
+    publishedAlert($quartier, 'jaune', 'Upcoming yellow', 3, 4);
+    publishedAlert($quartier, 'vert', 'Active green');
+    publishedAlert($quartier, 'orange', 'Active orange');
+
+    $titles = $this->get(route('weather-alerts'))->viewData('alertes')->pluck('titre')->all();
+
+    expect($titles)->toBe(['Active orange', 'Active green', 'Upcoming yellow', 'Ended red']);
+});
+
+test('period tabs narrow the list and show their own counts', function () {
+    $quartier = Quartier::factory()->create();
+    publishedAlert($quartier, 'rouge', 'Ended red', -9, -7);
+    publishedAlert($quartier, 'jaune', 'Upcoming yellow', 3, 4);
+    publishedAlert($quartier, 'orange', 'Active orange');
+
+    $titles = fn (string $periode) => $this->get(route('weather-alerts', ['periode' => $periode]))->assertOk()->viewData('alertes')->pluck('titre')->all();
+
+    expect($titles('upcoming'))->toBe(['Upcoming yellow'])
+        ->and($titles('current'))->toBe(['Active orange'])
+        ->and($titles('past'))->toBe(['Ended red'])
+        ->and($titles('nonsense'))->toHaveCount(3);
+    expect($this->get(route('weather-alerts', ['periode' => 'upcoming']))->viewData('periodCounts'))
+        ->toBe(['' => 3, 'current' => 1, 'upcoming' => 1, 'past' => 1]);
+});
+
+function fullForecastPayload(): array
+{
+    $hours = collect(range(0, 47))->map(fn ($i) => now()->startOfDay()->addHours($i));
+
+    return [
+        'current' => [
+            'time' => now()->format('Y-m-d\TH:00'), 'temperature_2m' => 31.4, 'apparent_temperature' => 34.0,
+            'relative_humidity_2m' => 52, 'weather_code' => 2, 'wind_speed_10m' => 18.2, 'is_day' => 1, 'precipitation' => 0.0,
+        ],
+        'hourly' => [
+            'time' => $hours->map->format('Y-m-d\TH:00')->all(),
+            'temperature_2m' => $hours->map(fn ($h) => 25 + $h->hour % 12)->all(),
+            'weather_code' => $hours->map(fn ($h) => $h->hour < 12 ? 0 : 61)->all(),
+            'precipitation_probability' => $hours->map(fn ($h) => $h->hour < 12 ? 0 : 40)->all(),
+            'is_day' => $hours->map(fn ($h) => $h->hour >= 6 && $h->hour < 19 ? 1 : 0)->all(),
+        ],
+        'daily' => [
+            'time' => collect(range(0, 2))->map(fn ($i) => now()->addDays($i)->toDateString())->all(),
+            'weather_code' => [2, 95, 0],
+            'temperature_2m_max' => [31.0, 38.0, 42.0], 'temperature_2m_min' => [22.0, 26.0, 29.0],
+            'apparent_temperature_max' => [34.0, 41.0, 46.0], 'uv_index_max' => [8.0, 9.0, 10.0],
+            'wind_speed_10m_max' => [20.0, 25.0, 30.0], 'precipitation_probability_max' => [10, 65, 0],
+            'sunrise' => array_fill(0, 3, now()->format('Y-m-d').'T06:41'), 'sunset' => array_fill(0, 3, now()->format('Y-m-d').'T17:23'),
+            'relative_humidity_2m_mean' => [50, 60, 30],
+        ],
+    ];
+}
+
+test('the neighborhood page shows current conditions, hourly and daily forecasts like a weather app', function () {
+    Http::fake(['api.open-meteo.com/*' => Http::response(fullForecastPayload())]);
+    $quartier = Quartier::factory()->create(['latitude' => 36.85, 'longitude' => 10.32]);
+
+    $response = $this->get(route('neighborhoods.show', $quartier))->assertOk()
+        ->assertSee('Partly cloudy')->assertSee('Feels like 34°')->assertSee('Rain chance')
+        ->assertSee('Sunrise')->assertSee('06:41')->assertSee('17:23')
+        ->assertSee('Next 24 hours')->assertSee('3-day forecast')
+        ->assertSee('Thunderstorm')->assertSee('Clear sky')->assertSee('65%');
+
+    $weather = $response->viewData('weather');
+    expect($weather['current']['temperature'])->toBe(31.4)
+        ->and($weather['current']['condition']['kind'])->toBe('partly')
+        ->and($weather['hourly'])->toHaveCount(24)
+        ->and($weather['hourly'][0]['hour'])->toBe(now()->format('H').':00')
+        ->and($weather['daily'])->toHaveCount(3)
+        ->and($weather['daily'][2]['niveau'])->toBe('rouge');
+});
+
+test('weather codes map to a label and an icon kind', function (int $code, string $label, string $kind) {
+    expect(App\Support\WeatherCode::describe($code))->toBe(['label' => $label, 'kind' => $kind]);
+})->with([
+    [0, 'Clear sky', 'clear'], [2, 'Partly cloudy', 'partly'], [3, 'Overcast', 'cloudy'], [45, 'Fog', 'fog'],
+    [63, 'Rain', 'rain'], [81, 'Rain showers', 'rain'], [73, 'Snow', 'snow'], [95, 'Thunderstorm', 'thunder'], [999, 'Unknown', 'cloudy'],
+]);

@@ -27,7 +27,7 @@ class NeighborhoodController extends Controller
 
         if ($quartier->hasCoordinates()) {
             try {
-                $weather = $forecast->forQuartier($quartier, 5);
+                $weather = $forecast->detailed($quartier, 7);
             } catch (RuntimeException $exception) {
                 $weatherError = $exception->getMessage();
             }
