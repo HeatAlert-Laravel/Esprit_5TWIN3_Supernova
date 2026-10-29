@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\M2IndexRequest;
 use App\Http\Requests\SignalementRequest;
 use App\Http\Requests\SignalementStatutRequest;
 use App\Models\Coupure;
 use App\Models\Signalement;
 use App\Models\User;
+use App\Support\M2Listing;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class SignalementController extends Controller
 {
-    public function index(): View
+    public function index(M2IndexRequest $request): View
     {
-        return view('signalements.index', ['signalements' => Signalement::with(['user', 'coupure.quartier'])->latest()->paginate(10)]);
+        return view('signalements.index', [
+            'signalements' => M2Listing::paginate(Signalement::with(['user', 'coupure.quartier']), $request->validated(), false),
+        ]);
     }
 
     public function create(): View

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coupure;
 use App\Models\Profile;
 use App\Models\SensitiveEquipment;
+use App\Models\Signalement;
 use App\Models\TypeEquipement;
 use App\Models\User;
 use Illuminate\View\View;
@@ -26,6 +28,9 @@ class DashboardController extends Controller
             'completeProfilesCount' => $profilesCount - $incompleteCount,
             'equipmentStats' => $this->equipmentStats(),
             'typesCount' => TypeEquipement::count(),
+            'activeOutagesCount' => Coupure::where('statut', 'active')->count(),
+            'pendingReportsCount' => Signalement::where('statut', 'en attente')->count(),
+            'reportsCount' => Signalement::count(),
             // [risk_level => count], read from the TypeEquipement each equipment belongs to.
             'equipmentByRisk' => SensitiveEquipment::query()
                 ->join('type_equipements', 'type_equipements.id', '=', 'sensitive_equipments.type_equipement_id')

@@ -3,16 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CoupureRequest;
+use App\Http\Requests\M2IndexRequest;
 use App\Models\Coupure;
 use App\Models\Quartier;
+use App\Support\M2Listing;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class CoupureController extends Controller
 {
-    public function index(): View
+    public function index(M2IndexRequest $request): View
     {
-        return view('coupures.index', ['coupures' => Coupure::with('quartier')->withCount('signalements')->latest()->paginate(10)]);
+        return view('coupures.index', [
+            'coupures' => M2Listing::paginate(Coupure::with('quartier')->withCount('signalements'), $request->validated(), true),
+        ]);
     }
 
     public function create(): View
