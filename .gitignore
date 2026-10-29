@@ -10,3 +10,33 @@ agent/
 
 # Local MySQL backups
 local-backups/
+
+# Local environment and dependencies
+/.env
+/.env.*
+!/.env.example
+/vendor/
+/node_modules/
+
+# Generated Laravel and Vite files
+/public/build/
+/public/hot
+/public/storage
+/bootstrap/cache/*.php
+/storage/*.key
+/storage/logs/*
+!/storage/logs/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/framework/testing/*
+!/storage/framework/testing/.gitignore
+
+# Local test and package manager caches
+/.phpunit.cache/
+/.phpunit.result.cache
+/npm-debug.log
+/yarn-error.log
