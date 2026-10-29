@@ -86,10 +86,14 @@ class QuartierController extends Controller
         return $request->validate([
             'nom' => ['required', 'string', 'max:255', Rule::unique('quartiers', 'nom')->ignore($request->route('quartier'))->where('ville', $request->input('ville'))],
             'ville' => ['required', 'string', 'max:255'],
+            'gouvernorat' => ['nullable', 'string', 'max:255'],
             'code_postal' => ['required', 'string', 'regex:/^\d{4}$/'],
+            'latitude' => ['nullable', 'required_with:longitude', 'numeric', 'between:-90,90'],
+            'longitude' => ['nullable', 'required_with:latitude', 'numeric', 'between:-180,180'],
         ], [], [
             'nom' => 'name',
             'ville' => 'city',
+            'gouvernorat' => 'governorate',
             'code_postal' => 'postal code',
         ]);
     }

@@ -43,7 +43,7 @@ class AlerteMeteoSeeder extends Seeder
                 continue;
             }
 
-            AlerteMeteo::firstOrCreate(
+            $alerte = AlerteMeteo::firstOrCreate(
                 ['quartier_id' => $quartier->id, 'titre' => $title],
                 [
                     'niveau' => $level,
@@ -53,6 +53,38 @@ class AlerteMeteoSeeder extends Seeder
                     'publiee' => $published,
                 ],
             );
+
+            // Weather details are derived from the level so the demo is consistent and repeatable.
+            if ($alerte->humidite === null) {
+                $alerte->update([
+                    'type' => match ($level) {
+                        'rouge' => 'canicule',
+                        'orange', 'jaune' => 'vague_de_chaleur',
+                        default => 'autre',
+                    },
+                    'temperature_min' => $temperature - 9,
+                    'temperature_ressentie' => $temperature + 3,
+                    'humidite' => match ($level) {
+                        'rouge' => 28,
+                        'orange' => 35,
+                        'jaune' => 45,
+                        default => 55,
+                    },
+                    'indice_uv' => match ($level) {
+                        'rouge' => 11,
+                        'orange' => 9,
+                        'jaune' => 7,
+                        default => 5,
+                    },
+                    'vitesse_vent' => match ($level) {
+                        'rouge' => 28.0,
+                        'orange' => 22.0,
+                        default => 14.0,
+                    },
+                    'risque_coupure' => in_array($level, ['orange', 'rouge'], true),
+                    'source' => 'Demo data',
+                ]);
+            }
         }
     }
 }

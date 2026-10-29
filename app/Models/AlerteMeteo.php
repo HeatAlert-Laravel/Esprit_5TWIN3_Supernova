@@ -11,8 +11,18 @@ class AlerteMeteo extends Model
 {
     use HasFactory;
 
+    public const TYPES = [
+        'canicule' => 'Heatwave',
+        'vague_de_chaleur' => 'Heat spell',
+        'orage' => 'Storm',
+        'secheresse' => 'Drought',
+        'autre' => 'Other',
+    ];
+
     protected $fillable = [
-        'quartier_id', 'titre', 'niveau', 'temperature_max',
+        'quartier_id', 'titre', 'type', 'niveau', 'temperature_max',
+        'temperature_min', 'temperature_ressentie', 'humidite', 'indice_uv',
+        'vitesse_vent', 'risque_coupure', 'source',
         'date_debut', 'date_fin', 'publiee',
     ];
 
@@ -20,6 +30,12 @@ class AlerteMeteo extends Model
     {
         return [
             'temperature_max' => 'float',
+            'temperature_min' => 'float',
+            'temperature_ressentie' => 'float',
+            'humidite' => 'integer',
+            'indice_uv' => 'integer',
+            'vitesse_vent' => 'float',
+            'risque_coupure' => 'boolean',
             'date_debut' => 'date',
             'date_fin' => 'date',
             'publiee' => 'boolean',
@@ -71,6 +87,11 @@ class AlerteMeteo extends Model
             'expired' => 'Ended',
             default => 'Unknown',
         };
+    }
+
+    public function typeLabel(): string
+    {
+        return self::TYPES[$this->type] ?? 'Other';
     }
 
     public function levelLabel(): string

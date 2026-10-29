@@ -14,7 +14,7 @@
 <div class="ha-grid ha-grid--main-rev">
     <section class="ha-card" aria-labelledby="neighborhood-info">
         <div class="ha-card__head"><h2 class="ha-card__title ha-card__title--with-icon" id="neighborhood-info"><span class="ha-icon-chip"><x-ha.icon name="map-pin" /></span>Neighborhood information</h2></div>
-        <dl class="ha-dl ha-dl--2"><div><dt>Name</dt><dd>{{ $quartier->nom }}</dd></div><div><dt>City</dt><dd>{{ $quartier->ville }}</dd></div><div><dt>Postal code</dt><dd class="ha-mono">{{ $quartier->code_postal }}</dd></div><div><dt>Weather alerts</dt><dd><span class="ha-count-pill">{{ $quartier->alerteMeteos->count() }}</span></dd></div></dl>
+        <dl class="ha-dl ha-dl--2"><div><dt>Name</dt><dd>{{ $quartier->nom }}</dd></div><div><dt>City</dt><dd>{{ $quartier->ville }}</dd></div><div><dt>Governorate</dt><dd>{{ $quartier->gouvernorat ?? '—' }}</dd></div><div><dt>Postal code</dt><dd class="ha-mono">{{ $quartier->code_postal }}</dd></div><div><dt>Coordinates</dt><dd class="ha-mono">{{ $quartier->hasCoordinates() ? $quartier->latitude.', '.$quartier->longitude : '—' }}</dd></div><div><dt>Weather alerts</dt><dd><span class="ha-count-pill">{{ $quartier->alerteMeteos->count() }}</span></dd></div></dl>
     </section>
 
     <section class="ha-card" aria-labelledby="neighborhood-alerts">

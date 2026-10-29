@@ -31,12 +31,17 @@
               <!--   <span class="ha-alert-card__temp-label">forecast maximum</span> -->
             </p>
             <!-- <p class="ha-alert-card__advice">{{ $alerte->levelAdvice() }}</p> -->
+            <p class="ha-alert-card__type">{{ $alerte->typeLabel() }}@if($alerte->temperature_min !== null) · {{ number_format($alerte->temperature_min, 0) }}° min @endif @if($alerte->temperature_ressentie !== null) · feels {{ number_format($alerte->temperature_ressentie, 0) }}° @endif</p>
             <ul class="ha-alert-card__meta">
+                @if($alerte->humidite !== null || $alerte->indice_uv !== null || $alerte->vitesse_vent !== null)
+                    <li><x-ha.icon name="info" size="sm" /><span>@if($alerte->humidite !== null)Humidity {{ $alerte->humidite }}% @endif @if($alerte->indice_uv !== null)· UV {{ $alerte->indice_uv }} @endif @if($alerte->vitesse_vent !== null)· Wind {{ number_format($alerte->vitesse_vent, 0) }} km/h @endif</span></li>
+                @endif
                 <li><x-ha.icon name="map-pin" size="sm" /><span>{{ $alerte->quartier->nom }}, {{ $alerte->quartier->ville }}</span></li>
                 <li><x-ha.icon name="clock" size="sm" /><time datetime="{{ $alerte->date_debut->toDateString() }}">{{ $alerte->date_debut->format('d/m/Y') }}</time> – <time datetime="{{ $alerte->date_fin->toDateString() }}">{{ $alerte->date_fin->format('d/m/Y') }}</time></li>
             </ul>
             <div class="ha-alert-card__foot">
                 <x-ha.badge :variant="$alerte->temporalStatusBadgeVariant()">{{ $alerte->temporalStatusLabel() }}</x-ha.badge>
+                @if($alerte->risque_coupure)<x-ha.badge variant="level-red">Power outage risk</x-ha.badge>@endif
             </div>
         </article>
     @empty

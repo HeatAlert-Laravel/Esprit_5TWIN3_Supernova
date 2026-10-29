@@ -6,6 +6,7 @@ use App\Models\AlerteMeteo;
 use App\Models\Quartier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class AlerteMeteoController extends Controller
@@ -68,8 +69,15 @@ class AlerteMeteoController extends Controller
         return $request->validate([
             'quartier_id' => ['required', 'exists:quartiers,id'],
             'titre' => ['required', 'string', 'max:255'],
+            'type' => ['nullable', Rule::in(array_keys(AlerteMeteo::TYPES))],
             'niveau' => ['required', 'in:vert,jaune,orange,rouge'],
             'temperature_max' => ['required', 'numeric', 'between:-50,60'],
+            'temperature_min' => ['nullable', 'numeric', 'between:-50,60', 'lte:temperature_max'],
+            'temperature_ressentie' => ['nullable', 'numeric', 'between:-50,70'],
+            'humidite' => ['nullable', 'integer', 'between:0,100'],
+            'indice_uv' => ['nullable', 'integer', 'between:0,15'],
+            'vitesse_vent' => ['nullable', 'numeric', 'between:0,400'],
+            'source' => ['nullable', 'string', 'max:100'],
             'date_debut' => ['required', 'date'],
             'date_fin' => ['required', 'date', 'after_or_equal:date_debut'],
             'publiee' => ['sometimes', 'boolean'],
@@ -78,8 +86,13 @@ class AlerteMeteoController extends Controller
             'titre' => 'title',
             'niveau' => 'level',
             'temperature_max' => 'maximum temperature',
+            'temperature_min' => 'minimum temperature',
+            'temperature_ressentie' => 'feels-like temperature',
+            'humidite' => 'humidity',
+            'indice_uv' => 'UV index',
+            'vitesse_vent' => 'wind speed',
             'date_debut' => 'start date',
             'date_fin' => 'end date',
-        ]) + ['publiee' => $request->boolean('publiee')];
+        ]) + ['type' => $request->input('type') ?: 'canicule', 'publiee' => $request->boolean('publiee'), 'risque_coupure' => $request->boolean('risque_coupure')];
     }
 }

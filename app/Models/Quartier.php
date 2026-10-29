@@ -10,7 +10,20 @@ class Quartier extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nom', 'ville', 'code_postal'];
+    protected $fillable = ['nom', 'ville', 'gouvernorat', 'code_postal', 'latitude', 'longitude'];
+
+    protected function casts(): array
+    {
+        return [
+            'latitude' => 'float',
+            'longitude' => 'float',
+        ];
+    }
+
+    public function hasCoordinates(): bool
+    {
+        return $this->latitude !== null && $this->longitude !== null;
+    }
 
     public function alerteMeteos(): HasMany
     {
