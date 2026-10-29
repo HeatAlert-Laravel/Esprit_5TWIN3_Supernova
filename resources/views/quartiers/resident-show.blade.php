@@ -145,6 +145,10 @@
     @endif
 </section>
 
+@if($summaryEnabled)
+<x-ha.ai-panel id="week-summary" title="Your week at a glance" description="A short briefing of the next days, written by AI in the language you choose." :url="route('neighborhoods.summary', $quartier)" button="Summarise my week" />
+@endif
+
 <section class="wx-alerts" aria-labelledby="nb-alerts" data-wx-tabs data-default-tab="{{ $defaultTab }}">
     <div class="wx-section-head"><h2 id="nb-alerts">Alerts</h2></div>
     <div class="wx-tabs" role="tablist" aria-label="Alerts by period">

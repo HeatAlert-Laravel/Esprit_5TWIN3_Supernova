@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AlerteMeteo;
 use App\Models\Quartier;
+use App\Services\GeminiTextClient;
 use App\Services\NeighborhoodResources;
 use App\Services\OpenMeteoForecast;
 use Illuminate\View\View;
@@ -42,6 +43,7 @@ class NeighborhoodController extends Controller
             'level' => $level,
             'weather' => $weather,
             'weatherError' => $weatherError,
+            'summaryEnabled' => $weather !== null && $weather['daily'] !== [] && GeminiTextClient::isConfigured(),
             'coolingPointsCount' => $resources->coolingPointsCount($quartier),
             'outagesCount' => $resources->activeOutagesCount($quartier),
         ]);
