@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AlerteMeteo;
 use App\Models\Quartier;
+use App\Services\NeighborhoodResources;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -94,6 +95,28 @@ class WeatherAlertController extends Controller
             'activeTotal' => $currentAlerts->count(),
             'topAlert' => $currentAlerts->first(),
             'mapQuartiers' => $mapQuartiers,
+        ]);
+    }
+
+    /** Detail page of one published alert, with the advice, cooling points and outages around it. */
+    public function show(AlerteMeteo $alerte, NeighborhoodResources $resources): View
+    {
+        abort_unless($alerte->publiee, 404);
+
+        $alerte->load('quartier');
+        $quartier = $alerte->quartier;
+
+        return view('alertes-meteo.resident-show', [
+            'alerte' => $alerte,
+            'quartier' => $quartier,
+            'advice' => $resources->advice($alerte->risque_coupure),
+            'coolingPoints' => $resources->coolingPoints($quartier),
+            'coolingPointsCount' => $resources->coolingPointsCount($quartier),
+            'outages' => $resources->activeOutages($quartier),
+            'outagesCount' => $resources->activeOutagesCount($quartier),
+            'otherAlerts' => $quartier->alerteMeteos()->published()->whereKeyNot($alerte->id)
+                ->where(fn ($query) => $query->current()->orWhereDate('date_debut', '>', today()->toDateString()))
+                ->mostSevereFirst()->orderBy('date_debut')->limit(4)->get(),
         ]);
     }
 }

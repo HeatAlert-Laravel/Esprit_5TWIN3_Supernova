@@ -3,6 +3,7 @@
 @section('content')
 @php
     use App\Models\AlerteMeteo;
+    use Illuminate\Support\Str;
     $today = $weather['daily'][0] ?? null;
     $now = $weather['current'] ?? null;
     $location = collect([$quartier->ville, $quartier->gouvernorat !== $quartier->ville ? $quartier->gouvernorat : null])->filter()->implode(', ');
@@ -55,6 +56,18 @@
             <div class="wx-map wx-map--empty"><x-ha.icon name="map-pin" /><span>No coordinates yet</span></div>
         @endif
     </div>
+</section>
+
+<section class="wx-around" aria-label="Around {{ $quartier->nom }}">
+    <a class="wx-around__tile" href="{{ route('cooling-points', ['quartier_id' => $quartier->id]) }}">
+        <x-ha.icon name="snowflake" /><strong>{{ $coolingPointsCount }}</strong><span>{{ Str::plural('cooling point', $coolingPointsCount) }} to cool down</span>
+    </a>
+    <a class="wx-around__tile @if($outagesCount > 0) wx-around__tile--warn @endif" href="{{ route('outages', ['quartier_id' => $quartier->id]) }}">
+        <x-ha.icon name="zap" /><strong>{{ $outagesCount }}</strong><span>active {{ Str::plural('outage', $outagesCount) }}</span>
+    </a>
+    <a class="wx-around__tile" href="{{ route('advice') }}">
+        <x-ha.icon name="lightbulb" /><strong>Advice</strong><span>Prepare for heat and outages</span>
+    </a>
 </section>
 
 <section class="wx-forecast" aria-labelledby="live-weather">

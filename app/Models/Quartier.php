@@ -30,6 +30,12 @@ class Quartier extends Model
         return $this->hasMany(AlerteMeteo::class);
     }
 
+    /** Membre 2 : un quartier peut subir plusieurs coupures (lecture seule depuis le module Quartier). */
+    public function coupures(): HasMany
+    {
+        return $this->hasMany(Coupure::class);
+    }
+
     /** Membre 3 : un quartier possède plusieurs points de fraîcheur. */
     public function pointFraicheurs(): HasMany
     {

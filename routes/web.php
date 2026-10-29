@@ -36,6 +36,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/weather-alerts', [WeatherAlertController::class, 'index'])->name('weather-alerts');
+Route::get('/weather-alerts/{alerte}', [WeatherAlertController::class, 'show'])
+    ->whereNumber('alerte')->name('weather-alerts.show');
 Route::get('/neighborhoods/{quartier}', [NeighborhoodController::class, 'show'])
     ->whereNumber('quartier')->middleware('throttle:60,1')->name('neighborhoods.show');
 Route::get('/outages', [OutageController::class, 'index'])->name('outages');

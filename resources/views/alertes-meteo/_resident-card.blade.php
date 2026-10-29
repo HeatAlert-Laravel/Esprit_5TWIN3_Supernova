@@ -7,7 +7,7 @@
 
     <div class="wx-card__body">
         <div>
-            <h2 class="wx-card__title">{{ $alerte->titre }}</h2>
+            <h2 class="wx-card__title"><a href="{{ route('weather-alerts.show', $alerte) }}" class="wx-card__link">{{ $alerte->titre }}</a></h2>
             <p class="wx-card__place">
                 <x-ha.icon name="map-pin" size="sm" />
                 @if($linkNeighborhood)

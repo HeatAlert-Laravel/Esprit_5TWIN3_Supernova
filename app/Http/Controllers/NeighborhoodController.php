@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AlerteMeteo;
 use App\Models\Quartier;
+use App\Services\NeighborhoodResources;
 use App\Services\OpenMeteoForecast;
 use Illuminate\View\View;
 use RuntimeException;
@@ -11,7 +12,7 @@ use RuntimeException;
 class NeighborhoodController extends Controller
 {
     /** Resident page of one neighborhood: current vigilance level, its alerts and the live forecast. */
-    public function show(Quartier $quartier, OpenMeteoForecast $forecast): View
+    public function show(Quartier $quartier, OpenMeteoForecast $forecast, NeighborhoodResources $resources): View
     {
         $alertes = $quartier->alerteMeteos()->published()->mostSevereFirst()->orderByDesc('date_debut')->get();
 
@@ -41,6 +42,8 @@ class NeighborhoodController extends Controller
             'level' => $level,
             'weather' => $weather,
             'weatherError' => $weatherError,
+            'coolingPointsCount' => $resources->coolingPointsCount($quartier),
+            'outagesCount' => $resources->activeOutagesCount($quartier),
         ]);
     }
 }
