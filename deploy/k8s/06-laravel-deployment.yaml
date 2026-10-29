@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: heatalert
+  labels:
+    app.kubernetes.io/name: app
+    app.kubernetes.io/part-of: heatalert
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: app
+        app.kubernetes.io/part-of: heatalert
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector:
+        kubernetes.io/hostname: heatalert-single-node
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 33
+        runAsGroup: 33
+        fsGroup: 33
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: app
+          image: aymen74407/heatalert-app:REPLACE_WITH_FULL_GIT_SHA
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: fpm
+              containerPort: 9000
+          envFrom:
+            - secretRef:
+                name: heatalert-app-env
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: public-files
+              mountPath: /var/www/html/storage/app/public
+            - name: private-files
+              mountPath: /var/www/html/storage/app/private
+            - name: app-logs
+              mountPath: /var/www/html/storage/logs
+            - name: app-cache
+              mountPath: /var/www/html/storage/framework/cache
+            - name: app-views
+              mountPath: /var/www/html/storage/framework/views
+          startupProbe:
+            tcpSocket:
+              port: fpm
+            periodSeconds: 5
+            failureThreshold: 24
+          readinessProbe:
+            tcpSocket:
+              port: fpm
+            periodSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: fpm
+            periodSeconds: 20
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 800m
+              memory: 1024Mi
+      volumes:
+        - name: public-files
+          persistentVolumeClaim:
+            claimName: public-files
+        - name: private-files
+          persistentVolumeClaim:
+            claimName: private-files
+        - name: app-logs
+          persistentVolumeClaim:
+            claimName: app-logs
+        - name: app-cache
+          emptyDir: {}
+        - name: app-views
+          emptyDir: {}

@@ -1,0 +1,6 @@
+rendered/
+*.env
+*.secret.yaml
+*kubeconfig*
+*.pem
+*.key

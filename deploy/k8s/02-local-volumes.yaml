@@ -1,0 +1,99 @@
+# Static local PVs: create host directories before applying. Capacity is not a disk quota.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: heatalert-mysql-pv
+  labels:
+    heatalert.io/volume: mysql
+spec:
+  capacity:
+    storage: 8Gi
+  volumeMode: Filesystem
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: heatalert-local
+  local:
+    path: /srv/heatalert-k8s/mysql-data
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values: [heatalert-single-node]
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: heatalert-public-pv
+  labels:
+    heatalert.io/volume: public
+spec:
+  capacity:
+    storage: 2Gi
+  volumeMode: Filesystem
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: heatalert-local
+  local:
+    path: /srv/heatalert-k8s/public-files
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values: [heatalert-single-node]
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: heatalert-private-pv
+  labels:
+    heatalert.io/volume: private
+spec:
+  capacity:
+    storage: 4Gi
+  volumeMode: Filesystem
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: heatalert-local
+  local:
+    path: /srv/heatalert-k8s/private-files
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values: [heatalert-single-node]
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: public-files
+  namespace: heatalert
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: heatalert-local
+  selector:
+    matchLabels:
+      heatalert.io/volume: public
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: private-files
+  namespace: heatalert
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: heatalert-local
+  selector:
+    matchLabels:
+      heatalert.io/volume: private
+  resources:
+    requests:
+      storage: 4Gi

@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - 00-namespace.yaml
+  - 01-storageclass.yaml
+  - 02-local-volumes.yaml
+  - 03-mysql-service.yaml
+  - 04-mysql-statefulset.yaml
+  - 05-laravel-service.yaml
+  - 06-laravel-deployment.yaml
+  - 07-nginx-service.yaml
+  - 08-nginx-deployment.yaml
+  - 09-local-logs.yaml
