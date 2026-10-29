@@ -3,6 +3,9 @@
 import './auto-filter';
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('[data-outage-notifications]')) {
+        import('./outage-notifications').then(({ initOutageNotifications }) => initOutageNotifications());
+    }
     if (document.querySelector('[data-similar-outages]')) {
         import('./similar-outages').then(({ initSimilarOutages }) => initSimilarOutages());
     }

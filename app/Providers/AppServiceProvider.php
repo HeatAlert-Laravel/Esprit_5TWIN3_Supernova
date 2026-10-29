@@ -27,6 +27,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        View::composer('partials.outage-notifications', function ($view) {
+            $user = auth()->user();
+            if ($user?->role === 'USER' && $user->hasVerifiedEmail()) {
+                $view->with(\App\Support\OutageNotificationInbox::for($user));
+            }
+        });
         // Display-only counts for the admin sidebar badges (real data).
         View::composer('partials.admin-sidebar', fn ($view) => $view->with('sidebarCounts', [
             'profiles' => Profile::count(),

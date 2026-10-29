@@ -2,6 +2,7 @@
 @import './similar-outages.css';
 @import './outages.css';
 @import './my-reports.css';
+@import './outage-notifications.css';
 
 @source '../views/**/*.blade.php';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

@@ -17,6 +17,9 @@
             <div class="ha-nav__actions">
                 @auth
                     <a href="{{ route('account.edit') }}" class="ha-btn ha-btn--ghost" @if(request()->routeIs('account.*')) aria-current="page" @endif><x-ha.avatar :name="auth()->user()->name" :src="auth()->user()->avatar_path ? Storage::disk('public')->url(auth()->user()->avatar_path) : null" />Account</a>
+                    @if(auth()->user()->role === 'USER' && auth()->user()->hasVerifiedEmail())
+                        @include('partials.outage-notifications')
+                    @endif
                     <form novalidate method="POST" action="{{ route('logout') }}">@csrf<button class="ha-btn ha-btn--outline ha-btn--sm"><x-ha.icon name="log-out" size="sm" />Log out</button></form>
                 @else
                     <a href="{{ route('login') }}" class="ha-btn ha-btn--ghost">Login</a>

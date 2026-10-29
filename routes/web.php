@@ -95,6 +95,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/outages/report', [OutageController::class, 'store'])->name('outages.report.store');
     Route::post('/outages/report/similar', [\App\Http\Controllers\SimilarOutageController::class, 'store'])
         ->middleware('throttle:4,1')->name('outages.report.similar');
+    Route::get('/outages/{coupure}', [\App\Http\Controllers\ResidentOutageController::class, 'show'])
+        ->whereNumber('coupure')->name('outages.show');
+
+    Route::get('/outage-notifications', [\App\Http\Controllers\OutageNotificationController::class, 'index'])->name('outage-notifications.index');
+    Route::patch('/outage-notifications/read-all', [\App\Http\Controllers\OutageNotificationController::class, 'readAll'])->name('outage-notifications.read-all');
+    Route::patch('/outage-notifications/{notification}/read', [\App\Http\Controllers\OutageNotificationController::class, 'read'])
+        ->whereUuid('notification')->name('outage-notifications.read');
+    Route::post('/outage-notifications/{notification}/open', [\App\Http\Controllers\OutageNotificationController::class, 'open'])
+        ->whereUuid('notification')->name('outage-notifications.open');
 
     Route::get('/advice/saved', [AdviceController::class, 'index'])->name('advice.saved');
     Route::get('/advice/{conseil}/vote', [AdviceController::class, 'show'])->name('advice.vote.prompt');
