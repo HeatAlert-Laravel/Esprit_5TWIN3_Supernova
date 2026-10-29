@@ -1,5 +1,5 @@
 <tr>
-    <td><a class="ha-cell-person__name" href="{{ route('admin.alertes-meteo.show', $alerte) }}">{{ $alerte->titre }}</a></td>
+    <td><a class="ha-cell-person__name" href="{{ route('admin.alertes-meteo.show', $alerte) }}">{{ $alerte->titre }}</a>@if($alerte->generee_auto)<span class="ha-auto-tag" title="Generated automatically from the Open-Meteo forecast"><x-ha.icon name="zap" size="sm" />Auto</span>@endif</td>
     <td>{{ $alerte->quartier->nom }}</td>
     <td><x-ha.badge :variant="$alerte->levelBadgeVariant()">{{ ucfirst($alerte->niveau) }}</x-ha.badge></td>
     <td>{{ number_format($alerte->temperature_max, 1) }} °C</td>

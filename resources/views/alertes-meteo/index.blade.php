@@ -2,7 +2,7 @@
 @section('title', 'Weather alerts')
 @section('content')
 <x-ha.page-header title="Weather alerts" description="Manage heat alerts published for residents." :breadcrumbs="[['Dashboard', route('admin.dashboard')], ['Weather alerts', null]]">
-	<x-slot:badges><span class="ha-count-pill">{{ $totalAlertes }} {{ \Illuminate\Support\Str::plural('alert', $totalAlertes) }}</span></x-slot:badges>
+	<x-slot:badges><span class="ha-count-pill">{{ $totalAlertes }} {{ \Illuminate\Support\Str::plural('alert', $totalAlertes) }}</span>@if($totalAutomatiques > 0)<span class="ha-auto-pill"><x-ha.icon name="zap" size="sm" />{{ $totalAutomatiques }} automatic</span>@endif</x-slot:badges>
 	<x-slot:actions><a href="{{ route('admin.alertes-meteo.create') }}" class="ha-btn ha-btn--primary"><x-ha.icon name="plus" size="sm" />Add alert</a></x-slot:actions>
 </x-ha.page-header>
 
@@ -14,9 +14,17 @@
 			@foreach($quartiers as $quartier)<option value="{{ $quartier->id }}" @selected($quartierId == $quartier->id)>{{ $quartier->nom }}</option>@endforeach
 		</select>
 	</div>
+	<div class="ha-field">
+		<label class="ha-label" for="origine">Origin</label>
+		<select id="origine" name="origine" class="ha-select">
+			<option value="">All origins</option>
+			<option value="auto" @selected($origine === 'auto')>Generated automatically</option>
+			<option value="manual" @selected($origine === 'manual')>Created manually</option>
+		</select>
+	</div>
 	<div class="ha-filter__actions">
 		<button class="ha-btn ha-btn--secondary"><x-ha.icon name="search" size="sm" />Filter</button>
-		@if($quartierId !== '')<a href="{{ route('admin.alertes-meteo.index') }}" class="ha-btn ha-btn--ghost">Reset</a>@endif
+		@if($quartierId !== '' || $origine !== '')<a href="{{ route('admin.alertes-meteo.index') }}" class="ha-btn ha-btn--ghost">Reset</a>@endif
 	</div>
 </form>
 

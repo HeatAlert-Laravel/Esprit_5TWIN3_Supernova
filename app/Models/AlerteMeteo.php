@@ -26,7 +26,7 @@ class AlerteMeteo extends Model
     protected $fillable = [
         'quartier_id', 'titre', 'type', 'niveau', 'temperature_max',
         'temperature_min', 'temperature_ressentie', 'humidite', 'indice_uv',
-        'vitesse_vent', 'risque_coupure', 'source',
+        'vitesse_vent', 'risque_coupure', 'source', 'generee_auto',
         'date_debut', 'date_fin', 'publiee',
     ];
 
@@ -40,6 +40,7 @@ class AlerteMeteo extends Model
             'indice_uv' => 'integer',
             'vitesse_vent' => 'float',
             'risque_coupure' => 'boolean',
+            'generee_auto' => 'boolean',
             'date_debut' => 'date',
             'date_fin' => 'date',
             'publiee' => 'boolean',
@@ -54,6 +55,16 @@ class AlerteMeteo extends Model
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('publiee', true);
+    }
+
+    public function scopeAutomatic(Builder $query): Builder
+    {
+        return $query->where('generee_auto', true);
+    }
+
+    public function scopeManual(Builder $query): Builder
+    {
+        return $query->where('generee_auto', false);
     }
 
     /** Alerts whose period includes the given day (today by default). */

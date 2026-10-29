@@ -1091,3 +1091,10 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
         .wx-weekday__rain { display: none; }
     }
 }
+
+@layer components {
+    .ha-auto-tag { display: inline-flex; align-items: center; gap: .25rem; margin-left: .5rem; padding: .0625rem .5rem; border-radius: 999px; background: #E3F0FB; color: #1D4F7C; font-size: .6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; vertical-align: middle; }
+    .ha-auto-pill { display: inline-flex; align-items: center; gap: .25rem; padding: .125rem .625rem; border-radius: 999px; background: #E3F0FB; color: #1D4F7C; font-size: .75rem; font-weight: 700; }
+    .ha-auto-notice { display: flex; gap: var(--ha-s-3); align-items: flex-start; margin-bottom: var(--ha-s-4); padding: var(--ha-s-4); background: #E3F0FB; border: 1px solid #B7D6F0; border-radius: var(--ha-r-lg); color: #1D4F7C; }
+    .ha-auto-notice p { margin: .125rem 0 0; font-size: .875rem; }
+}

@@ -14,12 +14,15 @@ class AlerteMeteoController extends Controller
     public function index(Request $request): View
     {
         $quartierId = (string) $request->query('quartier_id', '');
+        $origine = in_array($request->query('origine'), ['auto', 'manual'], true) ? $request->query('origine') : '';
 
         return view('alertes-meteo.index', [
-            'alertes' => AlerteMeteo::with('quartier')->when($quartierId !== '', fn ($query) => $query->where('quartier_id', $quartierId))->latest('date_debut')->paginate(10)->withQueryString(),
+            'alertes' => AlerteMeteo::with('quartier')->when($quartierId !== '', fn ($query) => $query->where('quartier_id', $quartierId))->when($origine === 'auto', fn ($query) => $query->automatic())->when($origine === 'manual', fn ($query) => $query->manual())->latest('date_debut')->paginate(10)->withQueryString(),
             'quartiers' => Quartier::orderBy('ville')->orderBy('nom')->get(),
             'quartierId' => $quartierId,
+            'origine' => $origine,
             'totalAlertes' => AlerteMeteo::count(),
+            'totalAutomatiques' => AlerteMeteo::automatic()->count(),
         ]);
     }
 
@@ -47,9 +50,14 @@ class AlerteMeteoController extends Controller
 
     public function update(Request $request, AlerteMeteo $alerte): RedirectResponse
     {
-        $alerte->update($this->validated($request));
+        $wasAutomatic = $alerte->generee_auto;
 
-        return redirect()->route('admin.alertes-meteo.show', $alerte)->with('status', 'Weather alert updated.');
+        // An administrator's edit takes ownership: the generator never overwrites a manual alert.
+        $alerte->update($this->validated($request) + ['generee_auto' => false]);
+
+        return redirect()->route('admin.alertes-meteo.show', $alerte)->with('status', $wasAutomatic
+            ? 'Weather alert updated. It is now managed manually and will no longer be changed by the automatic generation.'
+            : 'Weather alert updated.');
     }
 
     public function destroy(AlerteMeteo $alerte): RedirectResponse
