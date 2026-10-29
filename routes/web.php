@@ -129,6 +129,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin', 'verified']
     Route::resource('equipment', SensitiveEquipmentController::class);
 
     // Power outages and resident reports
+    Route::post('coupures/{coupure}/summary', [\App\Http\Controllers\OutageReportSummaryController::class, 'store'])
+        ->middleware('throttle:6,1')->name('coupures.summary');
     Route::resource('coupures', CoupureController::class);
     Route::patch('signalements/{signalement}/statut', [SignalementController::class, 'statut'])->name('signalements.statut');
     Route::resource('signalements', SignalementController::class);

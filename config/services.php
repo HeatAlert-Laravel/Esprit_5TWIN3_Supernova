@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'openrouter' => [
+        'key' => env('OPENROUTER_API_KEY'),
+        'model' => env('OPENROUTER_MODEL'),
+    ],
     'gemini' => [
         'key' => env('GEMINI_API_KEY'),
         'tts_model' => env('GEMINI_TTS_MODEL', 'gemini-3.8-flash-lite-tts'),
