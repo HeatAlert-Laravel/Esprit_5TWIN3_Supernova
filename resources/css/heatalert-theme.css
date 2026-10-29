@@ -888,3 +888,29 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
     .ha-forecast__date { font-weight: 600; min-width: 6.5rem; }
     .ha-forecast__values { color: var(--ha-ink-2); flex: 1; min-width: 12rem; }
 }
+
+@layer components {
+    .ha-link { color: var(--ha-shade-600); font-weight: 600; text-decoration: none; }
+    .ha-link:hover { color: var(--ha-ember-700); text-decoration: underline; }
+    .ha-section-title { display: flex; align-items: center; gap: var(--ha-s-2); margin: var(--ha-s-6, 2rem) 0 var(--ha-s-3, .75rem); font-size: 1.125rem; font-weight: 600; }
+
+    .ha-level-counters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ha-s-3, .75rem); margin-bottom: var(--ha-s-4, 1rem); }
+    @media (min-width: 768px) { .ha-level-counters { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    .ha-level-counter { display: flex; flex-direction: column; gap: .125rem; padding: 1rem; text-decoration: none; color: var(--ha-ink); border-left: 6px solid var(--ha-border-strong); transition: box-shadow .15s, transform .15s; }
+    .ha-level-counter:hover { box-shadow: var(--ha-shadow-md, 0 4px 12px rgba(0, 0, 0, .08)); transform: translateY(-1px); }
+    .ha-level-counter.is-selected { outline: 2px solid var(--ha-shade-600); outline-offset: 2px; }
+    .ha-level-counter--vert { border-left-color: #22C55E; }
+    .ha-level-counter--jaune { border-left-color: #FACC15; }
+    .ha-level-counter--orange { border-left-color: #F97316; }
+    .ha-level-counter--rouge { border-left-color: #EF4444; }
+    .ha-level-counter__value { font-family: var(--ha-font-heading); font-size: 2rem; font-weight: 700; line-height: 1; }
+    .ha-level-counter__label { font-weight: 600; }
+    .ha-level-counter__hint { font-size: .75rem; color: var(--ha-ink-3); }
+
+    .ha-weather-now { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem 1rem; margin: 0 0 var(--ha-s-3, .75rem); }
+    .ha-weather-now__value { font-family: var(--ha-font-heading); font-size: 2.5rem; font-weight: 700; line-height: 1; }
+    .ha-weather-now__meta { font-size: .875rem; color: var(--ha-ink-2); }
+    .ha-weather-days { list-style: none; margin: 0 0 var(--ha-s-3, .75rem); padding: 0; display: grid; gap: .375rem; }
+    .ha-weather-days li { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .375rem .625rem; background: var(--ha-surface-2); border-radius: var(--ha-r-md); font-size: .875rem; }
+    .ha-weather-days time { font-weight: 600; min-width: 5.5rem; }
+}

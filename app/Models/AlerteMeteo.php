@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -18,6 +19,9 @@ class AlerteMeteo extends Model
         'secheresse' => 'Drought',
         'autre' => 'Other',
     ];
+
+    /** Vigilance levels from the calmest to the most severe. */
+    public const LEVELS = ['vert', 'jaune', 'orange', 'rouge'];
 
     protected $fillable = [
         'quartier_id', 'titre', 'type', 'niveau', 'temperature_max',
@@ -47,6 +51,25 @@ class AlerteMeteo extends Model
         return $this->belongsTo(Quartier::class);
     }
 
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->where('publiee', true);
+    }
+
+    /** Alerts whose period includes the given day (today by default). */
+    public function scopeCurrent(Builder $query, ?Carbon $date = null): Builder
+    {
+        $day = ($date ?? today())->toDateString();
+
+        return $query->whereDate('date_debut', '<=', $day)->whereDate('date_fin', '>=', $day);
+    }
+
+    /** Most severe level first (rouge, orange, jaune, vert). */
+    public function scopeMostSevereFirst(Builder $query): Builder
+    {
+        return $query->orderByRaw("CASE niveau WHEN 'rouge' THEN 0 WHEN 'orange' THEN 1 WHEN 'jaune' THEN 2 ELSE 3 END");
+    }
+
     public function temporalStatus(?Carbon $date = null): string
     {
         $date ??= today();
@@ -60,7 +83,12 @@ class AlerteMeteo extends Model
 
     public function levelBadgeVariant(): string
     {
-        return match ($this->niveau) {
+        return self::badgeVariantFor($this->niveau);
+    }
+
+    public static function badgeVariantFor(?string $level): string
+    {
+        return match ($level) {
             'vert' => 'level-green',
             'jaune' => 'level-yellow',
             'orange' => 'level-orange',
@@ -96,7 +124,12 @@ class AlerteMeteo extends Model
 
     public function levelLabel(): string
     {
-        return match ($this->niveau) {
+        return self::labelFor($this->niveau);
+    }
+
+    public static function labelFor(?string $level): string
+    {
+        return match ($level) {
             'vert' => 'Green',
             'jaune' => 'Yellow',
             'orange' => 'Orange',
@@ -107,7 +140,12 @@ class AlerteMeteo extends Model
 
     public function levelAdvice(): string
     {
-        return match ($this->niveau) {
+        return self::adviceFor($this->niveau);
+    }
+
+    public static function adviceFor(?string $level): string
+    {
+        return match ($level) {
             'vert' => 'Stay hydrated and keep an eye on vulnerable people.',
             'jaune' => 'Limit outdoor activity during the hottest hours.',
             'orange' => 'Postpone strenuous activities and stay in the shade.',

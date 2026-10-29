@@ -5,7 +5,22 @@
     <x-slot:badges><span class="ha-count-pill">{{ $alertes->count() }} {{ $alertes->count() === 1 ? 'alert' : 'alerts' }}</span></x-slot:badges>
 </x-ha.page-header>
 
+<section class="ha-level-counters" aria-label="Alerts active today by level">
+    @foreach($activeByLevel as $level => $total)
+        @php $params = array_filter(['quartier_id' => $quartierId, 'q' => $search, 'niveau' => $niveau === $level ? null : $level]); @endphp
+        <a href="{{ route('weather-alerts', $params) }}" class="ha-card ha-level-counter ha-level-counter--{{ $level }} @if($niveau === $level) is-selected @endif" @if($niveau === $level) aria-current="true" @endif>
+            <span class="ha-level-counter__value">{{ $total }}</span>
+            <span class="ha-level-counter__label">{{ \App\Models\AlerteMeteo::labelFor($level) }}</span>
+            <span class="ha-level-counter__hint">active today</span>
+        </a>
+    @endforeach
+</section>
+
 <form method="GET" action="{{ route('weather-alerts') }}" class="ha-filter" role="search" aria-label="Filter weather alerts" data-auto-filter>
+    <div class="ha-field ha-field--grow">
+        <label class="ha-label" for="q">Search</label>
+        <input id="q" name="q" type="search" value="{{ $search }}" class="ha-input" placeholder="Title, neighborhood, city…">
+    </div>
     <div class="ha-field ha-field--grow">
         <label class="ha-label" for="quartier_id">Neighborhood</label>
         <select id="quartier_id" name="quartier_id" class="ha-select">
@@ -13,39 +28,25 @@
             @foreach($quartiers as $quartier)<option value="{{ $quartier->id }}" @selected($quartierId == $quartier->id)>{{ $quartier->nom }} — {{ $quartier->ville }}</option>@endforeach
         </select>
     </div>
+    <div class="ha-field">
+        <label class="ha-label" for="niveau">Level</label>
+        <select id="niveau" name="niveau" class="ha-select">
+            <option value="">All levels</option>
+            @foreach(array_reverse(\App\Models\AlerteMeteo::LEVELS) as $level)<option value="{{ $level }}" @selected($niveau === $level)>{{ \App\Models\AlerteMeteo::labelFor($level) }}</option>@endforeach
+        </select>
+    </div>
     <div class="ha-filter__actions">
         <noscript><button class="ha-btn ha-btn--secondary"><x-ha.icon name="search" size="sm" />Filter</button></noscript>
-        @if($quartierId !== '')<a href="{{ route('weather-alerts') }}" class="ha-btn ha-btn--ghost">Reset</a>@endif
+        @if($quartierId !== '')<a href="{{ route('neighborhoods.show', $quartierId) }}" class="ha-btn ha-btn--outline">Neighborhood page</a>@endif
+        @if($quartierId !== '' || $search !== '' || $niveau !== '')<a href="{{ route('weather-alerts') }}" class="ha-btn ha-btn--ghost">Reset</a>@endif
     </div>
 </form>
 
 <div class="ha-grid ha-grid--2">
     @forelse($alertes as $alerte)
-        <article class="ha-card ha-alert-card ha-alert-card--{{ $alerte->niveau }}" aria-label="{{ $alerte->titre }}, {{ $alerte->levelLabel() }} level, maximum {{ $alerte->temperature_max }} degrees Celsius">
-            <div class="ha-alert-card__head">
-                <h2 class="ha-alert-card__title">{{ $alerte->titre }}</h2>
-                <x-ha.badge :variant="$alerte->levelBadgeVariant()">{{ $alerte->levelLabel() }}</x-ha.badge>
-            </div>
-            <p class="ha-alert-card__temp">
-                <span class="ha-alert-card__temp-value">{{ number_format($alerte->temperature_max, 1) }}</span><span class="ha-alert-card__temp-unit">°C</span>
-              <!--   <span class="ha-alert-card__temp-label">forecast maximum</span> -->
-            </p>
-            <!-- <p class="ha-alert-card__advice">{{ $alerte->levelAdvice() }}</p> -->
-            <p class="ha-alert-card__type">{{ $alerte->typeLabel() }}@if($alerte->temperature_min !== null) · {{ number_format($alerte->temperature_min, 0) }}° min @endif @if($alerte->temperature_ressentie !== null) · feels {{ number_format($alerte->temperature_ressentie, 0) }}° @endif</p>
-            <ul class="ha-alert-card__meta">
-                @if($alerte->humidite !== null || $alerte->indice_uv !== null || $alerte->vitesse_vent !== null)
-                    <li><x-ha.icon name="info" size="sm" /><span>@if($alerte->humidite !== null)Humidity {{ $alerte->humidite }}% @endif @if($alerte->indice_uv !== null)· UV {{ $alerte->indice_uv }} @endif @if($alerte->vitesse_vent !== null)· Wind {{ number_format($alerte->vitesse_vent, 0) }} km/h @endif</span></li>
-                @endif
-                <li><x-ha.icon name="map-pin" size="sm" /><span>{{ $alerte->quartier->nom }}, {{ $alerte->quartier->ville }}</span></li>
-                <li><x-ha.icon name="clock" size="sm" /><time datetime="{{ $alerte->date_debut->toDateString() }}">{{ $alerte->date_debut->format('d/m/Y') }}</time> – <time datetime="{{ $alerte->date_fin->toDateString() }}">{{ $alerte->date_fin->format('d/m/Y') }}</time></li>
-            </ul>
-            <div class="ha-alert-card__foot">
-                <x-ha.badge :variant="$alerte->temporalStatusBadgeVariant()">{{ $alerte->temporalStatusLabel() }}</x-ha.badge>
-                @if($alerte->risque_coupure)<x-ha.badge variant="level-red">Power outage risk</x-ha.badge>@endif
-            </div>
-        </article>
+        @include('alertes-meteo._resident-card', ['alerte' => $alerte])
     @empty
-        <div class="ha-card"><x-ha.empty-state icon="alert-triangle" title="No active alerts" description="There are no published heat alerts for this selection. When a heat alert is issued for your area, it will appear here." /></div>
+        <div class="ha-card"><x-ha.empty-state icon="alert-triangle" title="No alerts found" description="There are no published heat alerts for this selection. When a heat alert is issued for your area, it will appear here." /></div>
     @endforelse
 </div>
 @endsection
