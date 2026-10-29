@@ -6,6 +6,7 @@ use App\Http\Controllers\AdviceAudioController;
 use App\Http\Controllers\AdviceBookmarkController;
 use App\Http\Controllers\AdviceController;
 use App\Http\Controllers\AdviceVoteController;
+use App\Http\Controllers\AlertExplainController;
 use App\Http\Controllers\AlerteMeteoController;
 use App\Http\Controllers\CategorieConseilController;
 use App\Http\Controllers\ConseilController;
@@ -38,6 +39,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/weather-alerts', [WeatherAlertController::class, 'index'])->name('weather-alerts');
 Route::get('/weather-alerts/{alerte}', [WeatherAlertController::class, 'show'])
     ->whereNumber('alerte')->name('weather-alerts.show');
+Route::post('/weather-alerts/{alerte}/explain', [AlertExplainController::class, 'store'])
+    ->whereNumber('alerte')->middleware('throttle:6,1')->name('weather-alerts.explain');
 Route::get('/neighborhoods/{quartier}', [NeighborhoodController::class, 'show'])
     ->whereNumber('quartier')->middleware('throttle:60,1')->name('neighborhoods.show');
 Route::get('/outages', [OutageController::class, 'index'])->name('outages');

@@ -3,6 +3,10 @@
 import './auto-filter';
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('[data-alert-explainer]')) {
+        import('./alert-explainer').then(({ initAlertExplainer }) => initAlertExplainer());
+    }
+
     if (document.querySelector('[data-wx-map], [data-wx-tabs]')) {
         import('./weather-map').then(({ initWeatherPages }) => initWeatherPages());
     }

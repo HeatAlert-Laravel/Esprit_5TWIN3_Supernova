@@ -1137,3 +1137,20 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
     .wx-around__tile--warn { border-color: var(--wx-orange); background: var(--wx-orange-bg); }
     .wx-around__tile--warn .ha-icon { color: var(--wx-orange); }
 }
+
+@layer components {
+    .wx-explain { margin-top: var(--ha-s-6); padding: var(--ha-s-5); background: var(--ha-surface); border: 1px solid var(--ha-border); border-left: 6px solid var(--ha-shade-600); border-radius: var(--ha-r-xl); box-shadow: var(--ha-shadow-rest); }
+    .wx-explain__head { display: flex; align-items: flex-start; gap: var(--ha-s-3); }
+    .wx-explain__head h2 { margin: 0; font-size: 1.25rem; }
+    .wx-explain__head .ha-help { margin: .125rem 0 0; }
+    .wx-explain__controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ha-s-3); margin-top: var(--ha-s-4); }
+    .wx-langs { display: flex; flex-wrap: wrap; gap: var(--ha-s-2); }
+    .wx-lang { padding: .4rem .9rem; background: var(--ha-surface); border: 1px solid var(--ha-border); border-radius: 999px; font: 600 .875rem var(--ha-font-body); color: var(--ha-ink-2); cursor: pointer; transition: background .15s, border-color .15s, color .15s; }
+    .wx-lang:hover { border-color: var(--ha-shade-600); }
+    .wx-lang[aria-checked="true"] { background: var(--ha-shade-800); border-color: var(--ha-shade-800); color: #fff; }
+    .wx-explain__result { margin-top: var(--ha-s-4); padding: var(--ha-s-4); background: var(--ha-surface-2); border-radius: var(--ha-r-lg); font-size: 1rem; line-height: 1.65; }
+    .wx-explain__summary { margin: 0 0 var(--ha-s-3); font-size: 1.0625rem; }
+    .wx-explain__actions { margin: 0; padding-inline-start: 1.25rem; display: grid; gap: .375rem; }
+    .wx-explain__error { margin: 0; color: var(--ha-error); font-weight: 600; }
+    .wx-explain__notice { display: flex; align-items: flex-start; gap: .375rem; margin: var(--ha-s-3) 0 0; font-size: .8125rem; color: var(--ha-ink-3); }
+}

@@ -6,6 +6,12 @@ return [
         'tts_model' => env('GEMINI_TTS_MODEL', 'gemini-3.8-flash-lite-tts'),
         'tts_daily_limit' => (int) env('GEMINI_TTS_DAILY_LIMIT', 30),
     ],
+    // Module 1 "Explain this alert": its own key and model, independent from the Gemini voice settings above.
+    'google' => [
+        'key' => env('GOOGLE_API_KEY'),
+        'explain_model' => env('GOOGLE_EXPLAIN_MODEL', 'gemini-3.5-flash'),
+        'explain_daily_limit' => (int) env('GOOGLE_EXPLAIN_DAILY_LIMIT', 60),
+    ],
     'groq' => [
         'key' => env('GROQ_API_KEY'),
         'assistant_model' => env('GROQ_ASSISTANT_MODEL', 'openai/gpt-oss-20b'),

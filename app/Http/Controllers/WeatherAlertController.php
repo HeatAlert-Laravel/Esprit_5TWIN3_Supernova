@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AlerteMeteo;
 use App\Models\Quartier;
+use App\Services\AlertExplainer;
 use App\Services\NeighborhoodResources;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -109,6 +110,7 @@ class WeatherAlertController extends Controller
         return view('alertes-meteo.resident-show', [
             'alerte' => $alerte,
             'quartier' => $quartier,
+            'explainerEnabled' => AlertExplainer::isConfigured(),
             'advice' => $resources->advice($alerte->risque_coupure),
             'coolingPoints' => $resources->coolingPoints($quartier),
             'coolingPointsCount' => $resources->coolingPointsCount($quartier),
