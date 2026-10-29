@@ -26,6 +26,9 @@ class M2Listing
         if (filled($filters['statut'] ?? null)) {
             $query->where('statut', $filters['statut']);
         }
+        if ($public && filled($filters['type'] ?? null)) {
+            $query->where('type', $filters['type']);
+        }
         $direction = ($filters['sort'] ?? 'recent') === 'oldest' ? 'asc' : 'desc';
         // Only these fixed columns can be sorted; no column comes from the request.
         $query->orderBy($public ? 'date_debut' : 'created_at', $direction)->orderBy('id', $direction);

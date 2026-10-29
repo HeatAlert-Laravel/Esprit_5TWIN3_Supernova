@@ -22,6 +22,11 @@
         </div>
     </section>
     <x-ha.error-summary />
+    <nav class="ha-advice-situations" aria-label="Filter outages by type">
+        @foreach(['' => 'All outages', 'en cours' => 'Ongoing', 'prévue' => 'Planned'] as $value => $label)
+            <a href="{{ route('outages', array_merge(request()->except('page', 'type', 'statut'), $value ? ['type' => $value] : [])) }}" class="ha-btn {{ request('type', '') === $value ? 'ha-btn--primary' : 'ha-btn--outline' }}" @if(request('type', '') === $value) aria-current="page" @endif>{{ $label }}</a>
+        @endforeach
+    </nav>
     <div class="outages-filter-wrap">@include('coupures._filters')</div>
     <div class="wx-list-head outages-list-head">
         <h2 class="wx-section-title">Outages <span class="ha-count-pill">{{ $coupures->total() }}</span></h2>
@@ -53,4 +58,3 @@
     <div class="ha-pagination">{{ $coupures->links() }}</div>
 </div>
 @endsection
-

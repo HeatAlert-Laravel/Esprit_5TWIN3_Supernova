@@ -16,11 +16,17 @@ class M2IndexRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'q' => ['nullable', 'string', 'max:200'],
             'statut' => ['nullable', 'string', Rule::in($this->routeIs('admin.signalements.index') ? Signalement::STATUTS : Coupure::STATUTS)],
             'sort' => ['sometimes', 'string', Rule::in(['recent', 'oldest'])],
             'page' => ['sometimes', 'integer', 'min:1', 'max:1000000'],
         ];
+
+        if ($this->routeIs('outages')) {
+            $rules['type'] = ['nullable', 'string', Rule::in(Coupure::TYPES)];
+        }
+
+        return $rules;
     }
 }
