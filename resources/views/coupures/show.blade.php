@@ -13,28 +13,28 @@
     <div class="ha-outage-ai__header">
         <div class="ha-outage-ai__heading">
             <span class="ha-outage-ai__icon"><x-ha.icon name="zap" /></span>
-            <div><span class="ha-outage-ai__eyebrow">ASSISTANT HEATALERT</span><h2 id="outage-summary-title">Résumé intelligent des signalements</h2></div>
+            <div><span class="ha-outage-ai__eyebrow">HEATALERT ASSISTANT</span><h2 id="outage-summary-title">AI report summary</h2></div>
         </div>
         @if($coupure->signalements->isNotEmpty())
-            <button type="button" class="ha-btn ha-btn--primary ha-outage-ai__button" data-summary-button><x-ha.icon name="zap" size="sm" /><span data-summary-button-label>Résumer les signalements avec l'IA</span></button>
+            <button type="button" class="ha-btn ha-btn--primary ha-outage-ai__button" data-summary-button><x-ha.icon name="zap" size="sm" /><span data-summary-button-label>Summarize reports with AI</span></button>
         @endif
     </div>
-    <p class="ha-outage-ai__intro">L’essentiel des signalements, regroupé en une synthèse claire pour faciliter votre suivi.</p>
+    <p class="ha-outage-ai__intro">Key information from the reports, brought together in a clear summary.</p>
     @if($coupure->signalements->isEmpty())
-        <p class="ha-outage-ai__empty">Aucun signalement associé à cette coupure pour le moment.</p>
+        <p class="ha-outage-ai__empty">No reports are associated with this outage yet.</p>
     @else
-        <noscript><p>Activez JavaScript pour générer le résumé sur cette page.</p></noscript>
+        <noscript><p>Enable JavaScript to generate the summary on this page.</p></noscript>
     @endif
-    <div class="ha-outage-ai__loading" data-summary-loading role="status" hidden><span class="ha-outage-ai__spinner" aria-hidden="true"></span><div><strong>Analyse des signalements en cours…</strong><span>Votre synthèse sera disponible dans quelques instants.</span></div></div>
+    <div class="ha-outage-ai__loading" data-summary-loading role="status" hidden><span class="ha-outage-ai__spinner" aria-hidden="true"></span><div><strong>Analyzing reports…</strong><span>Your summary will be ready shortly.</span></div></div>
     <p class="ha-outage-ai__error" data-summary-error role="alert" hidden></p>
     <div class="ha-outage-ai__result" data-summary-result aria-live="polite" hidden>
         <div class="ha-outage-ai__meta"><span class="ha-outage-ai__count" data-summary-count></span><span class="ha-outage-ai__location"><x-ha.icon name="map-pin" size="sm" /><span data-summary-location></span></span><span class="ha-outage-ai__provider" data-summary-provider></span></div>
-        <div class="ha-outage-ai__synthesis"><span class="ha-outage-ai__eyebrow">SYNTHÈSE GÉNÉRALE</span><p data-summary-text></p></div>
+        <div class="ha-outage-ai__synthesis"><span class="ha-outage-ai__eyebrow">OVERVIEW</span><p data-summary-text></p></div>
         <div class="ha-outage-ai__grid">
-            <div class="ha-outage-ai__block"><h3><span class="ha-outage-ai__mini-icon"><x-ha.icon name="plug" size="sm" /></span>Problèmes mentionnés</h3><ul data-summary-problems></ul></div>
-            <div class="ha-outage-ai__block ha-outage-ai__block--attention"><h3><span class="ha-outage-ai__mini-icon"><x-ha.icon name="alert-triangle" size="sm" /></span>Points d'attention</h3><ul data-summary-attention></ul></div>
+            <div class="ha-outage-ai__block"><h3><span class="ha-outage-ai__mini-icon"><x-ha.icon name="plug" size="sm" /></span>Reported issues</h3><ul data-summary-problems></ul></div>
+            <div class="ha-outage-ai__block ha-outage-ai__block--attention"><h3><span class="ha-outage-ai__mini-icon"><x-ha.icon name="alert-triangle" size="sm" /></span>Points to review</h3><ul data-summary-attention></ul></div>
         </div>
-        <div class="ha-outage-ai__footer"><p><x-ha.icon name="eye" size="sm" />Synthèse assistée par IA · Les déclarations restent à vérifier.</p><details><summary>Comment lire ce résumé</summary><p data-summary-note></p><p>Les descriptions nettoyées sont analysées par Gemini, ou OpenRouter en secours.</p></details></div>
+        <div class="ha-outage-ai__footer"><p><x-ha.icon name="eye" size="sm" />AI-assisted summary · Reported information still needs to be verified.</p><details><summary>About this summary</summary><p data-summary-note></p><p>Cleaned descriptions are analyzed by Gemini, or OpenRouter as a backup.</p></details></div>
     </div>
 </section>
 <div class="ha-card"><h2 class="ha-card__title">{{ __('Reports') }}</h2>@forelse($coupure->signalements as $signalement)<p><a href="{{ route('admin.signalements.show', $signalement) }}">{{ $signalement->user->name }} — {{ $signalement->adresse }}</a> — {{ __($signalement->statut) }}</p>@empty<p>{{ __('No records') }}</p>@endforelse</div>

@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import './similar-outages.css';
 @import './outages.css';
+@import './my-reports.css';
 
 @source '../views/**/*.blade.php';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

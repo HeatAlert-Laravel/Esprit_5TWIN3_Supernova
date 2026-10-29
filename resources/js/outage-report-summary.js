@@ -21,7 +21,7 @@ export function initOutageReportSummary() {
                 item.textContent = text;
                 const source = document.createElement('span');
                 source.className = 'ha-outage-ai__source';
-                source.textContent = `${count} signalement${count > 1 ? 's' : ''} cité${count > 1 ? 's' : ''}`;
+                source.textContent = `${count} cited report${count > 1 ? 's' : ''}`;
                 item.append(source);
                 list.append(item);
             });
@@ -45,13 +45,13 @@ export function initOutageReportSummary() {
                 const data = await response.json().catch(() => ({}));
                 if (!response.ok) {
                     const messages = {
-                        401: 'Votre session a expiré. Reconnectez-vous.',
-                        403: 'Cette action est réservée aux administrateurs autorisés.',
-                        419: 'Votre session a expiré. Actualisez la page puis réessayez.',
-                        429: 'Trop de demandes. Patientez une minute avant de réessayer.',
-                        503: 'Le résumé IA est momentanément indisponible. Veuillez réessayer plus tard.',
+                        401: 'Your session has expired. Please sign in again.',
+                        403: 'This action is restricted to authorized administrators.',
+                        419: 'Your session has expired. Refresh the page and try again.',
+                        429: 'Too many requests. Wait a minute before trying again.',
+                        503: 'The AI summary is temporarily unavailable. Please try again later.',
                     };
-                    throw new Error(messages[response.status] || (response.status === 409 ? data.message : 'Le résumé n’a pas pu être généré. Veuillez réessayer.'));
+                    throw new Error(messages[response.status] || (response.status === 409 ? data.message : 'The summary could not be generated. Please try again.'));
                 }
                 if (data.empty) {
                     error.textContent = data.message;
@@ -59,24 +59,24 @@ export function initOutageReportSummary() {
                     return;
                 }
                 if (!data.summary || !Array.isArray(data.problems) || !Array.isArray(data.attention)) {
-                    throw new Error('La réponse reçue est incomplète. Veuillez réessayer.');
+                    throw new Error('The response is incomplete. Please try again.');
                 }
-                panel.querySelector('[data-summary-count]').textContent = `${data.total} signalement${data.total > 1 ? 's' : ''}`;
+                panel.querySelector('[data-summary-count]').textContent = `${data.total} report${data.total > 1 ? 's' : ''}`;
                 panel.querySelector('[data-summary-text]').textContent = data.summary;
                 panel.querySelector('[data-summary-location]').textContent = data.location;
-                panel.querySelector('[data-summary-provider]').textContent = `Généré avec ${data.provider}`;
-                renderList('[data-summary-problems]', data.problems, 'Aucun problème précis exploitable dans les descriptions.');
-                renderList('[data-summary-attention]', data.attention, 'Aucun point particulier relevé.');
+                panel.querySelector('[data-summary-provider]').textContent = `Generated with ${data.provider}`;
+                renderList('[data-summary-problems]', data.problems, 'No specific issues could be identified from the descriptions.');
+                renderList('[data-summary-attention]', data.attention, 'No particular points were identified.');
                 panel.querySelector('[data-summary-note]').textContent =
-                    `${data.analyzed} description(s) analysée(s) avec ${data.provider}. ` +
-                    (data.partial ? 'Analyse limitée aux signalements les plus récents. ' : '') +
-                    'Les décomptes sont calculés par le serveur à partir des signalements cités par l’IA ; ils ne constituent pas un recensement exhaustif des problèmes.';
+                    `${data.analyzed} description(s) analyzed with ${data.provider}. ` +
+                    (data.partial ? 'Analysis is limited to the most recent reports. ' : '') +
+                    'Counts are calculated by the server from the reports cited by the AI and may not cover every mention.';
                 result.hidden = false;
-                buttonLabel.textContent = 'Régénérer le résumé';
+                buttonLabel.textContent = 'Regenerate summary';
             } catch (failure) {
                 error.textContent = failure.name === 'AbortError'
-                    ? 'Le service met trop de temps à répondre. Veuillez réessayer.'
-                    : (failure instanceof TypeError ? 'Connexion interrompue. Veuillez réessayer.' : failure.message);
+                    ? 'The service is taking too long to respond. Please try again.'
+                    : (failure instanceof TypeError ? 'Connection interrupted. Please try again.' : failure.message);
                 error.hidden = false;
             } finally {
                 clearTimeout(timer);

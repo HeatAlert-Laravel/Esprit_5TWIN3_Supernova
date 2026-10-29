@@ -91,6 +91,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::get('/outages/report', [OutageController::class, 'create'])->name('outages.report.create');
+    Route::get('/my-reports', [\App\Http\Controllers\ResidentReportController::class, 'index'])->name('my-reports');
     Route::post('/outages/report', [OutageController::class, 'store'])->name('outages.report.store');
     Route::post('/outages/report/similar', [\App\Http\Controllers\SimilarOutageController::class, 'store'])
         ->middleware('throttle:4,1')->name('outages.report.similar');

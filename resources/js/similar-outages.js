@@ -26,7 +26,7 @@ export function initSimilarOutages() {
             error.hidden = true;
             if (chosenSuggestion !== null && associated.value === chosenSuggestion) {
                 associated.value = '';
-                selection.textContent = 'Votre saisie a changé : la coupure suggérée a été désélectionnée. Vous pouvez relancer la recherche ou choisir manuellement.';
+                selection.textContent = 'Your details have changed, so the suggested outage was deselected. Search again or choose an outage manually.';
                 selection.hidden = false;
             } else selection.hidden = true;
             chosenSuggestion = null;
@@ -39,7 +39,7 @@ export function initSimilarOutages() {
             selection.hidden = true;
             cards.querySelectorAll('[data-select-similar]').forEach((button) => {
                 button.disabled = false;
-                button.textContent = 'Sélectionner cette coupure';
+                button.textContent = 'Select this outage';
                 button.closest('article').classList.remove('is-selected');
             });
         });
@@ -64,10 +64,10 @@ export function initSimilarOutages() {
                 const head = document.createElement('div');
                 head.className = 'ha-similar__card-head';
                 head.append(text('h4', '', outage.quartier), text('span', 'ha-badge ha-badge--warning', 'Active'));
-                card.append(head, text('p', 'ha-similar__date', `Coupure #${outage.id} · Début : ${outage.date_debut}`));
+                card.append(head, text('p', 'ha-similar__date', `Outage #${outage.id} · Started: ${outage.date_debut}`));
                 card.append(text('p', 'ha-similar__description', outage.description || 'Aucune description disponible.'));
                 card.append(text('p', 'ha-similar__reason', outage.reason));
-                const button = text('button', 'ha-btn ha-btn--outline ha-btn--sm', 'Sélectionner cette coupure');
+                const button = text('button', 'ha-btn ha-btn--outline ha-btn--sm', 'Select this outage');
                 button.type = 'button';
                 button.dataset.selectSimilar = '';
                 button.addEventListener('click', () => {
@@ -79,9 +79,9 @@ export function initSimilarOutages() {
                     associated.dispatchEvent(new Event('change', { bubbles: true }));
                     chosenSuggestion = id;
                     button.disabled = true;
-                    button.textContent = 'Coupure sélectionnée';
+                    button.textContent = 'Outage selected';
                     card.classList.add('is-selected');
-                    selection.textContent = `Coupure #${outage.id} sélectionnée dans le champ « Coupure associée ». Votre signalement n’a pas encore été envoyé.`;
+                    selection.textContent = `Outage #${outage.id} selected in the Associated outage field. Your report has not been submitted yet.`;
                     selection.hidden = false;
                 });
                 card.append(button);
@@ -93,8 +93,8 @@ export function initSimilarOutages() {
             if (search.disabled) return;
             error.hidden = true;
             if (!quartier.value || description.value.trim().length < 20) {
-                error.textContent = !quartier.value ? 'Choisissez votre quartier avant de lancer la recherche.'
-                    : 'Précisez votre problème avec au moins 20 caractères avant de lancer la recherche.';
+                error.textContent = !quartier.value ? 'Choose your neighborhood before searching.'
+                    : 'Describe your issue using at least 20 characters before searching.';
                 error.hidden = false;
                 (!quartier.value ? quartier : description).focus();
                 return;
@@ -118,24 +118,24 @@ export function initSimilarOutages() {
                 if (current !== version || draft !== snapshot()) return;
                 if (!response.ok) {
                     const messages = {
-                        401: 'Connectez-vous pour utiliser cette aide.',
-                        403: 'Cette recherche est réservée aux utilisateurs résidents autorisés.',
-                        419: 'Votre session a expiré. Actualisez la page pour relancer la recherche.',
-                        429: 'Trop de recherches rapprochées. Patientez une minute, ou envoyez votre signalement normalement.',
-                        409: 'Une recherche est déjà en cours. Patientez quelques instants.',
+                        401: 'Sign in to use this assistant.',
+                        403: 'This search is available only to authorized resident users.',
+                        419: 'Your session has expired. Refresh the page to search again.',
+                        429: 'Too many searches. Wait a minute or submit your report normally.',
+                        409: 'A search is already in progress. Please wait a moment.',
                     };
                     const validation = response.status === 422 ? Object.values(data.errors || {}).flat()[0] : null;
-                    throw new Error(validation || messages[response.status] || 'La recherche est indisponible. Vous pouvez envoyer votre signalement normalement.');
+                    throw new Error(validation || messages[response.status] || 'Search is unavailable. You can still submit your report normally.');
                 }
                 if (!Array.isArray(data.suggestions) || typeof data.message !== 'string') {
-                    throw new Error('La recherche n’a pas abouti. Vous pouvez poursuivre votre signalement normalement.');
+                    throw new Error('Search could not be completed. You can still submit your report normally.');
                 }
                 render(data);
             } catch (failure) {
                 if (current !== version) return;
                 error.textContent = failure.name === 'AbortError'
-                    ? 'La recherche prend trop de temps. Réessayez ou poursuivez votre signalement normalement.'
-                    : (failure instanceof TypeError ? 'Connexion interrompue. Votre formulaire reste disponible.' : failure.message);
+                    ? 'Search is taking too long. Try again or submit your report normally.'
+                    : (failure instanceof TypeError ? 'Connection interrupted. Your report form is still available.' : failure.message);
                 error.hidden = false;
             } finally {
                 clearTimeout(timer);

@@ -5,6 +5,7 @@
 .outages-hero__action-title { display: block; color: var(--ha-shade-800); font-size: 15px; font-weight: 650; line-height: 1.5; }
 .outages-hero__action p { margin: 6px 0 16px; font-size: 13px; line-height: 1.65; color: var(--ha-ink-2); }
 .outages-hero__action .ha-btn { font-size: 13px; }
+.outages-hero__buttons { display: flex; flex-wrap: wrap; gap: 10px; }
 .outages-filter-wrap .ha-filter { padding: 20px; background: var(--ha-surface); border: 1px solid var(--ha-border); border-radius: var(--ha-r-lg); box-shadow: var(--ha-shadow-rest); gap: 14px; margin-bottom: 10px; }
 .outages-filter-wrap > p { display: flex; align-items: center; gap: 7px; margin: 10px 3px 0; color: var(--ha-ink-3); font-size: 12px; line-height: 1.6; }
 .outages-filter-wrap > p::before { content: ''; flex: 0 0 6px; width: 6px; height: 6px; background: #4a8069; border-radius: 50%; }

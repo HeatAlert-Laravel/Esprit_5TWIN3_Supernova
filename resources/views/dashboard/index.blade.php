@@ -31,14 +31,14 @@
 </section>
 
 <section aria-label="Outages and reports" class="ha-grid ha-grid--3 mt-5">
-    <x-ha.kpi-card label="Coupures actives" :value="$activeOutagesCount" icon="zap">
-        <a href="{{ route('admin.coupures.index', ['statut' => 'active']) }}">Consulter les coupures actives</a>
+    <x-ha.kpi-card label="Active outages" :value="$activeOutagesCount" icon="zap">
+        <a href="{{ route('admin.coupures.index', ['statut' => 'active']) }}">View active outages</a>
     </x-ha.kpi-card>
-    <x-ha.kpi-card label="Signalements en attente" :value="$pendingReportsCount" icon="alert-triangle">
-        <a href="{{ route('admin.signalements.index', ['statut' => 'en attente']) }}">Traiter les signalements</a>
+    <x-ha.kpi-card label="Pending reports" :value="$pendingReportsCount" icon="alert-triangle">
+        <a href="{{ route('admin.signalements.index', ['statut' => 'en attente']) }}">Review pending reports</a>
     </x-ha.kpi-card>
-    <x-ha.kpi-card label="Total des signalements" :value="$reportsCount" icon="users">
-        <a href="{{ route('admin.signalements.index') }}">Consulter tous les signalements</a>
+    <x-ha.kpi-card label="Total reports" :value="$reportsCount" icon="users">
+        <a href="{{ route('admin.signalements.index') }}">View all reports</a>
     </x-ha.kpi-card>
 </section>
 

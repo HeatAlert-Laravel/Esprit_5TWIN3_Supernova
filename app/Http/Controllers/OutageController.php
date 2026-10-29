@@ -39,7 +39,7 @@ class OutageController extends Controller
             $data = $request->safe()->only(['coupure_id', 'adresse', 'description']);
             if (filled($data['coupure_id'] ?? null) && ! Coupure::whereKey($data['coupure_id'])
                 ->where('statut', 'active')->lockForUpdate()->first()) {
-                throw ValidationException::withMessages(['coupure_id' => 'Cette coupure n’est plus active. Choisissez-en une autre ou poursuivez sans association.']);
+                throw ValidationException::withMessages(['coupure_id' => 'This outage is no longer active. Choose another outage or continue without an association.']);
             }
             Signalement::create($data + ['user_id' => auth()->id(), 'statut' => 'en attente']);
         });

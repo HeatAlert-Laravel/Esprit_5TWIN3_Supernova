@@ -24,8 +24,8 @@ class SimilarOutageRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'description.min' => 'Précisez votre problème avec au moins 20 caractères avant de lancer la recherche.',
-            'quartier_id.required' => 'Choisissez votre quartier pour rechercher les coupures à proximité.',
+            'description.min' => 'Describe your issue using at least 20 characters before searching.',
+            'quartier_id.required' => 'Choose your neighborhood to find nearby outages.',
         ];
     }
 }

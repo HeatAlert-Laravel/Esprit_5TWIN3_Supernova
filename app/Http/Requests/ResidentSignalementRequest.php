@@ -25,6 +25,6 @@ class ResidentSignalementRequest extends FormRequest
 
     public function messages(): array
     {
-        return ['coupure_id.exists' => 'Cette coupure n’est plus disponible. Choisissez une coupure active ou poursuivez sans association.'];
+        return ['coupure_id.exists' => 'This outage is no longer available. Choose an active outage or continue without an association.'];
     }
 }
