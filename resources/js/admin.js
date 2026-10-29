@@ -22,6 +22,9 @@ Alpine.start();
 
 // Initialize components on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('[data-weather-forecast]')) {
+        import('./weather-forecast').then(({ initWeatherForecast }) => initWeatherForecast());
+    }
     if (document.querySelector('[data-advice-editor]')) {
         import('./advice-editor').then(({ initAdviceEditors }) => initAdviceEditors());
     }

@@ -875,3 +875,16 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
     .ha-account-section summary { cursor: pointer; color: var(--ha-shade-600); font-weight: 600; }
     @media (max-width: 720px) { .ha-account-grid { grid-template-columns: 1fr; } }
 }
+
+@layer components {
+    .ha-forecast { margin-bottom: 1.5rem; padding: 1rem; border: 1px dashed var(--ha-border-strong); border-radius: var(--ha-r-md); background: var(--ha-surface-2); }
+    .ha-forecast__head { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between; }
+    .ha-forecast__title { margin: 0; font-size: 1rem; font-weight: 600; color: var(--ha-ink); }
+    .ha-forecast__help { margin: .25rem 0 0; font-size: .8125rem; color: var(--ha-ink-2); }
+    .ha-forecast__status { margin: .75rem 0 0; font-size: .875rem; color: var(--ha-ink-2); }
+    .ha-forecast__status--error { color: var(--ha-error); }
+    .ha-forecast__days { display: grid; gap: .5rem; margin-top: .75rem; }
+    .ha-forecast__day { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; justify-content: space-between; padding: .5rem .75rem; background: var(--ha-surface); border: 1px solid var(--ha-border); border-radius: var(--ha-r-md); font-size: .875rem; }
+    .ha-forecast__date { font-weight: 600; min-width: 6.5rem; }
+    .ha-forecast__values { color: var(--ha-ink-2); flex: 1; min-width: 12rem; }
+}

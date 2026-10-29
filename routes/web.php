@@ -17,6 +17,7 @@ use App\Http\Controllers\OutageController;
 use App\Http\Controllers\PointFraicheurController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuartierController;
+use App\Http\Controllers\QuartierForecastController;
 use App\Http\Controllers\ResidentProfileController;
 use App\Http\Controllers\ResidentSensitiveEquipmentController;
 use App\Http\Controllers\SensitiveEquipmentController;
@@ -107,6 +108,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin', 'verified']
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Neighborhoods and weather alerts
+    Route::get('quartiers/{quartier}/forecast', [QuartierForecastController::class, 'show'])->middleware('throttle:30,1')->name('quartiers.forecast');
     Route::resource('quartiers', QuartierController::class);
     Route::resource('alertes-meteo', AlerteMeteoController::class)->parameters(['alertes-meteo' => 'alerte']);
 

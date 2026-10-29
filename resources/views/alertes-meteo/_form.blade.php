@@ -1,6 +1,18 @@
 @csrf
 @if(isset($alerte)) @method('PUT') @endif
 
+<section class="ha-forecast" data-weather-forecast data-url-template="{{ route('admin.quartiers.forecast', 0) }}" aria-labelledby="forecast-title">
+    <div class="ha-forecast__head">
+        <div>
+            <h3 class="ha-forecast__title" id="forecast-title">Live forecast (Open-Meteo)</h3>
+            <p class="ha-forecast__help">Choose a neighborhood with coordinates, load its 7-day forecast, then use a day to pre-fill the fields below. You can still edit everything before saving.</p>
+        </div>
+        <button type="button" class="ha-btn ha-btn--outline ha-btn--sm" data-forecast-load>Load forecast</button>
+    </div>
+    <p class="ha-forecast__status" data-forecast-status role="status" hidden></p>
+    <div class="ha-forecast__days" data-forecast-days></div>
+</section>
+
 <div class="ha-form-grid ha-form-grid--2">
     <x-ha.field name="quartier_id" label="Neighborhood">
         <select id="quartier_id" name="quartier_id" class="ha-select">
