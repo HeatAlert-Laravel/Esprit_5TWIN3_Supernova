@@ -92,6 +92,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/outages/report', [OutageController::class, 'create'])->name('outages.report.create');
     Route::post('/outages/report', [OutageController::class, 'store'])->name('outages.report.store');
+    Route::post('/outages/report/similar', [\App\Http\Controllers\SimilarOutageController::class, 'store'])
+        ->middleware('throttle:4,1')->name('outages.report.similar');
 
     Route::get('/advice/saved', [AdviceController::class, 'index'])->name('advice.saved');
     Route::get('/advice/{conseil}/vote', [AdviceController::class, 'show'])->name('advice.vote.prompt');

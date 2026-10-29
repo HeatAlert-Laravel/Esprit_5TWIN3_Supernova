@@ -3,6 +3,9 @@
 import './auto-filter';
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('[data-similar-outages]')) {
+        import('./similar-outages').then(({ initSimilarOutages }) => initSimilarOutages());
+    }
     if (document.querySelector('[data-ai-panel]')) {
         import('./ai-panel').then(({ initAiPanels }) => initAiPanels());
     }

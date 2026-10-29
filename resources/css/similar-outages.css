@@ -1,0 +1,31 @@
+.ha-similar { margin: 24px 0; padding: clamp(18px, 3vw, 26px); border: 1px solid #dfE8e2; border-radius: 14px; background: #f6f9f6; }
+.ha-similar [hidden] { display: none !important; }
+.ha-similar__header { display: flex; align-items: center; gap: 12px; }
+.ha-similar__icon { display: grid; place-items: center; width: 42px; height: 42px; flex-shrink: 0; border-radius: 12px; background: #e7f0e9; color: #315f50; }
+.ha-similar__eyebrow { font-size: 10px; font-weight: 700; color: #65796b; letter-spacing: .09em; }
+.ha-similar h2 { margin: 3px 0 0; color: #23473c; font-size: 18px; font-weight: 650; line-height: 1.4; }
+.ha-similar__intro { margin: 14px 0 18px; color: #5a675f; font-size: 13px; line-height: 1.8; }
+.ha-similar__controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+.ha-similar__controls > .ha-field { flex: 1 1 220px; margin: 0; }
+.ha-similar__controls > button { flex: 1 1 250px; white-space: normal; min-height: 44px; padding: 10px 14px; font-size: 13px; }
+.ha-similar__privacy { color: #6b756d; font-size: 11px; line-height: 1.8; margin: 12px 0 0; }
+.ha-similar__results { margin-top: 22px; padding-top: 20px; border-top: 1px solid #dce5dd; }
+.ha-similar__results-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.ha-similar h3 { font-size: 15px; font-weight: 650; color: #284d40; margin: 0; }
+.ha-similar__message { margin: 10px 0 16px; font-size: 13px; line-height: 1.7; color: #57675c; }
+.ha-similar[data-mode="local"] .ha-similar__message { background: #fff5e5; border: 1px solid #f1dfbe; border-radius: 8px; padding: 12px; color: #825c2f; }
+.ha-similar__cards { display: grid; gap: 12px; }
+.ha-similar__card { padding: 18px; border: 1px solid #e0e5de; border-radius: 10px; background: #fff; min-width: 0; }
+.ha-similar__card.is-selected { border-color: #39846e; box-shadow: 0 0 0 1px #39846e; }
+.ha-similar__card-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center; }
+.ha-similar h4 { font-size: 14px; font-weight: 650; color: #254e40; margin: 0; }
+.ha-similar__date { font-size: 11px; margin: 7px 0 12px; color: #727a70; }
+.ha-similar__description { font-size: 13px; line-height: 1.8; color: #505c52; margin: 0; white-space: pre-line; overflow-wrap: anywhere; }
+.ha-similar__reason { background: #f3f7f3; border-radius: 7px; padding: 10px 12px; font-size: 12px; line-height: 1.7; color: #45644e; margin: 12px 0; overflow-wrap: anywhere; }
+.ha-similar__error, .ha-similar__selection { padding: 12px 14px; margin: 16px 0 0; border-radius: 9px; font-size: 13px; line-height: 1.7; }
+.ha-similar__error { background: #fff1e8; color: #974522; border: 1px solid #efd4c5; }
+.ha-similar__selection { background: #e9f3ec; color: #2e6146; border: 1px solid #cddfcf; }
+.ha-similar__loading { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #48634d; margin-top: 18px; }
+.ha-similar__spinner { width: 18px; height: 18px; flex: 0 0 18px; border: 2px solid #cadcce; border-top-color: #376449; border-radius: 50%; animation: ha-similar-spin .8s linear infinite; }
+@keyframes ha-similar-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .ha-similar__spinner { animation: none; } }
