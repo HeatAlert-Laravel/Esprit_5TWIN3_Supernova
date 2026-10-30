@@ -211,3 +211,21 @@ test('account deletion follows existing FK cascades without deleting other users
     $this->assertDatabaseHas('conseil_votes', ['user_id' => $other->id]);
     expect(DB::select('PRAGMA foreign_key_check'))->toBe([]);
 });
+
+test('avatar changes require authentication and a verified email and are rate limited', function () {
+    $this->post(route('account.avatar.update'), ['avatar' => accountAvatarUpload()])
+        ->assertRedirect(route('login'));
+
+    $unverified = User::factory()->unverified()->create();
+    $this->actingAs($unverified)->post(route('account.avatar.update'), ['avatar' => accountAvatarUpload()])
+        ->assertRedirect(route('verification.notice'));
+    expect($unverified->fresh()->avatar_path)->toBeNull();
+    expect(Storage::disk('public')->allFiles())->toBe([]);
+
+    $verified = User::factory()->create();
+    $this->actingAs($verified);
+    for ($i = 0; $i < 10; $i++) {
+        $this->delete(route('account.avatar.destroy'))->assertRedirect(route('account.edit'));
+    }
+    $this->delete(route('account.avatar.destroy'))->assertStatus(429);
+});

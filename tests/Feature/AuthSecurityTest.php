@@ -206,3 +206,25 @@ test('auth routes have unique method URI and name combinations and resolve real 
         }
     }
 });
+
+test('role is not mass assignable so forged payloads can never create an administrator', function () {
+    expect((new User)->getFillable())->not->toContain('role');
+
+    $created = User::create([
+        'name' => 'Mass Assignment Attempt',
+        'email' => 'mass-assignment@example.test',
+        'password' => 'safe-password-123',
+        'role' => 'ADMIN',
+    ]);
+    expect($created->fresh()->role)->toBe('USER');
+
+    $created->fill(['role' => 'ADMIN'])->save();
+    expect($created->fresh()->role)->toBe('USER');
+
+    $this->post(route('register.store'), [
+        'name' => 'Forged Admin', 'email' => 'forged-admin@example.test',
+        'password' => 'safe-password-123', 'password_confirmation' => 'safe-password-123',
+        'role' => 'ADMIN',
+    ])->assertRedirect(route('verification.notice'));
+    expect(User::where('email', 'forged-admin@example.test')->firstOrFail()->role)->toBe('USER');
+});
