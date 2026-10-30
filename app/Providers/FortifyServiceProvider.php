@@ -13,7 +13,6 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Contracts;
@@ -49,16 +48,14 @@ class FortifyServiceProvider extends ServiceProvider
         RateLimiter::for('two-factor', fn (Request $request) => Limit::perMinute(5)
             ->by($request->session()->get('login.id').'|'.$request->ip()));
 
-        VerifyEmail::toMailUsing(fn ($user, string $url) => (new MailMessage)
-            ->subject('Verify your HeatAlert email address')->greeting('Hello '.$user->name.',')
-            ->line('Verify your email address to manage your HeatAlert household and equipment.')
-            ->action('Verify email address', $url)
-            ->line('If you did not create this account, no action is required.'));
-        ResetPassword::toMailUsing(fn ($user, string $token) => (new MailMessage)
-            ->subject('Reset your HeatAlert password')->greeting('Hello '.$user->name.',')
-            ->line('We received a password reset request for your HeatAlert account.')
-            ->action('Reset password', route('password.reset', ['token' => $token, 'email' => $user->email]))
-            ->line('This link expires in '.config('auth.passwords.users.expire').' minutes.')
-            ->line('If you did not request a reset, no action is required.'));
+        // Branded French emails. The CTA keeps the real signed URL / reset link, but the
+        // raw URL and the token are never printed as visible text.
+        VerifyEmail::toMailUsing(fn ($user, string $url) => (new \App\Mail\HeatAlertVerifyEmail($user->name, $url))
+            ->to($user->email, $user->name));
+        ResetPassword::toMailUsing(fn ($user, string $token) => (new \App\Mail\HeatAlertResetPassword(
+            $user->name,
+            route('password.reset', ['token' => $token, 'email' => $user->email]),
+            (int) config('auth.passwords.users.expire'),
+        ))->to($user->email, $user->name));
     }
 }
