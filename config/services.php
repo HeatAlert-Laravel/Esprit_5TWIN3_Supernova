@@ -22,6 +22,14 @@ return [
         'assistant_fallback_models' => array_values(array_filter(array_map('trim', explode(',', env('GROQ_ASSISTANT_FALLBACK_MODELS', 'openai/gpt-oss-120b'))))),
         'assistant_daily_limit' => (int) env('GROQ_ASSISTANT_DAILY_LIMIT', 100),
     ],
+    // Module 5 "household risk advisor": its own key and model, independent from the Groq/Gemini features.
+    'mistral' => [
+        'key' => env('MISTRAL_API_KEY'),
+        // Light, fast model available on the demo key; supports Mistral custom structured outputs.
+        'model' => env('MISTRAL_MODEL', 'ministral-8b-latest'),
+        'timeout' => (int) env('MISTRAL_TIMEOUT', 15),
+        'connect_timeout' => (int) env('MISTRAL_CONNECT_TIMEOUT', 5),
+    ],
 
     /*
     |--------------------------------------------------------------------------

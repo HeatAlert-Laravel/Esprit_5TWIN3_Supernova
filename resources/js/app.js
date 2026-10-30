@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
         import('./ai-panel').then(({ initAiPanels }) => initAiPanels());
     }
 
+    if (document.querySelector('[data-household-risk]')) {
+        import('./household-risk').then(({ initHouseholdRisk }) => initHouseholdRisk());
+    }
+
     if (document.querySelector('[data-wx-map], [data-wx-tabs]')) {
         import('./weather-map').then(({ initWeatherPages }) => initWeatherPages());
     }

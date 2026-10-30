@@ -1,9 +1,9 @@
 @extends('layouts.app')
-@section('title', 'Account settings')
+@section('title', 'Account and security')
 @section('content')
 <div class="ha-account-heading">
-    <div><p class="ha-eyebrow">Your HeatAlert account</p><h1>Account settings</h1><p class="ha-muted">Manage your identity and sign-in security.</p></div>
-    <a href="{{ route('my-profile') }}" class="ha-btn ha-btn--outline">Household profile</a>
+    <div><p class="ha-eyebrow">Your HeatAlert account</p><h1>Account and security</h1><p class="ha-muted">Identity and sign-in security. Your household data (phone, address, equipment) lives in the household profile.</p></div>
+    <a href="{{ route('my-profile') }}" class="ha-btn ha-btn--outline">Back to household profile</a>
 </div>
 <x-ha.error-summary :all="true" />
 <div class="ha-account-grid">
@@ -20,14 +20,18 @@
     <section class="ha-card ha-account-section" aria-labelledby="profile-picture">
         <h2 id="profile-picture">Profile picture</h2>
         <div class="ha-account-avatar"><x-ha.avatar :name="$user->name" :src="$user->avatar_path ? Storage::disk('public')->url($user->avatar_path) : null" size="lg" /></div>
-        <form method="POST" action="{{ route('account.avatar.update') }}" enctype="multipart/form-data" class="ha-form-grid">@csrf
-            <label for="avatar">Choose a profile picture</label>
-            <input id="avatar" type="file" name="avatar" accept="image/jpeg,image/png,image/webp" required>
-            <p class="ha-help">JPG, PNG or WebP, up to 2 MB.</p>
-            <button class="ha-btn ha-btn--primary">Upload picture</button>
-        </form>
-        @if($user->avatar_path)
-            <form method="POST" action="{{ route('account.avatar.destroy') }}" class="mt-6">@csrf @method('DELETE')<button class="ha-btn ha-btn--outline">Remove picture</button></form>
+        @if($user->hasVerifiedEmail())
+            <form method="POST" action="{{ route('account.avatar.update') }}" enctype="multipart/form-data" class="ha-form-grid">@csrf
+                <label for="avatar">Choose a profile picture</label>
+                <input id="avatar" type="file" name="avatar" accept="image/jpeg,image/png,image/webp" required>
+                <p class="ha-help">JPG, PNG or WebP, up to 2 MB.</p>
+                <button class="ha-btn ha-btn--primary">Upload picture</button>
+            </form>
+            @if($user->avatar_path)
+                <form method="POST" action="{{ route('account.avatar.destroy') }}" class="mt-6">@csrf @method('DELETE')<button class="ha-btn ha-btn--outline">Remove picture</button></form>
+            @endif
+        @else
+            <p class="ha-muted">Verify your email address to add or change your profile picture.</p>
         @endif
     </section>
     <section class="ha-card ha-account-section" aria-labelledby="account-password">

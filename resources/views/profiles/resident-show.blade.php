@@ -7,11 +7,12 @@
 @endphp
 <header class="ha-profile-head">
     <div class="ha-profile-head__id">
-        <x-ha.avatar :name="$user->name" size="lg" />
+        <x-ha.avatar :name="$user->name" :src="$user->avatar_path ? Storage::disk('public')->url($user->avatar_path) : null" size="lg" />
         <div class="min-w-0">
-            <p class="ha-eyebrow">Resident area</p>
+            <p class="ha-eyebrow">Resident area · Household profile</p>
             <h1>{{ $user->name }}</h1>
             <p class="ha-muted">{{ $user->email }}</p>
+            <p><a class="ha-link" href="{{ route('account.edit') }}">Manage account and security</a></p>
         </div>
     </div>
     <div class="ha-profile-head__meter">
@@ -53,6 +54,7 @@
     </section>
 
     <div class="ha-stack">
+        @include('profiles._household-risk-card')
         @include('partials.readiness-card')
     </div>
 </div>

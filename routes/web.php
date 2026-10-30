@@ -6,14 +6,15 @@ use App\Http\Controllers\AdviceAudioController;
 use App\Http\Controllers\AdviceBookmarkController;
 use App\Http\Controllers\AdviceController;
 use App\Http\Controllers\AdviceVoteController;
-use App\Http\Controllers\AlertExplainController;
 use App\Http\Controllers\AlerteMeteoController;
+use App\Http\Controllers\AlertExplainController;
 use App\Http\Controllers\CategorieConseilController;
 use App\Http\Controllers\ConseilController;
 use App\Http\Controllers\CoolingPointController;
 use App\Http\Controllers\CoupureController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HouseholdRiskAiController;
 use App\Http\Controllers\NeighborhoodController;
 use App\Http\Controllers\NeighborhoodSummaryController;
 use App\Http\Controllers\OutageController;
@@ -67,8 +68,8 @@ Route::get('/advice/{conseil}/audio/{voice}/{version}', [AdviceAudioController::
 Route::middleware(['auth', \App\Http\Middleware\PrivateAccountResponse::class])->group(function () {
     Route::get('/account', [AccountController::class, 'edit'])->name('account.edit');
     Route::get('/account/security', [AccountController::class, 'edit'])->middleware('password.confirm')->name('account.security');
-    Route::post('/account/avatar', [AccountController::class, 'updateAvatar'])->name('account.avatar.update');
-    Route::delete('/account/avatar', [AccountController::class, 'deleteAvatar'])->name('account.avatar.destroy');
+    Route::post('/account/avatar', [AccountController::class, 'updateAvatar'])->middleware(['verified', 'throttle:10,1'])->name('account.avatar.update');
+    Route::delete('/account/avatar', [AccountController::class, 'deleteAvatar'])->middleware(['verified', 'throttle:10,1'])->name('account.avatar.destroy');
     Route::delete('/account', [AccountController::class, 'destroy'])->middleware('password.confirm')->name('account.destroy');
 });
 
@@ -81,6 +82,10 @@ Route::middleware(['auth', \App\Http\Middleware\PrivateAccountResponse::class])-
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/my-profile', [ResidentProfileController::class, 'show'])->name('my-profile');
     Route::put('/my-profile', [ResidentProfileController::class, 'update'])->name('my-profile.update');
+
+    // Household risk advisor (Module 5). The household is always resolved from the session user.
+    Route::post('/my-profile/ai-risk-analysis', [HouseholdRiskAiController::class, 'store'])
+        ->middleware('throttle:5,1')->name('profile.ai-risk.analyze');
 
     Route::prefix('my-profile/equipment')->name('profile.equipment.')->group(function () {
         Route::get('/create', [ResidentSensitiveEquipmentController::class, 'create'])->name('create');
