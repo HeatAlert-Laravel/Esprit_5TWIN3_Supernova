@@ -35,12 +35,23 @@ class AuthenticatedResponse implements LoginResponse, TwoFactorLoginResponse, Ve
                     && ($parts['scheme'] ?? null) === ($origin['scheme'] ?? null)
                     && ($parts['port'] ?? null) === ($origin['port'] ?? null)))) {
                 $path = $parts['path'] ?? '/';
-                if (str_starts_with($path, '/') && ! str_starts_with($path, '//')) {
+                if (str_starts_with($path, '/') && ! str_starts_with($path, '//') && $this->pathAllowedForRole($path, $request->user()->role)) {
                     return redirect($path.(isset($parts['query']) ? '?'.$parts['query'] : ''));
                 }
             }
         }
 
         return redirect($fallback);
+    }
+
+    /**
+     * Keep each role inside its own area: an ADMIN never lands on a resident page
+     * and a USER never lands inside /admin, whatever url.intended contains.
+     */
+    private function pathAllowedForRole(string $path, string $role): bool
+    {
+        return $role === 'ADMIN'
+            ? ! str_starts_with($path, '/my-profile')
+            : ! str_starts_with($path, '/admin');
     }
 }

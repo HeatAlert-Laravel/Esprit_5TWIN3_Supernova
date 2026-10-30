@@ -75,11 +75,13 @@ Route::middleware(['auth', \App\Http\Middleware\PrivateAccountResponse::class])-
 
 /*
 |--------------------------------------------------------------------------
-| Signed-in users (USER and ADMIN)
+| Resident area (USER only) — Module 5
 |--------------------------------------------------------------------------
+| The household profile, its equipment and the AI risk analysis belong to
+| USER residents. An ADMIN hitting these routes is redirected to /admin.
 */
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'resident'])->group(function () {
     Route::get('/my-profile', [ResidentProfileController::class, 'show'])->name('my-profile');
     Route::put('/my-profile', [ResidentProfileController::class, 'update'])->name('my-profile.update');
 
@@ -94,6 +96,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/{equipment}', [ResidentSensitiveEquipmentController::class, 'update'])->name('update');
         Route::delete('/{equipment}', [ResidentSensitiveEquipmentController::class, 'destroy'])->name('destroy');
     });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Signed-in users (USER and ADMIN)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/outages/report', [OutageController::class, 'create'])->name('outages.report.create');
     Route::get('/my-reports', [\App\Http\Controllers\ResidentReportController::class, 'index'])->name('my-reports');
