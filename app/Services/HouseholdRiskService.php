@@ -62,10 +62,13 @@ class HouseholdRiskService
     /**
      * Assess one household. Same profile data always gives the same result.
      *
+     * The score is an internal HeatAlert exposure/preparation indicator, capped at 100.
+     * It is NOT a medical score, a medical prediction or an accident probability.
+     *
      * @return array{
      *     score: int,
      *     level: string,
-     *     factors: list<array{label: string, points: int}>,
+     *     factors: list<array{kind: string, title: string, label: string, points: int, level: ?string, tags: list<string>, detail: string}>,
      *     local_actions: list<string>,
      *     equipment_count: int,
      *     has_fragile_person: bool,
@@ -85,20 +88,33 @@ class HouseholdRiskService
         if ($profile->has_fragile_person) {
             $score += self::FRAGILE_PERSON_POINTS;
             $factors[] = [
+                'kind' => 'fragile_person',
+                'title' => 'Personne fragile',
                 'label' => 'Une personne fragile vit dans le foyer',
                 'points' => self::FRAGILE_PERSON_POINTS,
+                'level' => null,
+                'tags' => [],
+                'detail' => 'Présente dans le foyer',
             ];
         }
 
         foreach ($equipment as $item) {
-            [$points, $label] = $this->equipmentFactor($item);
+            $factor = $this->equipmentFactor($item);
 
-            $score += $points;
-            $factors[] = ['label' => $label, 'points' => $points];
+            $score += $factor['points'];
+            $factors[] = $factor;
         }
 
         if ($equipment->isEmpty()) {
-            $factors[] = ['label' => 'Aucun équipement sensible enregistré', 'points' => 0];
+            $factors[] = [
+                'kind' => 'info',
+                'title' => 'Aucun équipement sensible',
+                'label' => 'Aucun équipement sensible enregistré',
+                'points' => 0,
+                'level' => null,
+                'tags' => [],
+                'detail' => 'Ajoutez vos appareils pour affiner l’évaluation.',
+            ];
         }
 
         $score = max(0, min(self::MAX_SCORE, $score));
@@ -126,7 +142,7 @@ class HouseholdRiskService
     /**
      * Points and human-readable reason for one equipment record.
      *
-     * @return array{0: int, 1: string}
+     * @return array{kind: string, title: string, label: string, points: int, level: ?string, tags: list<string>, detail: string}
      */
     private function equipmentFactor(SensitiveEquipment $item): array
     {
@@ -135,22 +151,33 @@ class HouseholdRiskService
 
         $points = self::EQUIPMENT_POINTS + (self::RISK_POINTS[$risk] ?? 0);
         $reasons = [];
+        $tags = [];
 
         if ($type?->sensitive_to_heat) {
             $points += self::HEAT_POINTS;
             $reasons[] = 'sensible à la chaleur';
+            $tags[] = 'Chaleur';
         }
 
         if ($type?->sensitive_to_outage) {
             $points += self::OUTAGE_POINTS;
             $reasons[] = 'dépend de l’électricité';
+            $tags[] = 'Coupure électrique';
         }
 
         $name = $type?->name ?? 'Type non renseigné';
         $level = $risk ?? 'inconnu';
         $suffix = $reasons === [] ? '' : ' — '.implode(', ', $reasons);
 
-        return [$points, "Équipement sensible : {$name} (risque {$level}){$suffix}"];
+        return [
+            'kind' => 'equipment',
+            'title' => $name,
+            'label' => "Équipement sensible : {$name} (risque {$level}){$suffix}",
+            'points' => $points,
+            'level' => $risk === null ? null : strtoupper($risk),
+            'tags' => $tags,
+            'detail' => $tags === [] ? 'Aucune sensibilité particulière' : implode(' · ', $tags),
+        ];
     }
 
     /**
@@ -189,7 +216,7 @@ class HouseholdRiskService
      * Names, addresses, phone numbers, e-mails, free-text notes and identifiers are never included.
      *
      * @param  Collection<int, SensitiveEquipment>  $equipment
-     * @param  list<array{label: string, points: int}>  $factors
+     * @param  list<array{kind: string, title: string, label: string, points: int, level: ?string, tags: list<string>, detail: string}>  $factors
      * @return array<string, mixed>
      */
     private function aiPayload(Profile $profile, Collection $equipment, int $score, array $factors): array

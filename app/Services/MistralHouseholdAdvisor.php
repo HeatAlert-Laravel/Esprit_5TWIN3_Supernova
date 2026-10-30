@@ -194,7 +194,9 @@ class MistralHouseholdAdvisor
             '4. N’affirme jamais qu’un foyer est garanti en sécurité.',
             '5. Donne des conseils courts, concrets et actionnables, en privilégiant la sécurité des personnes fragiles.',
             '6. Réponds uniquement en français, sans donnée personnelle (nom, adresse, téléphone, e-mail).',
-            '7. Réponds uniquement avec un objet JSON strict contenant : summary (une phrase de synthèse),',
+            '7. N’utilise jamais de mise en forme Markdown : pas de **, de ##, de listes à puces ni de symboles * _ # ;',
+            'texte brut uniquement, en phrases courtes.',
+            '8. Réponds uniquement avec un objet JSON strict contenant : summary (deux à quatre phrases courtes de synthèse),',
             'risk_factors (au maximum 5 explications courtes des facteurs déjà fournis),',
             'priority_actions (au maximum 5 objets avec priority entier croissant à partir de 1 et action courte).',
             'N’expose pas ton raisonnement interne et n’ajoute aucun autre champ.',
@@ -257,7 +259,7 @@ class MistralHouseholdAdvisor
         return ['summary' => $summary, 'risk_factors' => $factors, 'priority_actions' => $actions];
     }
 
-    /** Trim, collapse whitespace and remove any markup; reject empty/oversized/invalid UTF-8 text. */
+    /** Trim, collapse whitespace, remove markup and markdown markers; reject empty/oversized/invalid UTF-8 text. */
     private function cleanText(mixed $value, int $max): ?string
     {
         if (! is_string($value) || ! mb_check_encoding($value, 'UTF-8')) {
@@ -265,6 +267,10 @@ class MistralHouseholdAdvisor
         }
 
         $text = trim(preg_replace('/\s+/u', ' ', strip_tags($value)) ?? '');
+        // Light server-side normalization: drop emphasis markers if the model returns markdown anyway.
+        $text = preg_replace('/[*_~`]{1,3}/u', '', $text) ?? $text;
+        $text = preg_replace('/#{1,6}\s*/u', '', $text) ?? $text;
+        $text = trim(preg_replace('/\s+/u', ' ', $text) ?? '');
 
         if ($text === '' || mb_strlen($text) > $max) {
             return null;

@@ -1180,3 +1180,51 @@ a.ha-cell-person__name:hover { color: var(--ha-ember-700); text-decoration: unde
         .ai-panel__cta { width: 100%; justify-content: center; }
     }
 }
+
+/* ===== Household risk advisor (Module 5) ===== */
+@layer components {
+    .ha-risk-score { display: grid; gap: var(--ha-s-2); padding: var(--ha-s-4); background: linear-gradient(180deg, var(--ha-surface) 0%, color-mix(in srgb, var(--ha-ember-50) 45%, var(--ha-surface)) 100%); border: 1px solid var(--ha-border); border-radius: var(--ha-r-lg); }
+    .ha-risk-score__value { margin: 0; font-family: var(--ha-font-heading); font-size: 2.25rem; font-weight: 700; line-height: 1; color: var(--ha-ink); font-variant-numeric: tabular-nums; }
+    .ha-risk-score__value small { margin-inline-start: 2px; font-size: 1rem; font-weight: 600; color: var(--ha-ink-3); }
+    .ha-risk-score__caption { margin: 0; font-size: .8125rem; line-height: 1.5; color: var(--ha-ink-2); }
+
+    .ha-risk-section { margin: var(--ha-s-5) 0 var(--ha-s-3); font-family: var(--ha-font-heading); font-size: 1rem; font-weight: 600; color: var(--ha-ink); }
+    .ha-risk-section:first-child { margin-top: var(--ha-s-4); }
+
+    .ha-risk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--ha-s-2); }
+    @media (min-width: 768px) { .ha-risk-list--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .ha-risk-factor { display: flex; gap: var(--ha-s-3); align-items: flex-start; padding: var(--ha-s-3) var(--ha-s-4); background: var(--ha-surface); border: 1px solid var(--ha-border); border-radius: var(--ha-r-md); }
+    .ha-risk-factor .ha-icon-chip { width: 2rem; height: 2rem; border-radius: var(--ha-r-sm); }
+    .ha-risk-factor .ha-icon-chip .ha-icon { width: 1rem; height: 1rem; }
+    .ha-risk-factor__body { flex: 1; min-width: 0; }
+    .ha-risk-factor__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ha-s-2); margin: 0; }
+    .ha-risk-factor__head strong { font-size: .9375rem; font-weight: 600; color: var(--ha-ink); overflow-wrap: anywhere; }
+    .ha-risk-factor__detail { display: flex; flex-wrap: wrap; gap: var(--ha-s-1) var(--ha-s-2); margin: var(--ha-s-2) 0 0; font-size: .8125rem; line-height: 1.5; color: var(--ha-ink-2); }
+    .ha-risk-factor__tag { display: inline-flex; padding: .0625rem .5rem; border-radius: 999px; background: var(--ha-surface-2); color: var(--ha-ink-2); font-size: .6875rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
+
+    .ha-ai-box { margin-top: var(--ha-s-4); padding: var(--ha-s-4) var(--ha-s-5); background: linear-gradient(180deg, color-mix(in srgb, var(--ha-shade-100) 40%, var(--ha-surface)) 0%, var(--ha-surface) 100%); border: 1px solid var(--ha-border); border-radius: var(--ha-r-lg); }
+    .ha-ai-box__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ha-s-2); margin-bottom: var(--ha-s-2); }
+    .ha-ai-box__title { margin: 0; font-family: var(--ha-font-heading); font-size: 1rem; font-weight: 600; color: var(--ha-shade-800); }
+    .ha-ai-box__provider { display: inline-flex; align-items: center; gap: .375rem; font-size: .6875rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ha-ink-3); }
+    .ha-ai-box__provider .ha-icon { width: .875rem; height: .875rem; color: var(--ha-shade-600); }
+    .ha-ai-box__summary { margin: 0; font-size: .9375rem; line-height: 1.6; color: var(--ha-ink); }
+    .ha-ai-box__summary:empty { display: none; }
+    .ha-ai-box__factors { list-style: none; margin: var(--ha-s-3) 0 0; padding: 0; display: grid; gap: var(--ha-s-1); }
+    .ha-ai-box__factors:empty { display: none; }
+    .ha-ai-box__factors li { position: relative; padding-inline-start: 1.25rem; font-size: .875rem; line-height: 1.55; color: var(--ha-ink-2); }
+    .ha-ai-box__factors li::before { content: ""; position: absolute; inset-inline-start: 0; top: .5rem; width: .375rem; height: .375rem; border-radius: 999px; background: var(--ha-shade-600); }
+    .ha-ai-box .ha-alert { margin: 0; }
+    .ha-ai-box .ha-alert[hidden] { display: none; }
+
+    .ha-risk-actions { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--ha-s-2); }
+    .ha-action { display: flex; gap: var(--ha-s-3); align-items: flex-start; padding: var(--ha-s-3) var(--ha-s-4); background: var(--ha-surface); border: 1px solid var(--ha-border); border-radius: var(--ha-r-md); }
+    .ha-action__num { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: var(--ha-shade-800); color: #fff; font-family: var(--ha-font-heading); font-size: .8125rem; font-weight: 700; }
+    .ha-action__body { flex: 1; min-width: 0; }
+    .ha-action__title { margin: 0; font-size: .9375rem; font-weight: 600; line-height: 1.45; color: var(--ha-ink); }
+    .ha-action__desc { margin: 2px 0 0; font-size: .875rem; line-height: 1.55; color: var(--ha-ink-2); }
+
+    .ha-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: ha-spin .6s linear infinite; }
+    .ha-spinner[hidden] { display: none; }
+    @keyframes ha-spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .ha-spinner { animation-duration: 1.5s; } }
+}

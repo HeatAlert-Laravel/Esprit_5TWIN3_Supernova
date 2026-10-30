@@ -17,7 +17,7 @@ class HouseholdRiskAiController extends Controller
 {
     public const MISSING_PROFILE_MESSAGE = 'Complétez d’abord votre profil de foyer avant de lancer l’analyse.';
 
-    public const UNAVAILABLE_MESSAGE = 'L’analyse IA est temporairement indisponible.';
+    public const UNAVAILABLE_MESSAGE = 'L’analyse IA est temporairement indisponible. Votre évaluation locale HeatAlert reste disponible.';
 
     public function store(
         Request $request,
