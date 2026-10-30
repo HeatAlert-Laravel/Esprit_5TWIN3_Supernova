@@ -204,7 +204,7 @@ test('invalid JSON from Mistral falls back to the local deterministic analysis',
             'ai' => null,
             'ai_available' => false,
         ])
-        ->assertJsonPath('message', 'L’analyse IA est temporairement indisponible.');
+        ->assertJsonPath('message', 'L’analyse IA est temporairement indisponible. Votre évaluation locale HeatAlert reste disponible.');
 });
 
 test('an unexpected AI structure is rejected instead of trusted', function () {
@@ -326,4 +326,87 @@ test('the AI card explains that the household profile is required first', functi
         ->assertOk()
         ->assertSee('Complétez d’abord votre profil de foyer')
         ->assertDontSee('Analyser mon foyer');
+});
+
+test('markdown markers returned by the model are stripped server-side', function () {
+    Http::fake(['api.mistral.ai/*' => Http::response(householdAiResponse([
+        'summary' => '**Synthèse** du risque du foyer.',
+        'risk_factors' => ['## Un facteur _important_ à connaître'],
+        'priority_actions' => [['priority' => 1, 'action' => '**Buvez** de l’eau régulièrement.']],
+    ]))]);
+
+    $response = $this->actingAs(householdResident())->postJson(route('profile.ai-risk.analyze'))->assertOk();
+
+    expect($response->json('ai.summary'))->toBe('Synthèse du risque du foyer.')
+        ->and($response->json('ai.risk_factors.0'))->toBe('Un facteur important à connaître')
+        ->and($response->json('ai.priority_actions.0.action'))->toBe('Buvez de l’eau régulièrement.')
+        ->and($response->getContent())->not->toContain('**')
+        ->and($response->getContent())->not->toContain('##');
+});
+
+test('the local assessment exposes structured factors for the card UI', function () {
+    Http::fake();
+
+    $user = householdResident(['has_fragile_person' => true]);
+    SensitiveEquipment::factory()->for($user->profile)->ofType(($this->type)('Refrigerator'))->create();
+
+    $response = $this->actingAs($user)->postJson(route('profile.ai-risk.analyze'))->assertOk();
+
+    $factors = $response->json('factors');
+    expect($factors)->toHaveCount(2)
+        ->and($factors[0])->toMatchArray([
+            'kind' => 'fragile_person',
+            'title' => 'Personne fragile',
+            'level' => null,
+            'tags' => [],
+            'points' => 30,
+        ])
+        ->and($factors[1]['kind'])->toBe('equipment')
+        ->and($factors[1]['title'])->toBe('Refrigerator')
+        ->and($factors[1]['level'])->toBe('HIGH')
+        ->and($factors[1]['tags'])->toContain('Chaleur', 'Coupure électrique')
+        ->and($factors[1]['detail'])->toContain('Chaleur');
+});
+
+test('a household with a fragile person and critical equipment reaches exactly the capped 100 HIGH score', function () {
+    // 30 (fragile) + 32 (Medical equipment: 2 presence + 20 critical + 5 heat + 5 outage)
+    // + 27 (Refrigerator: 2 + 15 high + 5 + 5) + 15 (Fan: 2 + 8 medium + 0 heat + 5 outage) = 104 -> capped at 100.
+    Http::fake();
+
+    $user = householdResident(['has_fragile_person' => true]);
+    SensitiveEquipment::factory()->for($user->profile)->ofType(($this->type)('Medical equipment'))->create();
+    SensitiveEquipment::factory()->for($user->profile)->ofType(($this->type)('Refrigerator'))->create();
+    SensitiveEquipment::factory()->for($user->profile)->ofType(($this->type)('Fan'))->create();
+
+    $response = $this->actingAs($user)->postJson(route('profile.ai-risk.analyze'))->assertOk();
+
+    expect($response->json('score'))->toBe(100)
+        ->and($response->json('level'))->toBe('HIGH')
+        ->and($response->json('equipment_count'))->toBe(3)
+        ->and(collect($response->json('factors'))->sum('points'))->toBe(104);
+});
+
+test('more than five priority actions are rejected instead of truncated', function () {
+    Http::fake(['api.mistral.ai/*' => Http::response(householdAiResponse([
+        'priority_actions' => array_map(
+            fn (int $priority) => ['priority' => $priority, 'action' => "Action numéro {$priority}."],
+            range(1, 6),
+        ),
+    ]))]);
+
+    $this->actingAs(householdResident())->postJson(route('profile.ai-risk.analyze'))
+        ->assertOk()
+        ->assertJson(['ai' => null, 'ai_available' => false])
+        ->assertJsonPath('message', 'L’analyse IA est temporairement indisponible. Votre évaluation locale HeatAlert reste disponible.');
+});
+
+test('an admin is kept out of the resident analysis pages', function () {
+    Http::fake();
+
+    $admin = User::factory()->create(['role' => 'ADMIN']);
+
+    $this->actingAs($admin)->get(route('my-profile'))->assertRedirect(route('admin.dashboard'));
+    $this->actingAs($admin)->postJson(route('profile.ai-risk.analyze'))->assertRedirect(route('admin.dashboard'));
+
+    Http::assertNothingSent();
 });

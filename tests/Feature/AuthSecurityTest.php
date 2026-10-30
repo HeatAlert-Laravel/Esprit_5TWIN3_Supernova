@@ -101,6 +101,7 @@ test('login has safe intended redirects and keeps role destinations', function (
     ['USER', null, 'my-profile'], ['ADMIN', null, 'admin.dashboard'],
     ['USER', '/account', 'account'], ['USER', 'https://attacker.example/path', 'my-profile'],
     ['USER', '//attacker.example/path', 'my-profile'], ['USER', '/\\attacker.example/path', 'my-profile'],
+    ['ADMIN', '/my-profile', 'admin.dashboard'], ['USER', '/admin', 'my-profile'],
 ]);
 
 test('email notice resend signed link and verified event complete the verification flow', function () {

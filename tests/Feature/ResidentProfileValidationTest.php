@@ -51,6 +51,11 @@ test('a resident cannot use crafted equipment urls of another resident', functio
 test('an administrator account cannot use the resident equipment pages as someone else', function () {
     $admin = User::factory()->create(['role' => 'ADMIN']);
     $foreign = SensitiveEquipment::factory()->create();
+    $data = ['name' => 'Hacked', 'type_equipement_id' => $foreign->type_equipement_id];
 
-    $this->actingAs($admin)->get(route('profile.equipment.edit', $foreign))->assertNotFound();
+    $this->actingAs($admin);
+    $this->get(route('profile.equipment.edit', $foreign))->assertRedirect(route('admin.dashboard'));
+    $this->put(route('profile.equipment.update', $foreign), $data)->assertRedirect(route('admin.dashboard'));
+    $this->delete(route('profile.equipment.destroy', $foreign))->assertRedirect(route('admin.dashboard'));
+    $this->assertDatabaseHas('sensitive_equipments', ['id' => $foreign->id, 'name' => $foreign->name]);
 });

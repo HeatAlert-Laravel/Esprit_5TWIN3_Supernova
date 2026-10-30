@@ -86,7 +86,10 @@ test('forgot password validates email and sends a broker reset token', function 
     Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
         expect(Password::broker()->tokenExists($user, $notification->token))->toBeTrue();
         $resetUrl = route('password.reset', ['token' => $notification->token, 'email' => $user->email]);
-        expect($notification->toMail($user)->actionUrl)->toBe($resetUrl);
+        $mail = $notification->toMail($user);
+        expect($mail)->toBeInstanceOf(\App\Mail\HeatAlertResetPassword::class)
+            ->and($mail->resetUrl)->toBe($resetUrl)
+            ->and($mail->envelope()->subject)->toBe('Réinitialiser votre mot de passe HeatAlert');
         $this->get($resetUrl)
             ->assertOk()->assertSee($user->email)->assertSee('Reset your password');
 
