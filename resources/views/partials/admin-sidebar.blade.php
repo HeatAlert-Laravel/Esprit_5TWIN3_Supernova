@@ -67,18 +67,5 @@
 
     </nav>
 
-    <div class="ha-sidebar__foot">
-        <a href="{{ route('home') }}"
-           title="Public site"
-           class="ha-nav-item">
-
-            <x-ha.icon name="home" />
-
-            <span class="ha-nav-item__text" x-show="open">
-                Public site
-            </span>
-
-            <x-ha.icon name="external-link" size="sm" x-show="open" />
-        </a>
-    </div>
+    {{-- The admin stays in the admin area: no shortcut to the resident/public site. --}}
 </aside>

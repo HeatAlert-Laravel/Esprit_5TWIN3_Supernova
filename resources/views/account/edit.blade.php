@@ -2,14 +2,20 @@
 @section('title', 'Account and security')
 @section('content')
 <div class="ha-account-heading">
-    <div><p class="ha-eyebrow">Your HeatAlert account</p><h1>Account and security</h1><p class="ha-muted">Identity and sign-in security. Your household data (phone, address, equipment) lives in the household profile.</p></div>
-    <a href="{{ route('my-profile') }}" class="ha-btn ha-btn--outline">Back to household profile</a>
+    <div><p class="ha-eyebrow">Votre compte HeatAlert</p><h1>Compte et sécurité</h1><p class="ha-muted">Identité et sécurité de connexion.</p></div>
+    @if($user->role === 'USER')
+        <a href="{{ route('my-profile') }}" class="ha-btn ha-btn--outline">Retour au profil du foyer</a>
+    @endif
 </div>
 <x-ha.error-summary :all="true" />
 <div class="ha-account-grid">
     <section class="ha-card ha-account-section" aria-labelledby="account-information">
         <h2 id="account-information">Account information</h2>
-        <p>Your household address, phone and equipment stay in your <a class="ha-link" href="{{ route('my-profile') }}">HeatAlert profile</a>.</p>
+        @if($user->role === 'USER')
+            <p>Votre téléphone, votre adresse et vos équipements restent dans votre <a class="ha-link" href="{{ route('my-profile') }}">profil du foyer</a>.</p>
+        @else
+            <p>Compte administrateur : gérez ici votre identité et la sécurité de votre connexion.</p>
+        @endif
         <form method="POST" action="{{ route('user-profile-information.update') }}" class="ha-form-grid">@csrf @method('PUT')
             <x-ha.input name="name" error-bag="updateProfileInformation" label="Name" :value="old('name', $user->name)" autocomplete="name" required />
             <x-ha.input name="email" error-bag="updateProfileInformation" label="Email" type="email" :value="old('email', $user->email)" autocomplete="email" required />
