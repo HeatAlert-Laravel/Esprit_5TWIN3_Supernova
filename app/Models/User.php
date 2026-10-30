@@ -19,13 +19,15 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * The attributes that are mass assignable.
      *
+     * `role` is intentionally NOT fillable: it is assigned explicitly (forceFill) by the
+     * registration action, the local demo seeder or trusted admin code, never from request data.
+     *
      * @var list<string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role',
     ];
 
     /**

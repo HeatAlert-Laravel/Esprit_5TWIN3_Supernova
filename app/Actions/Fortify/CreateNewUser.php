@@ -17,11 +17,14 @@ class CreateNewUser implements CreatesNewUsers
             'password' => ['required', 'string', 'confirmed', Password::min(8)],
         ])->validate();
 
-        return User::create([
+        $user = new User([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
-            'role' => 'USER',
         ]);
+        // `role` is not mass assignable: registration always assigns USER explicitly.
+        $user->forceFill(['role' => 'USER'])->save();
+
+        return $user;
     }
 }
