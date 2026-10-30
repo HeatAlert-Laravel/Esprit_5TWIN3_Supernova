@@ -51,7 +51,7 @@ HeatAlert/
 | Advice (Module 4) | `CategorieConseil`, `Conseil` | `CategorieConseilController`, `ConseilController` | `AdviceController`, `AdviceBookmarkController` (`/advice`) | `categorie-conseils/`, `conseils/` |
 | Equipment types and sensitive equipment (Module 5) | `TypeEquipement`, `SensitiveEquipment`, `Profile` | `TypeEquipementController`, `SensitiveEquipmentController`, `ProfileController` | `ResidentProfileController`, `ResidentSensitiveEquipmentController` (`/my-profile`) | `type-equipements/`, `sensitive-equipments/`, `profiles/` |
 | Dashboard and home | all of the above | `DashboardController` (`/admin`) | `HomeController` (`/`) | `dashboard/`, `home.blade.php` |
-| Authentication | `User` | — | `AuthController`, `PasswordResetController` | `auth/` |
+| Authentication and account security | `User` | — | Laravel Fortify (registration, login, password reset, email verification, 2FA) + `AccountController` (`/account`) | `auth/`, `account/` |
 
 ### Routes, roles and middleware
 
