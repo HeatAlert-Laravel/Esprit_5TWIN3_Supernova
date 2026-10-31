@@ -12,10 +12,16 @@ export function initHeatDistressAssistants() {
         const directions = node('directions'), origin = node('origin'), distanceNote = node('distance-note');
         const accessible = node('accessible'), read = node('read');
         const replay = node('replay'), stopAudio = node('stop-audio');
+        const recordLabel = node('record-label'), session = node('session');
+        const sessionTitle = node('session-title'), sessionHint = node('session-hint');
+        const clock = node('clock'), timer = node('timer'), progress = node('progress');
+        const waveform = node('waveform'), thinking = node('thinking'), signal = node('signal');
+        const bars = Array.from(root.querySelectorAll('[data-heat-wave-bar]'));
         const supportsRecording = !!(window.isSecureContext && navigator.mediaDevices?.getUserMedia && window.MediaRecorder);
         const synthesis = window.speechSynthesis;
         let phase = 'idle', version = 0, controller = null, stream = null, recorder = null;
         let recordingTimer = null, gps = null, responseLanguage = 'fr', utterance = null;
+        let audioContext = null, microphoneSource = null, analyser = null, frame = null, clockInterval = null;
         const text = (key) => copy[language.value][key];
         const sayStatus = (key) => { status.textContent = text(key); };
 
@@ -25,6 +31,7 @@ export function initHeatDistressAssistants() {
             utterance = null;
         }
         function stopTracks() {
+            stopRecordingFeedback();
             stream?.getTracks().forEach((track) => track.stop());
             stream = null;
             clearTimeout(recordingTimer);
@@ -32,14 +39,90 @@ export function initHeatDistressAssistants() {
         }
         function setPhase(next) {
             phase = next;
+            root.dataset.phase = next;
             const busy = next !== 'idle';
             form.setAttribute('aria-busy', String(busy));
             [language, message, accessible, locate, clearLocation, node('submit')].forEach((control) => { control.disabled = busy; });
             choices.querySelectorAll('button').forEach((button) => { button.disabled = busy; });
             record.disabled = !supportsRecording || !['idle', 'recording'].includes(next);
             record.setAttribute('aria-pressed', String(next === 'recording'));
-            record.textContent = text(next === 'recording' ? 'stop_recording' : 'record');
+            recordLabel.textContent = text(next === 'recording' ? 'stop_recording' : 'record');
             cancel.hidden = !busy;
+            session.hidden = !['permission', 'recording', 'transcribing', 'request'].includes(next);
+            clock.hidden = waveform.hidden = signal.hidden = progress.hidden = next !== 'recording';
+            thinking.hidden = next === 'recording';
+            const prefix = ({ permission: 'permission', recording: 'listening', transcribing: 'transcribing', request: 'searching' })[next];
+            if (prefix) {
+                sessionTitle.textContent = text(`${prefix}_title`);
+                sessionHint.textContent = text(`${prefix}_hint`);
+            }
+        }
+        function prepareRecordingFeedback() {
+            // Use the existing microphone stream; never connect it to speakers.
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            try {
+                audioContext = new AudioContext();
+                audioContext.resume().catch(() => {});
+            } catch { audioContext = null; }
+        }
+        function stopRecordingFeedback() {
+            clearInterval(clockInterval);
+            clockInterval = null;
+            if (frame !== null) window.cancelAnimationFrame(frame);
+            frame = null;
+            try { microphoneSource?.disconnect(); } catch { /* A disconnected meter needs no further action. */ }
+            microphoneSource = analyser = null;
+            if (audioContext) {
+                try { audioContext.close().catch(() => {}); } catch { /* Recording cleanup must still complete. */ }
+                audioContext = null;
+            }
+            bars.forEach((bar) => bar.style.setProperty('--voice-level', '.07'));
+        }
+        function startRecordingFeedback(current) {
+            const startedAt = Date.now();
+            const levels = bars.map(() => .07);
+            let lastSample = 0, lastSound = startedAt, heardSound = false;
+            timer.textContent = '00:00';
+            progress.value = 0;
+            progress.setAttribute('aria-label', text('recording_progress'));
+            signal.textContent = text('signal_waiting');
+            const updateClock = () => {
+                const elapsed = Math.min(30, Math.max(0, (Date.now() - startedAt) / 1000));
+                timer.textContent = `00:${String(Math.floor(elapsed)).padStart(2, '0')}`;
+                progress.value = elapsed;
+            };
+            clockInterval = setInterval(updateClock, 250);
+            if (!audioContext || !window.requestAnimationFrame) {
+                signal.textContent = text('signal_unavailable');
+                return;
+            }
+            try {
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 512;
+                microphoneSource = audioContext.createMediaStreamSource(stream);
+                microphoneSource.connect(analyser);
+                const samples = new Uint8Array(analyser.fftSize);
+                const draw = () => {
+                    if (current !== version || phase !== 'recording') return;
+                    const now = Date.now();
+                    if (now - lastSample >= 90) {
+                        try { analyser.getByteTimeDomainData(samples); }
+                        catch { signal.textContent = text('signal_unavailable'); frame = null; return; }
+                        let sum = 0;
+                        for (const sample of samples) sum += ((sample - 128) / 128) ** 2;
+                        const level = Math.min(1, Math.sqrt(sum / samples.length) * 5);
+                        levels.shift(); levels.push(Math.max(.07, level));
+                        bars.forEach((bar, index) => bar.style.setProperty('--voice-level', levels[index].toFixed(3)));
+                        if (level > .1) { lastSound = now; heardSound = true; }
+                        signal.textContent = text(now - lastSound > 5000 ? 'signal_quiet'
+                            : heardSound && now - lastSound < 800 ? 'signal_detected' : 'signal_waiting');
+                        lastSample = now;
+                    }
+                    frame = window.requestAnimationFrame(draw);
+                };
+                frame = window.requestAnimationFrame(draw);
+            } catch { signal.textContent = text('signal_unavailable'); }
         }
         function clearResult() {
             stopSpeech();
@@ -169,6 +252,7 @@ export function initHeatDistressAssistants() {
             clearResult();
             setPhase('permission');
             sayStatus('permission');
+            prepareRecordingFeedback();
             try {
                 const granted = await navigator.mediaDevices.getUserMedia({ audio: true });
                 if (current !== version) { granted.getTracks().forEach((track) => track.stop()); return; }
@@ -204,6 +288,7 @@ export function initHeatDistressAssistants() {
                 };
                 recorder.start();
                 setPhase('recording'); sayStatus('recording');
+                startRecordingFeedback(current);
                 recordingTimer = setTimeout(() => { if (recording.state === 'recording') recording.stop(); }, 30000);
             } catch {
                 stopTracks();

@@ -24,8 +24,33 @@
                     <option value="derja" lang="ar-TN">تونسي · Derja</option>
                 </select>
             </div>
-            <button type="button" class="ha-btn ha-btn--primary" data-heat-record aria-pressed="false" aria-describedby="heat-status" data-i18n="record">{{ $copy['record'] }}</button>
+            <button type="button" class="ha-btn ha-btn--primary ha-heat-assistant__record" data-heat-record aria-pressed="false" aria-describedby="heat-status">
+                <svg class="ha-heat-assistant__mic-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8"/></svg>
+                <span class="ha-heat-assistant__stop-icon" aria-hidden="true"></span>
+                <span data-heat-record-label data-i18n="record">{{ $copy['record'] }}</span>
+            </button>
             <button type="button" class="ha-btn ha-btn--outline" data-heat-cancel hidden data-i18n="cancel">{{ $copy['cancel'] }}</button>
+        </div>
+        <div class="ha-voice-session" data-heat-session hidden>
+            <div class="ha-voice-session__top">
+                <div class="ha-voice-session__state">
+                    <span class="ha-voice-session__indicator" aria-hidden="true"></span>
+                    <strong data-heat-session-title>{{ $copy['listening_title'] }}</strong>
+                </div>
+                <span class="ha-voice-session__clock" data-heat-clock aria-hidden="true"><time data-heat-timer>00:00</time><span> / 00:30</span></span>
+            </div>
+            <div class="ha-voice-session__visual" data-heat-waveform aria-hidden="true">
+                <span class="ha-voice-session__mic">
+                    <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8"/></svg>
+                </span>
+                <div class="ha-voice-session__wave">
+                    @for($bar = 0; $bar < 32; $bar++)<span data-heat-wave-bar></span>@endfor
+                </div>
+            </div>
+            <div class="ha-voice-session__thinking" data-heat-thinking hidden aria-hidden="true"><span></span><span></span><span></span></div>
+            <p class="ha-voice-session__hint" data-heat-session-hint>{{ $copy['listening_hint'] }}</p>
+            <p class="ha-voice-session__signal" data-heat-signal aria-hidden="true">{{ $copy['signal_waiting'] }}</p>
+            <progress class="ha-voice-session__progress" data-heat-progress max="30" value="0" aria-label="{{ $copy['recording_progress'] }}" aria-live="off"></progress>
         </div>
         <label for="heat-message" data-i18n="message">{{ $copy['message'] }}</label>
         <textarea id="heat-message" class="ha-input" rows="2" required maxlength="1000" data-heat-message dir="auto"
