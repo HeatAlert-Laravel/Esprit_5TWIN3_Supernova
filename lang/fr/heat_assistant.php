@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Besoin de fraîcheur ? Parlez-nous',
-    'intro' => 'Dites votre rue et votre ville en français, arabe ou derja tunisienne.',
+    'intro' => 'Dites votre rue et votre ville en anglais, français, arabe ou derja tunisienne.',
     'language' => 'Langue de réponse',
     'record' => 'Parler au microphone',
     'stop_recording' => 'Terminer et envoyer',

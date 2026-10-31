@@ -31,7 +31,7 @@ function setup({ recording = false, media, fetcher = async () => response(found)
         'searching_title', 'searching_hint', 'signal_waiting', 'signal_detected', 'signal_quiet', 'signal_unavailable', 'recording_progress',
         'error_title', 'search_error', 'transcription_error', 'retry_search', 'retry_recording', 'not_configured', 'location_unavailable',
         'confirm_location_title', 'found_title', 'result', 'expired'];
-    const copy = Object.fromEntries(['fr', 'ar', 'derja'].map((lang) => [lang, Object.fromEntries(keys.map((key) => [key, `${lang}:${key}`]))]));
+    const copy = Object.fromEntries(['fr', 'ar', 'derja', 'en'].map((lang) => [lang, Object.fromEntries(keys.map((key) => [key, `${lang}:${key}`]))]));
     const root = new Element();
     root.dataset = { copy: JSON.stringify(copy), endpoint: '/cooling-points/assistant', transcribeEndpoint: '/cooling-points/assistant/transcribe' };
     root.querySelector = (selector) => n[selector.slice(11, -1)];
@@ -53,7 +53,7 @@ function setup({ recording = false, media, fetcher = async () => response(found)
             });
         }
     }
-    const speech = { spoken: [], cancelled: 0, cancel() { this.cancelled++; }, getVoices: () => [{ lang: 'fr-FR' }, { lang: 'ar-TN' }], speak(utterance) { this.spoken.push(utterance); } };
+    const speech = { spoken: [], cancelled: 0, cancel() { this.cancelled++; }, getVoices: () => [{ lang: 'fr-FR' }, { lang: 'ar-TN' }, { lang: 'en-US' }], speak(utterance) { this.spoken.push(utterance); } };
     const win = new Element();
     Object.assign(win, { isSecureContext: true, speechSynthesis: speech, SpeechSynthesisUtterance: class { constructor(text) { this.text = text; } } });
     if (recording) win.MediaRecorder = Recorder;
@@ -249,6 +249,29 @@ test('denied and inaccurate GPS never manufacture coordinates and RTL selection 
     assert.equal(root.lang, 'ar-TN');
     assert.equal(root.dir, 'rtl');
     assert.equal(n.result.hidden, true);
+});
+
+test('English selection preserves the message and speaks English results with an installed English voice', async () => {
+    const englishText = 'If you feel dizzy, sit in the shade and ask someone nearby for help. The nearest listed point has drinking water and shade.';
+    const { n, root, speech, requests, submit } = setup({ fetcher: async () => response({ ...found, language: 'en', text: englishText }) });
+    const englishVoice = { name: 'Microsoft David', lang: 'en-US' };
+    speech.getVoices = () => [englishVoice];
+    n.message.value = 'I am on Habib Bourguiba Avenue in Tunis. Where can I find drinking water and shade?';
+    n.language.value = 'en';
+    n.language.emit('change');
+    assert.equal(root.lang, 'en');
+    assert.equal(root.dir, 'ltr');
+    assert.equal(n.message.value, 'I am on Habib Bourguiba Avenue in Tunis. Where can I find drinking water and shade?');
+    assert.equal(requests.length, 0);
+    assert.equal(speech.spoken.length, 0);
+    await submit();
+    assert.equal(requests[0].options.body.get('language'), 'en');
+    assert.equal(n.answer.textContent, englishText);
+    assert.equal(speech.spoken.length, 1);
+    assert.equal(speech.spoken[0].voice, englishVoice);
+    assert.equal(speech.spoken[0].lang, 'en-US');
+    assert.equal(speech.spoken[0].text, englishText);
+    assert.notEqual(n.status.textContent, 'en:voice_missing');
 });
 
 test('GPS is opt-in can be cleared and does not send precise coordinates to the speech provider', async () => {

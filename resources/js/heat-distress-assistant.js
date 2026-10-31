@@ -193,7 +193,7 @@ export function initHeatDistressAssistants() {
             stopSpeech();
             if (!answer.textContent) return;
             if (!synthesis || !window.SpeechSynthesisUtterance) { sayStatus('voice_missing'); return; }
-            const target = responseLanguage === 'fr' ? 'fr-FR' : responseLanguage === 'derja' ? 'ar-TN' : 'ar';
+            const target = ({ en: 'en-US', fr: 'fr-FR', derja: 'ar-TN' })[responseLanguage] || 'ar';
             const voices = synthesis.getVoices();
             const voice = voices.find((voice) => voice.lang.toLowerCase() === target.toLowerCase())
                 || voices.find((voice) => voice.lang.toLowerCase().startsWith(target.slice(0, 2)));
@@ -321,7 +321,7 @@ export function initHeatDistressAssistants() {
         }
         function translate() {
             root.lang = language.value === 'derja' ? 'ar-TN' : language.value;
-            root.dir = language.value === 'fr' ? 'ltr' : 'rtl';
+            root.dir = ['fr', 'en'].includes(language.value) ? 'ltr' : 'rtl';
             root.querySelectorAll('[data-i18n]').forEach((element) => { element.textContent = text(element.dataset.i18n); });
             message.placeholder = text('placeholder');
             sayStatus(supportsRecording ? 'ready' : 'unsupported');

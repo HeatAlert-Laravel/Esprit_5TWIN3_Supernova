@@ -45,6 +45,45 @@ test('cooling page offers labelled multilingual voice and text controls without 
     Http::assertNothingSent();
 });
 
+test('English is available with a complete set of localized assistant strings', function () {
+    $this->get(route('cooling-points'))->assertOk()->assertSee('English');
+    $english = \Illuminate\Support\Facades\Lang::get('heat_assistant', [], 'en');
+    $french = \Illuminate\Support\Facades\Lang::get('heat_assistant', [], 'fr');
+    expect($english)->toBeArray()->and($french)->toBeArray();
+    $englishKeys = array_keys($english);
+    $frenchKeys = array_keys($french);
+    sort($englishKeys);
+    sort($frenchKeys);
+    expect($englishKeys)->toBe($frenchKeys);
+    foreach ($english as $value) {
+        expect($value)->toBeString()->not->toBe('');
+    }
+    Http::assertNothingSent();
+});
+
+test('English requests return the nearest point with an English text response', function () {
+    Http::fake(['api.groq.com/*' => Http::response(heatIntent())]);
+    $point = heatPlace(['nom' => 'English demo point']);
+    $this->postJson($this->endpoint, heatGps([
+        'language' => 'en', 'message' => 'I am in Tunis and need drinking water and shade.',
+    ]))->assertOk()->assertJsonPath('status', 'found')->assertJsonPath('language', 'en')
+        ->assertJsonPath('point.id', $point->id)
+        ->assertJsonPath('text', fn ($text) => str_contains(strtolower($text), 'drinking water')
+            && str_contains(strtolower($text), 'shade') && ! str_contains($text, 'Si vous'));
+    Http::assertSentCount(1);
+});
+
+test('English recordings are accepted for automatic language transcription', function () {
+    Http::fake(['api.groq.com/*/audio/transcriptions' => Http::response([
+        'text' => 'I am on Habib Bourguiba Avenue in Tunis.', 'segments' => [['no_speech_prob' => 0.01]],
+    ])]);
+    $this->postJson(route('cooling-points.assistant.transcribe'), [
+        'language' => 'en', 'audio' => UploadedFile::fake()->create('english.webm', 100, 'audio/webm'),
+    ])->assertOk()->assertJsonPath('text', 'I am on Habib Bourguiba Avenue in Tunis.')
+        ->assertHeader('Cache-Control', 'no-store, private');
+    Http::assertSentCount(1);
+});
+
 test('nearest selection uses actual distance and excludes closed inactive unconfirmed missing and far points', function () {
     Http::fake(['api.groq.com/*' => Http::response(heatIntent())]);
     CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-10-31 12:00:00', 'Africa/Tunis'));

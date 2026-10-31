@@ -183,7 +183,7 @@ Mapping rule for existing rows (first match on the equipment name, then the lega
 
 ## Module 3: Voice-activated cooling-point assistant
 
-The cooling points page includes French, Arabic and Tunisian Derja voice/text help, optional GPS, spoken-address confirmation and a two-sentence text/audio response. Groq transcribes and interprets the request; the server selects the closest active point with confirmed drinking water, shade, coordinates and known opening hours. Administrators confirm the two new amenity fields after running `php artisan migrate`. Set `HEAT_ASSISTANT_GROQ_API_KEY` (or the existing `GROQ_API_KEY`), clear configuration, and rebuild assets. Device speech voices determine available audio languages.
+The cooling points page includes English, French, Arabic and Tunisian Derja voice/text help, optional GPS, spoken-address confirmation and a two-sentence text/audio response. Groq transcribes and interprets the request; the server selects the closest active point with confirmed drinking water, shade, coordinates and known opening hours. Administrators confirm the two new amenity fields after running `php artisan migrate`. Set `HEAT_ASSISTANT_GROQ_API_KEY` (or the existing `GROQ_API_KEY`), clear configuration, and rebuild assets. Device speech voices determine available audio languages.
 
 See [Module 3 setup, behavior and verification](docs/module3-heat-distress-assistant.md), including provider setup, accessibility limitations, distress handling and a demo checklist.
 

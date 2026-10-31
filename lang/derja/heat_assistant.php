@@ -3,7 +3,7 @@
 // Tunisian Arabic copy; browsers may use a general Arabic voice when ar-TN is absent.
 return array_replace(require __DIR__.'/../ar/heat_assistant.php', [
     'title' => 'تلوّج على بلاصة باردة؟ احكي معانا',
-    'intro' => 'قول اسم النهج والمدينة بالفرنسية، بالعربي ولا بالتونسي.',
+    'intro' => 'قول اسم النهج والمدينة بالأنڨليزية، بالفرنسية، بالعربي ولا بالتونسي.',
     'record' => 'احكي بالميكرو', 'stop_recording' => 'كمّل وابعث', 'cancel' => 'إلغاء',
     'listening_title' => 'نسمع فيك، احكي معايا',
     'listening_hint' => 'احكي على راحتك، وكي تكمّل اضغط على « كمّل وابعث ».',

@@ -1,5 +1,5 @@
 @php
-    $assistantCopy = collect(['fr', 'ar', 'derja'])->mapWithKeys(fn ($language) => [$language => \Illuminate\Support\Facades\Lang::get('heat_assistant', [], $language)]);
+    $assistantCopy = collect(['fr', 'en', 'ar', 'derja'])->mapWithKeys(fn ($language) => [$language => \Illuminate\Support\Facades\Lang::get('heat_assistant', [], $language)]);
     $copy = $assistantCopy['fr'];
 @endphp
 <section class="ha-heat-assistant" data-heat-assistant lang="fr" dir="ltr" aria-labelledby="heat-assistant-title"
@@ -20,6 +20,7 @@
                 <label for="heat-language" data-i18n="language">{{ $copy['language'] }}</label>
                 <select id="heat-language" class="ha-select" data-heat-language>
                     <option value="fr" lang="fr">Français</option>
+                    <option value="en" lang="en">English</option>
                     <option value="ar" lang="ar">العربية</option>
                     <option value="derja" lang="ar-TN">تونسي · Derja</option>
                 </select>
