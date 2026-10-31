@@ -42,7 +42,7 @@ return [
     'replay' => 'Listen again',
     'stop_audio' => 'Stop reading',
     'directions' => 'Open directions',
-    'privacy' => 'After you send, Groq processes your recording and text; only the place you mention is sent to Photon to look up the address. HeatAlert does not keep recordings or conversations. Sharing GPS is optional.',
+    'privacy' => 'After you send, Groq processes your recording and text; only the place you mention is sent to Photon to look up the address. HeatAlert does not keep recordings or conversations. Sharing GPS is optional. Maps load from OpenStreetMap for the displayed area; opening directions shares both locations with Google Maps.',
     'safety' => 'Confusion, fainting, or difficulty walking or breathing: immediately ask someone nearby to call local emergency services. Do not go alone.',
     'ready' => 'Ready. Speak or type your request.',
     'permission' => 'Allow microphone access to begin.',

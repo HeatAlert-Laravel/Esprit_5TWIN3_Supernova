@@ -8,7 +8,7 @@ GPT-OSS interpretation uses low reasoning effort with reasoning excluded from th
 
 ## Enable locally
 
-1. Pull the feature branch and install the existing locked dependencies (`composer install`, `npm ci`). No new packages are added. Follow the project's PHP/Node requirements.
+1. Pull the latest `main` after the feature is merged and install the existing locked dependencies (`composer install`, `npm ci`). No new packages are added. Follow the project's PHP/Node requirements.
 2. Run `php artisan migrate`. The additive migration creates `eau_potable` and `ombre`, both false for existing records. It preserves all existing cooling points.
 3. Put a Groq key in the ignored `.env`: `HEAT_ASSISTANT_GROQ_API_KEY=...`. Leaving that variable empty uses the existing `GROQ_API_KEY`. Never commit the real key.
 4. Run `php artisan config:clear` and `npm run build`.
@@ -18,6 +18,10 @@ GPT-OSS interpretation uses low reasoning effort with reasoning excluded from th
 Supported eligibility hours: `24/7`, `24h/24`, `always open`, or a complete **daily** `HH:MM - HH:MM` range, including overnight hours. Unknown, blank, malformed or weekday-specific free text is excluded. End times are exclusive. Hours are evaluated in `Africa/Tunis`, independent of the application's UTC setting. These are published schedules, not live occupancy/availability guarantees.
 
 The default search radius is **5 km**; no eligible point in that radius returns an honest no-match response. The optional wheelchair control filters `accessible_pmr`; a spoken accessibility need is also honored. A pool or misting station is never assumed to provide drinking water or shade.
+
+Each successful result includes an interactive map: blue marks the confirmed origin, orange marks the cooling point, and the dashed line represents straight-line distance. **Open directions** sends both endpoints to Google Maps for walking directions only when clicked. Map tiles load from OpenStreetMap for the displayed area; if the map cannot load, the reply and directions link remain available.
+
+The fictitious professor-demo record created in one developer's local database is not included in Git or migrations. Teammates need an eligible local record to see a successful recommendation. For a disposable demonstration database, use Admin to create a clearly named `DEMO - fictitious cooling point` at `36.8004, 10.1850`, with an address near Avenue Habib Bourguiba in Tunis, active status, `24/7` hours, and both confirmed-amenity fields checked. Use existing type/neighborhood records and describe the point as fictitious. Do not mark an unverified real place as confirmed. Choose the actual street in Tunis at address confirmation, rather than another landmark or similarly named street; this changes the distance.
 
 ## Configuration
 

@@ -42,7 +42,7 @@ return [
     'replay' => 'Réécouter',
     'stop_audio' => 'Arrêter la lecture',
     'directions' => 'Ouvrir l’itinéraire',
-    'privacy' => 'Après envoi, votre enregistrement et votre texte sont traités par Groq ; seul le lieu cité est envoyé à Photon pour chercher l’adresse. HeatAlert ne conserve ni l’enregistrement, ni la conversation. Le GPS reste facultatif.',
+    'privacy' => 'Après envoi, votre enregistrement et votre texte sont traités par Groq ; seul le lieu cité est envoyé à Photon pour chercher l’adresse. HeatAlert ne conserve ni l’enregistrement, ni la conversation. Le GPS reste facultatif. Les cartes sont chargées depuis OpenStreetMap pour la zone affichée ; ouvrir l’itinéraire partage les deux positions avec Google Maps.',
     'safety' => 'Confusion, évanouissement ou difficulté à marcher ou respirer : demandez immédiatement à une personne proche d’appeler les secours locaux. Ne partez pas seul.',
     'ready' => 'Prêt. Parlez ou écrivez votre demande.',
     'permission' => 'Autorisez le microphone pour commencer.',

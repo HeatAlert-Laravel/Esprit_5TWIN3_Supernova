@@ -23,7 +23,7 @@ class PointFraicheurController extends Controller
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->where('nom', 'like', "%{$search}%")
-                  ->orWhere('adresse', 'like', "%{$search}%");
+                    ->orWhere('adresse', 'like', "%{$search}%");
             });
         }
 
