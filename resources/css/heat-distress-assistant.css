@@ -18,6 +18,7 @@
 .ha-heat-assistant label { display: block; font-size: 1rem; }
 .ha-heat-assistant .ha-input { width: 100%; font-size: 1.05rem; }
 .ha-heat-assistant__toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.ha-heat-assistant__toolbar--voice { align-items: flex-end; }
 .ha-heat-assistant__toolbar > label { display: flex; align-items: center; gap: 8px; min-height: 44px; }
 .ha-heat-assistant :is(button, select, a.ha-btn) { min-height: 48px; font-size: 1rem; white-space: normal; text-align: start; }
 .ha-heat-assistant input[type=checkbox] { width: 22px; height: 22px; flex-shrink: 0; }

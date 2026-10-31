@@ -15,7 +15,7 @@
     </div>
     <p class="ha-heat-assistant__safety" data-i18n="safety">{{ $copy['safety'] }}</p>
     <form data-heat-form>
-        <div class="ha-heat-assistant__toolbar">
+        <div class="ha-heat-assistant__toolbar ha-heat-assistant__toolbar--voice">
             <div>
                 <label for="heat-language" data-i18n="language">{{ $copy['language'] }}</label>
                 <select id="heat-language" class="ha-select" data-heat-language>
