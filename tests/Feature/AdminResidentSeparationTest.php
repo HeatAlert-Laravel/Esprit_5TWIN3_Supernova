@@ -44,6 +44,18 @@ test('the admin navigation never links back to the public or resident area', fun
         ->assertSee('href="'.route('admin.dashboard').'"', false);
 });
 
+test('the public navigation offers the household profile to residents only', function () {
+    $this->actingAs(User::factory()->create(['role' => 'USER']))
+        ->get(route('home'))
+        ->assertOk()
+        ->assertSee('My Profile');
+
+    $this->actingAs(User::factory()->create(['role' => 'ADMIN']))
+        ->get(route('home'))
+        ->assertOk()
+        ->assertDontSee('My Profile');
+});
+
 test('the resident profile page never links to the admin area', function () {
     $this->actingAs(User::factory()->create(['role' => 'USER']))
         ->get(route('my-profile'))
