@@ -24,6 +24,7 @@ export function initHeatDistressAssistants() {
         let recordingTimer = null, gps = null, responseLanguage = 'fr', utterance = null;
         let audioContext = null, microphoneSource = null, analyser = null, frame = null, clockInterval = null;
         let retryAction = null;
+        let resultMap = null;
         const text = (key) => copy[language.value][key];
         const sayStatus = (key) => { status.textContent = text(key); };
 
@@ -127,6 +128,7 @@ export function initHeatDistressAssistants() {
             } catch { signal.textContent = text('signal_unavailable'); }
         }
         function clearResult() {
+            clearMap();
             stopSpeech();
             clearError();
             result.hidden = true;
@@ -136,6 +138,49 @@ export function initHeatDistressAssistants() {
             directions.removeAttribute('href');
             origin.hidden = true;
             distanceNote.hidden = true;
+        }
+        function clearMap() {
+            resultMap?.remove();
+            resultMap = null;
+            node('map-panel').hidden = true;
+            node('map-error').hidden = true;
+        }
+        function validCoordinates(point) {
+            return point && Number.isFinite(point.latitude) && Math.abs(point.latitude) <= 90
+                && Number.isFinite(point.longitude) && Math.abs(point.longitude) <= 180;
+        }
+        function showMap(payload) {
+            const L = window.L;
+            if (!L) { node('map-error').hidden = false; return; }
+            const destination = [payload.point.latitude, payload.point.longitude];
+            const start = validCoordinates(payload.origin_coordinates)
+                ? [payload.origin_coordinates.latitude, payload.origin_coordinates.longitude] : null;
+            node('map-panel').hidden = false;
+            node('map').setAttribute('aria-label', text('map_title'));
+            try {
+                resultMap = L.map(node('map'), { scrollWheelZoom: false });
+                const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                }).addTo(resultMap);
+                tiles.on('tileerror', () => { node('map-error').hidden = false; });
+                const marker = (coordinates, color, label) => {
+                    const popup = document.createElement('span');
+                    popup.textContent = label;
+                    return L.circleMarker(coordinates, { radius: 10, color: '#fff', weight: 3, fillColor: color, fillOpacity: 1 })
+                        .addTo(resultMap).bindPopup(popup);
+                };
+                marker(destination, '#c64b12', `${text('map_point')}: ${payload.point.name || ''}`).openPopup();
+                if (start) {
+                    marker(start, '#2563eb', `${text('map_origin')}: ${payload.origin}`);
+                    // This is the same straight-line distance as the text, not a walking route.
+                    L.polyline([start, destination], { color: '#547269', weight: 3, dashArray: '7 9' }).addTo(resultMap);
+                    resultMap.fitBounds([start, destination], { padding: [40, 40], maxZoom: 16 });
+                } else resultMap.setView(destination, 16);
+                resultMap.invalidateSize();
+            } catch {
+                clearMap();
+                node('map-error').hidden = false;
+            }
         }
         function cancelOperation(announce = true) {
             version++;
@@ -227,6 +272,10 @@ export function initHeatDistressAssistants() {
                 if (Number.isFinite(latitude) && Math.abs(latitude) <= 90 && Number.isFinite(longitude) && Math.abs(longitude) <= 180) {
                     directions.href = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&travelmode=walking`;
                     directions.hidden = false;
+                    if (validCoordinates(payload.origin_coordinates)) {
+                        directions.href += `&origin=${payload.origin_coordinates.latitude},${payload.origin_coordinates.longitude}`;
+                    }
+                    showMap(payload);
                 }
                 origin.textContent = `${text('origin')}: ${payload.origin}`;
                 origin.hidden = false;
@@ -358,7 +407,7 @@ export function initHeatDistressAssistants() {
         });
         clearLocation.addEventListener('click', () => { gps = null; clearLocation.hidden = true; clearResult(); sayStatus('ready'); });
         root.addEventListener('keydown', (event) => { if (event.key === 'Escape') { cancelOperation(); record.focus(); } });
-        window.addEventListener('pagehide', () => cancelOperation(false));
+        window.addEventListener('pagehide', () => { cancelOperation(false); clearMap(); });
         // Warm the asynchronous browser voice list without starting playback.
         synthesis?.getVoices();
         translate();

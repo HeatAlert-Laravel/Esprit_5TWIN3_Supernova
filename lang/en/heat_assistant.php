@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'map_title' => 'Map of your result',
+    'map_origin' => 'Location used',
+    'map_point' => 'Cooling point',
+    'map_unavailable' => 'The map could not load. You can still open directions below.',
     'title' => 'Need a cool place? Talk to us',
     'intro' => 'Tell us your street and city in English, French, Arabic or Tunisian Derja.',
     'language' => 'Reply language',

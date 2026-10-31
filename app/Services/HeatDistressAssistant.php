@@ -64,6 +64,7 @@ class HeatDistressAssistant
         ]);
         $result['point'] = $point;
         $result['origin'] = $origin['label'];
+        $result['origin_coordinates'] = ['latitude' => (float) $origin['latitude'], 'longitude' => (float) $origin['longitude']];
         $result['directions_url'] = 'https://www.google.com/maps/dir/?'.http_build_query([
             'api' => 1, 'destination' => $point['latitude'].','.$point['longitude'], 'travelmode' => 'walking',
         ]);

@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'map_title' => 'Carte du résultat',
+    'map_origin' => 'Position utilisée',
+    'map_point' => 'Point de fraîcheur',
+    'map_unavailable' => 'La carte ne peut pas être chargée. Vous pouvez ouvrir l’itinéraire ci-dessous.',
     'title' => 'Besoin de fraîcheur ? Parlez-nous',
     'intro' => 'Dites votre rue et votre ville en anglais, français, arabe ou derja tunisienne.',
     'language' => 'Langue de réponse',

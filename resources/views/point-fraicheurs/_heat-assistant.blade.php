@@ -75,6 +75,12 @@
         <p data-heat-answer dir="auto"></p>
         <p data-heat-origin hidden dir="auto"></p>
         <div class="ha-heat-assistant__choices" data-heat-choices></div>
+        <div data-heat-map-panel hidden>
+            <h4 data-i18n="map_title">{{ $copy['map_title'] }}</h4>
+            <div class="ha-heat-assistant__map" data-heat-map tabindex="0" role="region" aria-label="{{ $copy['map_title'] }}"></div>
+            <p class="ha-heat-assistant__map-legend"><span class="ha-heat-assistant__origin-dot" aria-hidden="true"></span> <span data-i18n="map_origin">{{ $copy['map_origin'] }}</span> · <span class="ha-heat-assistant__point-dot" aria-hidden="true"></span> <span data-i18n="map_point">{{ $copy['map_point'] }}</span></p>
+        </div>
+        <p data-heat-map-error hidden data-i18n="map_unavailable">{{ $copy['map_unavailable'] }}</p>
         <div class="ha-heat-assistant__toolbar">
             <button type="button" class="ha-btn ha-btn--outline" data-heat-replay data-i18n="replay">{{ $copy['replay'] }}</button>
             <button type="button" class="ha-btn ha-btn--outline" data-heat-stop-audio data-i18n="stop_audio">{{ $copy['stop_audio'] }}</button>

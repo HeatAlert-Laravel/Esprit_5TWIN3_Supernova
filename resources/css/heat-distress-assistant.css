@@ -88,3 +88,8 @@
 }
 /* Keep the existing floating map switch from covering the active recording card. */
 .ha-cp-page:has(.ha-heat-assistant:is([data-phase=permission], [data-phase=recording], [data-phase=transcribing], [data-phase=request])) ~ .ha-mobile-map-toggle { display: none; }
+
+.ha-heat-assistant__map { height: 340px; width: 100%; border-radius: 12px; border: 1px solid #c9d8d0; isolation: isolate; direction: ltr; }
+.ha-heat-assistant__map-legend { font-size: .9rem; }
+.ha-heat-assistant__origin-dot, .ha-heat-assistant__point-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #2563eb; vertical-align: middle; }
+.ha-heat-assistant__point-dot { background: #c64b12; }

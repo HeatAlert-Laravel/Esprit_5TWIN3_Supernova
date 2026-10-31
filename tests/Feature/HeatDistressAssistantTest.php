@@ -95,6 +95,7 @@ test('nearest selection uses actual distance and excludes closed inactive unconf
     }
     $this->postJson($this->endpoint, heatGps(['point_id' => 999, 'distance_km' => 0]))
         ->assertOk()->assertJsonPath('status', 'found')->assertJsonPath('point.id', $nearest->id)
+        ->assertJsonPath('origin_coordinates.latitude', 36.8)->assertJsonPath('origin_coordinates.longitude', 10.18)
         ->assertJsonPath('choices', [])->assertJsonPath('text', fn ($text) => str_contains($text, 'vol d’oiseau'))->assertHeader('Cache-Control', 'no-store, private');
     Http::assertSentCount(1);
     Http::assertSent(fn ($request) => $request->hasHeader('Authorization', 'Bearer member-three-test-secret')

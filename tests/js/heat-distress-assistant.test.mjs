@@ -23,7 +23,7 @@ function setup({ recording = false, media, fetcher = async () => response(found)
     const names = ['form', 'language', 'message', 'record', 'cancel', 'status', 'result', 'answer', 'choices', 'locate',
         'clear-location', 'directions', 'origin', 'distance-note', 'accessible', 'read', 'replay', 'stop-audio', 'submit',
         'record-label', 'session', 'session-title', 'session-hint', 'clock', 'timer', 'progress', 'waveform', 'thinking', 'signal',
-        'error', 'error-message', 'retry', 'result-title'];
+        'error', 'error-message', 'retry', 'result-title', 'map-panel', 'map', 'map-error'];
     const n = Object.fromEntries(names.map((name) => [name, new Element()]));
     const keys = ['title', 'ready', 'record', 'stop_recording', 'cancelled', 'unsupported', 'mic_error', 'voice_missing', 'invalid',
         'limit', 'session', 'unavailable', 'location_error', 'located', 'loading', 'transcribing', 'permission', 'recording', 'locating', 'origin', 'placeholder', 'no_speech',
@@ -362,4 +362,33 @@ test('malformed successful search replies also produce a visible retry instead o
     assert.equal(n.error.hidden, false);
     assert.equal(n['error-message'].textContent, 'fr:search_error');
     assert.equal(n.result.hidden, true);
+});
+
+
+test('found result maps validated origin and destination and clears the old map on editing', async () => {
+    const payload = { ...found, origin_coordinates: { latitude: 36.81, longitude: 10.19 } };
+    const { n, win, submit } = setup({ fetcher: async () => response(payload) });
+    const marks = [], lines = [], bounds = [];
+    let removed = 0;
+    const map = { remove() { removed++; }, fitBounds(coords) { bounds.push(coords); }, invalidateSize() {} };
+    const layer = { addTo() { return this; }, on() { return this; }, bindPopup() { return this; }, openPopup() { return this; } };
+    win.L = { map: () => map, tileLayer: () => layer,
+        circleMarker(coords) { marks.push(coords); return layer; },
+        polyline(coords) { lines.push(coords); return layer; } };
+    await submit();
+    assert.equal(n['map-panel'].hidden, false);
+    assert.deepEqual(marks, [[36.8, 10.18], [36.81, 10.19]]);
+    assert.deepEqual(bounds[0], lines[0]);
+    assert.ok(n.directions.href.includes('&origin=36.81,10.19'));
+    n.message.emit('input');
+    assert.equal(removed, 1);
+    assert.equal(n['map-panel'].hidden, true);
+});
+
+test('map library failure preserves the answer and directions', async () => {
+    const { n, submit } = setup();
+    await submit();
+    assert.equal(n['map-error'].hidden, false);
+    assert.equal(n.answer.textContent, found.text);
+    assert.equal(n.directions.hidden, false);
 });
