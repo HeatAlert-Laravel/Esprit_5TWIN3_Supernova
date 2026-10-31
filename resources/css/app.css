@@ -3,6 +3,7 @@
 @import './outages.css';
 @import './my-reports.css';
 @import './outage-notifications.css';
+@import './heat-distress-assistant.css';
 
 @source '../views/**/*.blade.php';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

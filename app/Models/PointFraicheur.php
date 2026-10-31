@@ -19,13 +19,13 @@ class PointFraicheur extends Model
 
     protected $fillable = [
         'type_point_id', 'quartier_id', 'nom', 'adresse',
-        'latitude', 'longitude', 'horaires', 'accessible_pmr', 'actif', 'description',
+        'latitude', 'longitude', 'horaires', 'accessible_pmr', 'actif', 'description', 'eau_potable', 'ombre',
     ];
 
     // MySQL renvoie 0/1 : les casts les transforment en vrais booléens PHP.
     protected function casts(): array
     {
-        return ['accessible_pmr' => 'boolean', 'actif' => 'boolean'];
+        return ['accessible_pmr' => 'boolean', 'actif' => 'boolean', 'eau_potable' => 'boolean', 'ombre' => 'boolean'];
     }
 
     /** Un point appartient à un type. */
@@ -58,13 +58,13 @@ class PointFraicheur extends Model
 
         if (preg_match('/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/', $hours, $m)) {
             $now = now();
-            $start = now()->copy()->setTime((int)$m[1], (int)$m[2], 0);
-            $end = now()->copy()->setTime((int)$m[3], (int)$m[4], 0);
+            $start = now()->copy()->setTime((int) $m[1], (int) $m[2], 0);
+            $end = now()->copy()->setTime((int) $m[3], (int) $m[4], 0);
 
             if ($now->between($start, $end)) {
-                return ['is_open' => true, 'label' => 'OPEN', 'detail' => 'Closes ' . sprintf('%02d:%02d', $m[3], $m[4])];
+                return ['is_open' => true, 'label' => 'OPEN', 'detail' => 'Closes '.sprintf('%02d:%02d', $m[3], $m[4])];
             } else {
-                return ['is_open' => false, 'label' => 'CLOSED', 'detail' => 'Opens ' . sprintf('%02d:%02d', $m[1], $m[2])];
+                return ['is_open' => false, 'label' => 'CLOSED', 'detail' => 'Opens '.sprintf('%02d:%02d', $m[1], $m[2])];
             }
         }
 
@@ -78,7 +78,7 @@ class PointFraicheur extends Model
     {
         $amenities = [];
         $typeName = strtolower($this->typePoint?->nom ?? '');
-        $text = strtolower(($this->description ?? '') . ' ' . $this->nom . ' ' . $typeName);
+        $text = strtolower(($this->description ?? '').' '.$this->nom.' '.$typeName);
 
         if (str_contains($text, 'fountain') || str_contains($text, 'water') || str_contains($text, 'mister') || str_contains($text, 'drinking') || str_contains($typeName, 'fountain')) {
             $amenities[] = ['icon' => '💧', 'label' => 'Water'];

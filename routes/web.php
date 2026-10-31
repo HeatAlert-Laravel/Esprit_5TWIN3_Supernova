@@ -13,6 +13,7 @@ use App\Http\Controllers\ConseilController;
 use App\Http\Controllers\CoolingPointController;
 use App\Http\Controllers\CoupureController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HeatDistressAssistantController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HouseholdRiskAiController;
 use App\Http\Controllers\NeighborhoodController;
@@ -49,6 +50,10 @@ Route::get('/neighborhoods/{quartier}', [NeighborhoodController::class, 'show'])
     ->whereNumber('quartier')->middleware('throttle:60,1')->name('neighborhoods.show');
 Route::get('/outages', [OutageController::class, 'index'])->name('outages');
 Route::get('/cooling-points', [CoolingPointController::class, 'index'])->name('cooling-points');
+Route::post('/cooling-points/assistant', [HeatDistressAssistantController::class, 'store'])
+    ->middleware('throttle:10,1')->name('cooling-points.assistant');
+Route::post('/cooling-points/assistant/transcribe', [HeatDistressAssistantController::class, 'transcribe'])
+    ->middleware('throttle:6,1')->name('cooling-points.assistant.transcribe');
 Route::get('/advice', [AdviceController::class, 'index'])->name('advice');
 Route::post('/advice/{conseil}/assistant', [AdviceAssistantController::class, 'store'])
     ->middleware('throttle:6,1')->name('advice.assistant');

@@ -3,6 +3,9 @@
 import './auto-filter';
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('[data-heat-assistant]')) {
+        import('./heat-distress-assistant').then(({ initHeatDistressAssistants }) => initHeatDistressAssistants());
+    }
     if (document.querySelector('[data-outage-notifications]')) {
         import('./outage-notifications').then(({ initOutageNotifications }) => initOutageNotifications());
     }

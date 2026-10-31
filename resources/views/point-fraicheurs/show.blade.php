@@ -43,6 +43,8 @@
             <div><dt>Neighborhood (Member 1)</dt><dd class="font-medium">{{ $point->quartier?->nom ?? '—' }} ({{ $point->quartier?->ville }})</dd></div>
             <div><dt>Address</dt><dd>{{ $point->adresse }}</dd></div>
             <div><dt>Hours</dt><dd class="ha-mono">{{ $point->horaires ?? 'Not specified' }}</dd></div>
+            <div><dt>Confirmed drinking water</dt><dd>{{ $point->eau_potable ? 'Yes' : 'Not confirmed' }}</dd></div>
+            <div><dt>Confirmed shade</dt><dd>{{ $point->ombre ? 'Yes' : 'Not confirmed' }}</dd></div>
             <div>
                 <dt>GPS Coordinates</dt>
                 <dd class="ha-mono">

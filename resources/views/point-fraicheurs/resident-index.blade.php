@@ -508,6 +508,8 @@
         <p class="ha-cp-subtitle">Find nearby places for shade, water, and relief from the heat.</p>
     </header>
 
+    @include('point-fraicheurs._heat-assistant')
+
     {{-- Search & Quick-Filters System --}}
     <form method="GET" action="{{ route('cooling-points') }}" id="cooling-search-form" class="ha-search-box" role="search">
         {{-- Search Row with "Near me" --}}
