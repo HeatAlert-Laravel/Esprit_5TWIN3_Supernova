@@ -30,7 +30,7 @@ function setup({ recording = false, media, fetcher = async () => response(found)
         'listening_title', 'listening_hint', 'permission_title', 'permission_hint', 'transcribing_title', 'transcribing_hint',
         'searching_title', 'searching_hint', 'signal_waiting', 'signal_detected', 'signal_quiet', 'signal_unavailable', 'recording_progress',
         'error_title', 'search_error', 'transcription_error', 'retry_search', 'retry_recording', 'not_configured', 'location_unavailable',
-        'confirm_location_title', 'found_title', 'result'];
+        'confirm_location_title', 'found_title', 'result', 'expired'];
     const copy = Object.fromEntries(['fr', 'ar', 'derja'].map((lang) => [lang, Object.fromEntries(keys.map((key) => [key, `${lang}:${key}`]))]));
     const root = new Element();
     root.dataset = { copy: JSON.stringify(copy), endpoint: '/cooling-points/assistant', transcribeEndpoint: '/cooling-points/assistant/transcribe' };
@@ -303,6 +303,20 @@ test('address lookup errors explain using GPS and never display provider error t
     assert.equal(n['error-message'].textContent, 'fr:location_unavailable');
     n.message.emit('input');
     assert.equal(n.error.hidden, true);
+});
+
+test('an expired address confirmation retries from the preserved transcript with fresh choices', async () => {
+    let attempts = 0;
+    const { n, submit, requests } = setup({ fetcher: async () => ++attempts === 2 ? response({}, 422)
+        : response({ status: 'confirm_location', language: 'fr', text: 'Choose a location.', choices: [{ label: 'Tunis', token: 'opaque' }] }) });
+    await submit();
+    n.choices.children[0].emit('click'); await tick();
+    assert.equal(n['error-message'].textContent, 'fr:expired');
+    n.retry.emit('click'); await tick();
+    assert.equal(requests.length, 3);
+    assert.equal(requests[2].options.body.has('location_token'), false);
+    assert.equal(requests[2].options.body.get('message'), n.message.value);
+    assert.equal(n.choices.children.length, 1);
 });
 
 test('transcription failures offer an explicit new recording and never search with stale text', async () => {

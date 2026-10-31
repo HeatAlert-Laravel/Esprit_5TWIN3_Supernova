@@ -157,12 +157,13 @@ export function initHeatDistressAssistants() {
         function showError(error, stage = 'search', token = null) {
             if (error.name === 'AbortError') return;
             setPhase('idle');
-            const key = ({ 419: 'session', 429: 'limit', 422: 'invalid' })[error.status]
+            const expiredLocation = stage === 'search' && token && error.status === 422;
+            const key = (expiredLocation ? 'expired' : null) || ({ 419: 'session', 429: 'limit', 422: 'invalid' })[error.status]
                 || ({ no_speech: 'no_speech', assistant_not_configured: 'not_configured', location_unavailable: 'location_unavailable' })[error.code]
                 || (stage === 'transcription' ? 'transcription_error' : 'search_error');
             errorMessage.textContent = text(error.code === 'no_speech' ? 'no_speech' : key);
             retry.textContent = text(stage === 'transcription' ? 'retry_recording' : 'retry_search');
-            retryAction = stage === 'transcription' ? () => beginRecording() : () => getAnswer(token);
+            retryAction = stage === 'transcription' ? () => beginRecording() : () => getAnswer(expiredLocation ? null : token);
             errorPanel.hidden = false;
             status.textContent = '';
             errorPanel.focus();
