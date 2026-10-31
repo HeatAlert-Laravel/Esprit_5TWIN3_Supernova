@@ -33,6 +33,9 @@
 .ha-heat-assistant__result { padding: 18px; background: var(--ha-surface-2); border-radius: var(--ha-r-md); overflow-wrap: anywhere; }
 .ha-heat-assistant__result > [data-heat-answer] { font-size: 1.15rem; }
 .ha-heat-assistant__result:focus { outline: 3px solid var(--ha-info, #2b6cb0); outline-offset: 3px; }
+.ha-heat-assistant__error { padding: 18px; border: 1px solid #d9a49b; border-inline-start: 4px solid #a83c2b; border-radius: var(--ha-r-md); color: #742d23; background: #fff4f1; }
+.ha-heat-assistant__error:focus { outline: 3px solid #a83c2b; outline-offset: 3px; }
+.ha-heat-assistant__error .ha-btn { background: #fff; color: #742d23; border-color: #bc7366; }
 .ha-heat-assistant__choices { display: grid; gap: 10px; margin-block: 12px; }
 .ha-heat-assistant__privacy { font-size: .85rem; color: var(--ha-ink-2); }
 .ha-voice-session {

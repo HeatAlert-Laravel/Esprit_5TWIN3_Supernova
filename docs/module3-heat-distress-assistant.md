@@ -4,6 +4,8 @@ The public `/cooling-points` page offers a microphone, an editable text alternat
 
 The backend selects the nearest eligible record using Haversine distance, independently of the page's current filters. The model never chooses a destination, invents coordinates, or writes medical/navigation instructions. Fixed localized templates produce two short sentences. Distances are explicitly straight-line estimates, not walking distance or turn-by-turn guidance. An optional Google Maps link opens only after the resident chooses it.
 
+GPT-OSS interpretation uses low reasoning effort with reasoning excluded from the response. If the provider returns the observed `400/json_validate_failed` error, the backend makes at most one JSON-object-mode recovery attempt. Both attempts count against the same budget and are capped at 10 seconds each; the result must still contain exactly the three expected fields with valid types and lengths. Provider `failed_generation` content is never used. Authentication, quota and unrelated errors are not retried automatically.
+
 ## Enable locally
 
 1. Pull the feature branch and install the existing locked dependencies (`composer install`, `npm ci`). No new packages are added. Follow the project's PHP/Node requirements.
@@ -36,6 +38,8 @@ The [Photon public demo](https://github.com/komoot/photon#demo-server) permits r
 The interface includes explicit labels, keyboard controls, visible focus, a polite status region, focused text results, targets at least 44 CSS pixels, replay/stop controls, and Arabic right-to-left layout. These are accessibility provisions, **not a WCAG conformance certification**. Test with the target residents, screen readers and actual devices before claiming conformance.
 
 While recording, a prominent listening card shows an elapsed timer, the 30-second limit, a duration bar and a waveform driven by actual microphone input. Low input after five seconds prompts the resident to move closer. Sending transitions through distinct message-processing and location-search cards. The optional Web Audio analyser uses the existing microphone stream without speaker output or an extra provider request; its context, animation frames and timer are released on send, cancellation, denial and navigation. Recording still works if the level display is unavailable. Reduced-motion preferences disable decorative pulsing and transitions.
+
+When a search fails after successful transcription, a focused error card preserves the text and offers **Retry search** without a second recording. Transcription failures instead offer an explicit new recording. Address-provider failures suggest GPS, and location choices have a clear confirmation heading. Raw provider errors are never shown in the browser.
 
 Whisper automatically detects the input language; the response-language selector does not force the recording into a particular language. Code-switching, background noise, names and Derja pronunciation can reduce recognition accuracy. The transcript stays editable. Validate recognition with Tunisian speakers before presenting accuracy claims.
 

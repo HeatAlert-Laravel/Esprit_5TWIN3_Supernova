@@ -17,11 +17,13 @@ export function initHeatDistressAssistants() {
         const clock = node('clock'), timer = node('timer'), progress = node('progress');
         const waveform = node('waveform'), thinking = node('thinking'), signal = node('signal');
         const bars = Array.from(root.querySelectorAll('[data-heat-wave-bar]'));
+        const errorPanel = node('error'), errorMessage = node('error-message'), retry = node('retry');
         const supportsRecording = !!(window.isSecureContext && navigator.mediaDevices?.getUserMedia && window.MediaRecorder);
         const synthesis = window.speechSynthesis;
         let phase = 'idle', version = 0, controller = null, stream = null, recorder = null;
         let recordingTimer = null, gps = null, responseLanguage = 'fr', utterance = null;
         let audioContext = null, microphoneSource = null, analyser = null, frame = null, clockInterval = null;
+        let retryAction = null;
         const text = (key) => copy[language.value][key];
         const sayStatus = (key) => { status.textContent = text(key); };
 
@@ -126,6 +128,7 @@ export function initHeatDistressAssistants() {
         }
         function clearResult() {
             stopSpeech();
+            clearError();
             result.hidden = true;
             answer.textContent = '';
             choices.replaceChildren();
@@ -142,13 +145,27 @@ export function initHeatDistressAssistants() {
             recorder = null;
             stopTracks();
             stopSpeech();
+            clearError();
             setPhase('idle');
             if (announce) sayStatus('cancelled');
         }
-        function showError(error) {
+        function clearError() {
+            errorPanel.hidden = true;
+            errorMessage.textContent = '';
+            retryAction = null;
+        }
+        function showError(error, stage = 'search', token = null) {
             if (error.name === 'AbortError') return;
-            const key = ({ 419: 'session', 429: 'limit', 422: 'invalid' })[error.status] || 'unavailable';
-            sayStatus(key);
+            setPhase('idle');
+            const key = ({ 419: 'session', 429: 'limit', 422: 'invalid' })[error.status]
+                || ({ no_speech: 'no_speech', assistant_not_configured: 'not_configured', location_unavailable: 'location_unavailable' })[error.code]
+                || (stage === 'transcription' ? 'transcription_error' : 'search_error');
+            errorMessage.textContent = text(error.code === 'no_speech' ? 'no_speech' : key);
+            retry.textContent = text(stage === 'transcription' ? 'retry_recording' : 'retry_search');
+            retryAction = stage === 'transcription' ? () => beginRecording() : () => getAnswer(token);
+            errorPanel.hidden = false;
+            status.textContent = '';
+            errorPanel.focus();
         }
         async function post(url, data, current) {
             const requestController = new AbortController();
@@ -161,7 +178,7 @@ export function initHeatDistressAssistants() {
                 });
                 if (current !== version) return null;
                 const payload = await response.json().catch(() => ({}));
-                if (!response.ok) throw Object.assign(new Error('Assistant request failed'), { status: response.status });
+                if (!response.ok) throw Object.assign(new Error('Assistant request failed'), { status: response.status, code: payload.code });
                 return payload;
             } catch (error) {
                 if (current === version && error.name === 'AbortError') throw new Error('Request timed out');
@@ -188,6 +205,8 @@ export function initHeatDistressAssistants() {
             synthesis.speak(utterance);
         }
         function render(payload) {
+            node('result-title').textContent = text(payload.status === 'confirm_location' ? 'confirm_location_title'
+                : payload.status === 'found' ? 'found_title' : 'result');
             answer.textContent = payload.text;
             responseLanguage = payload.language;
             result.hidden = false;
@@ -243,8 +262,11 @@ export function initHeatDistressAssistants() {
             }
             try {
                 const payload = await post(root.dataset.endpoint, data, current);
-                if (current === version && payload) render(payload);
-            } catch (error) { if (current === version) showError(error); }
+                if (current === version && payload) {
+                    if (typeof payload.text !== 'string' || typeof payload.status !== 'string') throw new Error('Invalid search response');
+                    render(payload);
+                }
+            } catch (error) { if (current === version) showError(error, 'search', token); }
             finally { if (current === version) setPhase('idle'); }
         }
         async function beginRecording() {
@@ -281,9 +303,10 @@ export function initHeatDistressAssistants() {
                     try {
                         const payload = await post(root.dataset.transcribeEndpoint, data, current);
                         if (current !== version || !payload) return;
+                        if (typeof payload.text !== 'string' || !payload.text.trim()) throw new Error('Invalid transcription response');
                         message.value = payload.text;
                         await getAnswer(null, current);
-                    } catch (error) { if (current === version) showError(error); }
+                    } catch (error) { if (current === version) showError(error, 'transcription'); }
                     finally { if (current === version) setPhase('idle'); }
                 };
                 recorder.start();
@@ -314,6 +337,7 @@ export function initHeatDistressAssistants() {
         read.addEventListener('change', () => { if (!read.checked) stopSpeech(); });
         replay.addEventListener('click', speak);
         stopAudio.addEventListener('click', stopSpeech);
+        retry.addEventListener('click', () => { if (phase === 'idle') retryAction?.(); });
         locate.addEventListener('click', () => {
             clearResult();
             if (!navigator.geolocation) { sayStatus('location_error'); return; }

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -27,11 +28,15 @@ class CoolingLocationSearch
                     'q' => $location, 'countrycode' => 'TN', 'limit' => 3,
                 ]);
         } catch (ConnectionException) {
-            abort(503, trans('heat_assistant.location_unavailable', [], $language));
+            $this->unavailable($language);
         }
-        abort_unless($response->successful(), 503, trans('heat_assistant.location_unavailable', [], $language));
+        if (! $response->successful()) {
+            $this->unavailable($language);
+        }
         $features = $response->json('features');
-        abort_unless(is_array($features), 503, trans('heat_assistant.location_unavailable', [], $language));
+        if (! is_array($features)) {
+            $this->unavailable($language);
+        }
         $choices = [];
         foreach (array_slice($features, 0, 3) as $feature) {
             if (! is_array($feature) || ! is_array($feature['properties'] ?? null)
@@ -56,5 +61,12 @@ class CoolingLocationSearch
         Cache::put($key, $choices, now()->addDay());
 
         return $choices;
+    }
+
+    private function unavailable(string $language): never
+    {
+        throw new HttpResponseException(response()->json([
+            'code' => 'location_unavailable', 'message' => trans('heat_assistant.location_unavailable', [], $language),
+        ], 503)->header('Cache-Control', 'no-store'));
     }
 }

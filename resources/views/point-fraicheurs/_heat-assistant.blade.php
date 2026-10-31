@@ -64,8 +64,13 @@
         <button type="submit" class="ha-btn ha-btn--primary" data-heat-submit data-i18n="submit">{{ $copy['submit'] }}</button>
     </form>
     <p id="heat-status" class="ha-heat-assistant__status" role="status" aria-live="polite" aria-atomic="true" data-heat-status>{{ $copy['ready'] }}</p>
+    <div class="ha-heat-assistant__error" data-heat-error hidden tabindex="-1" role="alert" aria-labelledby="heat-error-title">
+        <h3 id="heat-error-title" data-i18n="error_title">{{ $copy['error_title'] }}</h3>
+        <p data-heat-error-message></p>
+        <button type="button" class="ha-btn ha-btn--outline" data-heat-retry>{{ $copy['retry_search'] }}</button>
+    </div>
     <div class="ha-heat-assistant__result" data-heat-result hidden tabindex="-1" aria-labelledby="heat-result-title">
-        <h3 id="heat-result-title" data-i18n="result">{{ $copy['result'] }}</h3>
+        <h3 id="heat-result-title" data-heat-result-title data-i18n="result">{{ $copy['result'] }}</h3>
         <p data-heat-answer dir="auto"></p>
         <p data-heat-origin hidden dir="auto"></p>
         <div class="ha-heat-assistant__choices" data-heat-choices></div>

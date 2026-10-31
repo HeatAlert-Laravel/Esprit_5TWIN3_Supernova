@@ -22,12 +22,15 @@ const found = { status: 'found', language: 'fr', text: 'Sit in shade. A safe reg
 function setup({ recording = false, media, fetcher = async () => response(found), geolocation, metering = false } = {}) {
     const names = ['form', 'language', 'message', 'record', 'cancel', 'status', 'result', 'answer', 'choices', 'locate',
         'clear-location', 'directions', 'origin', 'distance-note', 'accessible', 'read', 'replay', 'stop-audio', 'submit',
-        'record-label', 'session', 'session-title', 'session-hint', 'clock', 'timer', 'progress', 'waveform', 'thinking', 'signal'];
+        'record-label', 'session', 'session-title', 'session-hint', 'clock', 'timer', 'progress', 'waveform', 'thinking', 'signal',
+        'error', 'error-message', 'retry', 'result-title'];
     const n = Object.fromEntries(names.map((name) => [name, new Element()]));
     const keys = ['title', 'ready', 'record', 'stop_recording', 'cancelled', 'unsupported', 'mic_error', 'voice_missing', 'invalid',
         'limit', 'session', 'unavailable', 'location_error', 'located', 'loading', 'transcribing', 'permission', 'recording', 'locating', 'origin', 'placeholder', 'no_speech',
         'listening_title', 'listening_hint', 'permission_title', 'permission_hint', 'transcribing_title', 'transcribing_hint',
-        'searching_title', 'searching_hint', 'signal_waiting', 'signal_detected', 'signal_quiet', 'signal_unavailable', 'recording_progress'];
+        'searching_title', 'searching_hint', 'signal_waiting', 'signal_detected', 'signal_quiet', 'signal_unavailable', 'recording_progress',
+        'error_title', 'search_error', 'transcription_error', 'retry_search', 'retry_recording', 'not_configured', 'location_unavailable',
+        'confirm_location_title', 'found_title', 'result'];
     const copy = Object.fromEntries(['fr', 'ar', 'derja'].map((lang) => [lang, Object.fromEntries(keys.map((key) => [key, `${lang}:${key}`]))]));
     const root = new Element();
     root.dataset = { copy: JSON.stringify(copy), endpoint: '/cooling-points/assistant', transcribeEndpoint: '/cooling-points/assistant/transcribe' };
@@ -35,7 +38,7 @@ function setup({ recording = false, media, fetcher = async () => response(found)
     const bars = Array.from({ length: 32 }, () => new Element());
     root.querySelectorAll = (selector) => selector === '[data-heat-wave-bar]' ? bars : [];
     n.language.value = 'fr'; n.message.value = 'Je suis à Tunis'; n.read.checked = true;
-    n.result.hidden = n.directions.hidden = n['clear-location'].hidden = true;
+    n.result.hidden = n.directions.hidden = n['clear-location'].hidden = n.error.hidden = true;
     const tracks = { stopped: 0, getTracks() { return [{ stop: () => this.stopped++ }]; } };
     const recorders = [];
     class Recorder {
@@ -227,6 +230,7 @@ test('spoken address choices render as text and confirmation posts only the opaq
     const { n, submit, requests } = setup({ fetcher: async () => response({ status: 'confirm_location', language: 'fr', text: 'Choose location.', choices: [{ label: '<img src=x onerror=alert(1)>', token: 'opaque' }] }) });
     await submit();
     assert.equal(n.choices.children[0].textContent, '<img src=x onerror=alert(1)>');
+    assert.equal(n['result-title'].textContent, 'fr:confirm_location_title');
     n.choices.children[0].emit('click'); await tick();
     assert.equal(requests[1].options.body.get('location_token'), 'opaque');
     assert.equal(requests[1].options.body.has('message'), false);
@@ -255,11 +259,13 @@ test('GPS is opt-in can be cleared and does not send precise coordinates to the 
     assert.equal(requests[1].options.body.has('latitude'), false);
 });
 
-test('provider failures restore controls and missing voices leave the text usable', async () => {
-    for (const [status, key] of [[419, 'session'], [429, 'limit'], [422, 'invalid'], [503, 'unavailable']]) {
+test('provider failures show a focused error card and restore controls while missing voices keep text usable', async () => {
+    for (const [status, key] of [[419, 'session'], [429, 'limit'], [422, 'invalid'], [503, 'search_error']]) {
         const { n, submit } = setup({ fetcher: async () => response({}, status) });
         await submit();
-        assert.equal(n.status.textContent, `fr:${key}`);
+        assert.equal(n['error-message'].textContent, `fr:${key}`);
+        assert.equal(n.error.hidden, false);
+        assert.equal(n.error.focused, true);
         assert.equal(n.submit.disabled, false);
     }
     const { n, submit, speech } = setup();
@@ -267,4 +273,56 @@ test('provider failures restore controls and missing voices leave the text usabl
     await submit();
     assert.equal(n.answer.textContent, found.text);
     assert.equal(n.status.textContent, 'fr:voice_missing');
+});
+
+test('a successful transcript followed by search failure offers retry without another recording', async () => {
+    let searchAttempts = 0;
+    const { n, requests } = setup({ recording: true, fetcher: async (url) => {
+        if (url.endsWith('/transcribe')) return response({ text: 'Je suis avenue Habib Bourguiba à Tunis.' });
+        return ++searchAttempts === 1 ? response({ code: 'interpretation_unavailable', message: 'private upstream details' }, 503) : response(found);
+    } });
+    n.record.emit('click'); await tick();
+    n.record.emit('click'); await tick();
+    assert.equal(n.message.value, 'Je suis avenue Habib Bourguiba à Tunis.');
+    assert.equal(n.error.hidden, false);
+    assert.equal(n['error-message'].textContent, 'fr:search_error');
+    assert.equal(n.retry.textContent, 'fr:retry_search');
+    assert.equal(n.error.focused, true);
+    assert.equal(n.session.hidden, true);
+    n.retry.emit('click'); await tick();
+    assert.equal(n.error.hidden, true);
+    assert.equal(n.result.hidden, false);
+    assert.equal(requests.filter(({ url }) => url.endsWith('/transcribe')).length, 1);
+    assert.equal(requests.length, 3);
+    assert.equal(requests[2].options.body.get('message'), n.message.value);
+});
+
+test('address lookup errors explain using GPS and never display provider error text', async () => {
+    const { n, submit } = setup({ fetcher: async () => response({ code: 'location_unavailable', message: '<script>private error</script>' }, 503) });
+    await submit();
+    assert.equal(n['error-message'].textContent, 'fr:location_unavailable');
+    n.message.emit('input');
+    assert.equal(n.error.hidden, true);
+});
+
+test('transcription failures offer an explicit new recording and never search with stale text', async () => {
+    const { n, requests } = setup({ recording: true, fetcher: async () => response({ code: 'no_speech' }, 422) });
+    n.record.emit('click'); await tick();
+    n.record.emit('click'); await tick();
+    assert.equal(n.error.hidden, false);
+    assert.equal(n['error-message'].textContent, 'fr:no_speech');
+    assert.equal(n.retry.textContent, 'fr:retry_recording');
+    assert.equal(requests.length, 1);
+    n.retry.emit('click'); await tick();
+    assert.equal(n.record.attrs['aria-pressed'], 'true');
+    assert.equal(n.error.hidden, true);
+    n.cancel.emit('click'); await tick();
+});
+
+test('malformed successful search replies also produce a visible retry instead of an empty result', async () => {
+    const { n, submit } = setup({ fetcher: async () => response({}) });
+    await submit();
+    assert.equal(n.error.hidden, false);
+    assert.equal(n['error-message'].textContent, 'fr:search_error');
+    assert.equal(n.result.hidden, true);
 });

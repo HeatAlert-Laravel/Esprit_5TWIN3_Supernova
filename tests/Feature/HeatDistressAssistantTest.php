@@ -8,6 +8,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\RateLimiter;
 
 function heatIntent(array $overrides = []): array
 {
@@ -180,6 +181,97 @@ test('provider malformed output network errors quotas and missing keys fail with
 test('connection failures never expose private transport details', function () {
     Http::fake(fn () => throw new ConnectionException('private transport details'));
     $this->postJson($this->endpoint, heatGps())->assertServiceUnavailable()->assertDontSee('private transport details');
+});
+
+test('a provider schema rejection retries once in JSON object mode and charges both bounded attempts', function () {
+    $point = heatPlace();
+    $attempts = [];
+    Http::fake(function ($request, $options) use (&$attempts) {
+        $attempts[] = ['payload' => $request->data(), 'timeout' => $options['timeout'] ?? null];
+
+        return count($attempts) === 1
+            ? Http::response(['error' => ['code' => 'json_validate_failed', 'type' => 'invalid_request_error',
+                'message' => 'private provider detail', 'failed_generation' => 'private discarded generation']], 400)
+            : Http::response(heatIntent());
+    });
+
+    $this->postJson($this->endpoint, heatGps())->assertOk()->assertJsonPath('status', 'found')
+        ->assertJsonPath('point.id', $point->id)->assertDontSee('private provider detail')->assertDontSee('private discarded generation');
+
+    Http::assertSentCount(2);
+    expect(RateLimiter::attempts('heat-assistant:daily'))->toBe(2)
+        ->and($attempts[0]['payload']['response_format']['type'])->toBe('json_schema')
+        ->and($attempts[0]['payload']['response_format']['json_schema']['strict'])->toBeTrue()
+        ->and($attempts[1]['payload']['response_format'])->toBe(['type' => 'json_object']);
+    foreach ($attempts as $attempt) {
+        expect($attempt['timeout'])->toBeGreaterThan(0)->toBeLessThanOrEqual(10)
+            ->and($attempt['payload']['reasoning_effort'])->toBe('low')
+            ->and($attempt['payload']['include_reasoning'])->toBeFalse()
+            ->and($attempt['payload'])->not->toHaveKey('reasoning_format');
+    }
+    expect($attempts[1]['payload']['messages'][0]['content'])->toContain('JSON')->toContain('needs_accessible')->toContain('emergency');
+});
+
+test('interpretation does not retry unrelated client errors authentication failures or provider quotas', function ($status, $providerCode, $expectedStatus, $expectedCode) {
+    Http::fake(['api.groq.com/*' => Http::sequence()
+        ->push(['error' => ['code' => $providerCode, 'message' => 'private upstream response']], $status)
+        ->push(heatIntent())]);
+
+    $this->postJson($this->endpoint, heatGps())->assertStatus($expectedStatus)->assertJsonPath('code', $expectedCode)
+        ->assertDontSee('private upstream response')->assertDontSee('member-three-test-secret');
+
+    Http::assertSentCount(1);
+    expect(RateLimiter::attempts('heat-assistant:daily'))->toBe(1);
+})->with([
+    'unrelated bad request' => [400, 'invalid_request_error', 503, 'interpretation_unavailable'],
+    'invalid API key' => [401, 'invalid_api_key', 503, 'interpretation_unavailable'],
+    'permission failure' => [403, 'permission_denied', 503, 'interpretation_unavailable'],
+    'provider quota exhausted' => [429, 'rate_limit_exceeded', 429, 'assistant_limit'],
+]);
+
+test('JSON mode fallback still rejects extra missing and incorrectly typed fields', function (array $invalidResult) {
+    $completion = heatIntent();
+    $completion['choices'][0]['message']['content'] = json_encode($invalidResult);
+    Http::fake(['api.groq.com/*' => Http::sequence()
+        ->push(['error' => ['code' => 'json_validate_failed']], 400)
+        ->push($completion)]);
+
+    $this->postJson($this->endpoint, heatGps())->assertServiceUnavailable()->assertJsonPath('code', 'interpretation_unavailable');
+
+    Http::assertSentCount(2);
+    expect(RateLimiter::attempts('heat-assistant:daily'))->toBe(2);
+})->with([
+    'extra coordinate' => [['location' => 'Tunis', 'needs_accessible' => false, 'emergency' => false, 'latitude' => 36.8]],
+    'missing emergency flag' => [['location' => 'Tunis', 'needs_accessible' => false]],
+    'numeric location' => [['location' => 123, 'needs_accessible' => false, 'emergency' => false]],
+    'string accessibility flag' => [['location' => 'Tunis', 'needs_accessible' => 'false', 'emergency' => false]],
+    'numeric emergency flag' => [['location' => 'Tunis', 'needs_accessible' => false, 'emergency' => 0]],
+    'overlong location' => [['location' => str_repeat('a', 201), 'needs_accessible' => false, 'emergency' => false]],
+]);
+
+test('a second provider schema rejection fails visibly without another retry', function () {
+    Http::fake(['api.groq.com/*' => Http::sequence()
+        ->push(['error' => ['code' => 'json_validate_failed', 'failed_generation' => 'private failed output']], 400)
+        ->push(['error' => ['code' => 'json_validate_failed', 'failed_generation' => 'private failed output']], 400)
+        ->push(heatIntent())]);
+
+    $this->postJson($this->endpoint, heatGps())->assertServiceUnavailable()->assertJsonPath('code', 'interpretation_unavailable')
+        ->assertDontSee('private failed output');
+
+    Http::assertSentCount(2);
+    expect(RateLimiter::attempts('heat-assistant:daily'))->toBe(2);
+});
+
+test('the shared daily budget can block a JSON fallback before a second upstream call', function () {
+    config(['heat_assistant.daily_limit' => 1]);
+    Http::fake(['api.groq.com/*' => Http::sequence()
+        ->push(['error' => ['code' => 'json_validate_failed']], 400)
+        ->push(heatIntent())]);
+
+    $this->postJson($this->endpoint, heatGps())->assertTooManyRequests()->assertJsonPath('code', 'assistant_limit');
+
+    Http::assertSentCount(1);
+    expect(RateLimiter::attempts('heat-assistant:daily'))->toBe(1);
 });
 
 test('separate daily budget and per-client throttles limit public AI usage', function () {
