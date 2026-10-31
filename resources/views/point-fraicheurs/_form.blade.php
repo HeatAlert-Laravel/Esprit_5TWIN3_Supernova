@@ -39,6 +39,21 @@
     <x-ha.input name="horaires" label="Opening hours" :value="old('horaires', $point?->horaires)" placeholder="e.g. 08:00 - 20:00 or 24/7" />
 </div>
 
+<x-ha.divider>Confirmed amenities for the voice assistant</x-ha.divider>
+<p class="ha-help">Check only amenities you have confirmed. The assistant requires both, GPS coordinates, and known hours (daily HH:MM - HH:MM or 24/7).</p>
+<div class="ha-form-grid ha-form-grid--2">
+    @foreach(['eau_potable' => 'Drinking water available', 'ombre' => 'Shaded resting area available'] as $field => $label)
+        <div class="ha-field">
+            <input type="hidden" name="{{ $field }}" value="0">
+            <label class="ha-check">
+                <input type="checkbox" name="{{ $field }}" value="1" @checked(old($field, $point?->{$field} ?? false))>
+                <span class="ha-check__text">{{ $label }}</span>
+            </label>
+            @error($field)<p class="ha-error">{{ $message }}</p>@enderror
+        </div>
+    @endforeach
+</div>
+
 <x-ha.divider>Accessibility & Status</x-ha.divider>
 <div class="ha-form-grid ha-form-grid--2">
     <div class="ha-field">

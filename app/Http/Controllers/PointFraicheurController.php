@@ -121,11 +121,15 @@ class PointFraicheurController extends Controller
             'horaires' => ['nullable', 'string', 'max:100'],
             'accessible_pmr' => ['sometimes', 'boolean'],
             'actif' => ['sometimes', 'boolean'],
+            'eau_potable' => ['sometimes', 'boolean'],
+            'ombre' => ['sometimes', 'boolean'],
             'description' => ['nullable', 'string', 'max:1000'],
         ]);
 
         $data['accessible_pmr'] = $request->boolean('accessible_pmr');
         $data['actif'] = $request->boolean('actif');
+        $data['eau_potable'] = $request->boolean('eau_potable');
+        $data['ombre'] = $request->boolean('ombre');
 
         return $data;
     }

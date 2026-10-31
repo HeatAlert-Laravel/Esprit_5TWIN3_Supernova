@@ -19,13 +19,13 @@ class PointFraicheur extends Model
 
     protected $fillable = [
         'type_point_id', 'quartier_id', 'nom', 'adresse',
-        'latitude', 'longitude', 'horaires', 'accessible_pmr', 'actif', 'description',
+        'latitude', 'longitude', 'horaires', 'accessible_pmr', 'actif', 'description', 'eau_potable', 'ombre',
     ];
 
     // MySQL renvoie 0/1 : les casts les transforment en vrais booléens PHP.
     protected function casts(): array
     {
-        return ['accessible_pmr' => 'boolean', 'actif' => 'boolean'];
+        return ['accessible_pmr' => 'boolean', 'actif' => 'boolean', 'eau_potable' => 'boolean', 'ombre' => 'boolean'];
     }
 
     /** Un point appartient à un type. */
