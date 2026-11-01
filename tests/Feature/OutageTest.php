@@ -7,16 +7,43 @@ use App\Models\User;
 
 beforeEach(fn () => $this->artisan('migrate', ['--force' => true]));
 
+
 test('public outages show only active records with neighborhood filtering and report counts', function () {
-    $quartier = Quartier::factory()->create();
-    $active = Coupure::factory()->for($quartier)->create(['statut' => 'active', 'description' => 'Visible incident']);
-    Coupure::factory()->for($quartier)->create(['statut' => 'résolue', 'description' => 'Resolved incident']);
-    Coupure::factory()->create(['statut' => 'active', 'description' => 'Other area incident']);
+    $quartier = Quartier::factory()->create([
+        'nom' => 'Quartier Filtre Test Unique',
+    ]);
+
+    $active = Coupure::factory()->for($quartier)->create([
+        'statut' => 'active',
+        'description' => 'Visible incident',
+    ]);
+
+    Coupure::factory()->for($quartier)->create([
+        'statut' => 'résolue',
+        'description' => 'Resolved incident',
+    ]);
+
+    Coupure::factory()->create([
+        'statut' => 'active',
+        'description' => 'Other area incident',
+    ]);
+
     Signalement::factory()->for($active)->create();
-    $this->get(route('outages', ['quartier_id' => $quartier->id]))->assertOk()
-        ->assertSee('Visible incident')->assertSee('Reports: <strong>1</strong>', false)->assertDontSee('Resolved incident')->assertDontSee('Other area incident');
-    $this->get(route('outages', ['quartier_id' => 999999]))->assertSessionHasErrors('quartier_id');
+
+    $this->get(route('outages', [
+        'q' => 'Quartier Filtre Test Unique',
+    ]))
+        ->assertOk()
+        ->assertSee('Visible incident')
+        ->assertSee('Reports: <strong>1</strong>', false)
+        ->assertDontSee('Resolved incident')
+        ->assertDontSee('Other area incident');
+
+    $this->get(route('outages', [
+        'type' => 'type-invalide',
+    ]))->assertSessionHasErrors('type');
 });
+
 
 test('residents can report with or without an outage using their authenticated identity', function () {
     $user = User::factory()->create();
