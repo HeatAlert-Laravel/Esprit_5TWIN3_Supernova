@@ -14,7 +14,7 @@ test('public outages show only active records with neighborhood filtering and re
     Coupure::factory()->create(['statut' => 'active', 'description' => 'Other area incident']);
     Signalement::factory()->for($active)->create();
     $this->get(route('outages', ['quartier_id' => $quartier->id]))->assertOk()
-        ->assertSee('Visible incident')->assertSee('Reports: 1')->assertDontSee('Resolved incident')->assertDontSee('Other area incident');
+        ->assertSee('Visible incident')->assertSee('Reports: <strong>1</strong>', false)->assertDontSee('Resolved incident')->assertDontSee('Other area incident');
     $this->get(route('outages', ['quartier_id' => 999999]))->assertSessionHasErrors('quartier_id');
 });
 
