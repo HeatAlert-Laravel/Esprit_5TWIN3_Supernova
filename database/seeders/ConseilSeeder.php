@@ -69,7 +69,7 @@ class ConseilSeeder extends Seeder
             $existing = Conseil::where('categorie_conseil_id', $category->id)->where('titre', $title)->first();
             $document = AdviceArticleContent::document($title);
             if (! $existing) {
-                Conseil::factory()->create([
+                Conseil::create([
                     'categorie_conseil_id' => $category->id, 'titre' => $title, 'resume' => $summary,
                     'contenu' => $content, 'contenu_formate' => $document, 'public_cible' => $audience, 'situation' => $situation, 'actif' => $published,
                 ]);
