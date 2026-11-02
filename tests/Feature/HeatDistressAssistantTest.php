@@ -38,6 +38,10 @@ beforeEach(function () {
     $this->endpoint = route('cooling-points.assistant');
 });
 
+afterEach(function () {
+    CarbonImmutable::setTestNow();
+});
+
 test('cooling page offers labelled multilingual voice and text controls without sending requests', function () {
     $this->get(route('cooling-points'))->assertOk()->assertSee('data-heat-record', false)
         ->assertSee('data-heat-message', false)->assertSee('Derja')->assertSee('aria-live="polite"', false)
@@ -96,7 +100,8 @@ test('nearest selection uses actual distance and excludes closed inactive unconf
     $this->postJson($this->endpoint, heatGps(['point_id' => 999, 'distance_km' => 0]))
         ->assertOk()->assertJsonPath('status', 'found')->assertJsonPath('point.id', $nearest->id)
         ->assertJsonPath('origin_coordinates.latitude', 36.8)->assertJsonPath('origin_coordinates.longitude', 10.18)
-        ->assertJsonPath('choices', [])->assertJsonPath('text', fn ($text) => str_contains($text, 'vol d’oiseau'))->assertHeader('Cache-Control', 'no-store, private');
+        ->assertJsonPath('choices', [])->assertJsonPath('text', fn ($text) => str_contains($text, 'vol d’oiseau'))
+        ->assertHeader('Cache-Control', 'no-store, private');
     Http::assertSentCount(1);
     Http::assertSent(fn ($request) => $request->hasHeader('Authorization', 'Bearer member-three-test-secret')
         && $request['response_format']['json_schema']['strict'] === true
@@ -104,7 +109,6 @@ test('nearest selection uses actual distance and excludes closed inactive unconf
     PointFraicheur::query()->update(['actif' => false]);
     heatPlace(['latitude' => 37.5]);
     $this->postJson($this->endpoint, heatGps())->assertOk()->assertJsonPath('status', 'no_match')->assertJsonPath('point', null);
-    CarbonImmutable::setTestNow();
 });
 
 test('PMR requests both explicit and interpreted exclude inaccessible closer locations', function () {
@@ -129,7 +133,6 @@ test('known hours use Tunis time with overnight ranges and exclude ambiguous hou
     CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-10-31 07:30:00', 'UTC'));
     heatPlace(['horaires' => '08:00 - 09:00']);
     expect($finder->nearest(36.80, 10.18, false))->not->toBeNull();
-    CarbonImmutable::setTestNow();
 });
 
 test('spoken street always requires confirmation and a signed origin rechecks current places without another AI call', function () {
@@ -212,23 +215,58 @@ test('provider malformed output network errors quotas and missing keys fail with
         ->push(['error' => 'upstream secret'], 500)->push(['error' => 'upstream secret'], 429)
         ->push(heatIntent(['location' => 5]))]);
     foreach ([503, 429, 503] as $status) {
-        $this->postJson($this->endpoint, heatGps())->assertStatus($status)->assertDontSee('upstream secret')->assertDontSee('member-three-test-secret');
+        $this->postJson($this->endpoint, heatGps())->assertStatus($status)->assertDontSee('upstream secret')
+            ->assertDontSee('member-three-test-secret');
     }
     config(['heat_assistant.key' => '']);
     $this->postJson($this->endpoint, heatGps())->assertServiceUnavailable();
 });
 
-test('connection failures never expose private transport details', function () {
-    Http::fake(fn () => throw new ConnectionException('private transport details'));
-    $this->postJson($this->endpoint, heatGps())->assertServiceUnavailable()->assertDontSee('private transport details');
+// The updated HeatDistressAi uses retry(2, 350, ConnectionException-only) inside ONE
+// logical interpretation attempt: a recovered connection must not consume two Laravel budgets.
+test('temporary Groq connection failure is retried once and the same interpretation succeeds', function () {
+    $calls = 0;
+    Http::fake(function () use (&$calls) {
+        $calls++;
+        if ($calls === 1) {
+            throw new ConnectionException('temporary private transport interruption');
+        }
+        return Http::response(heatIntent(['location' => '']));
+    });
+
+    $this->postJson($this->endpoint, [
+        'language' => 'fr',
+        'message' => 'Je cherche un endroit frais.',
+    ])->assertOk()->assertJsonPath('status', 'needs_location');
+
+    expect($calls)->toBe(2)
+        ->and(RateLimiter::attempts('heat-assistant:daily'))->toBe(1);
+});
+
+test('persistent Groq connection failures stop after two tries and never expose private transport details', function () {
+    $calls = 0;
+    Http::fake(function () use (&$calls) {
+        $calls++;
+        throw new ConnectionException('private transport details');
+    });
+
+    $this->postJson($this->endpoint, heatGps())
+        ->assertServiceUnavailable()->assertJsonPath('code', 'interpretation_unavailable')
+        ->assertDontSee('private transport details')->assertDontSee('member-three-test-secret');
+
+    expect($calls)->toBe(2)
+        ->and(RateLimiter::attempts('heat-assistant:daily'))->toBe(1);
 });
 
 test('a provider schema rejection retries once in JSON object mode and charges both bounded attempts', function () {
     $point = heatPlace();
     $attempts = [];
     Http::fake(function ($request, $options) use (&$attempts) {
-        $attempts[] = ['payload' => $request->data(), 'timeout' => $options['timeout'] ?? null];
-
+        $attempts[] = [
+            'payload' => $request->data(),
+            'timeout' => $options['timeout'] ?? null,
+            'connect_timeout' => $options['connect_timeout'] ?? null,
+        ];
         return count($attempts) === 1
             ? Http::response(['error' => ['code' => 'json_validate_failed', 'type' => 'invalid_request_error',
                 'message' => 'private provider detail', 'failed_generation' => 'private discarded generation']], 400)
@@ -236,7 +274,8 @@ test('a provider schema rejection retries once in JSON object mode and charges b
     });
 
     $this->postJson($this->endpoint, heatGps())->assertOk()->assertJsonPath('status', 'found')
-        ->assertJsonPath('point.id', $point->id)->assertDontSee('private provider detail')->assertDontSee('private discarded generation');
+        ->assertJsonPath('point.id', $point->id)->assertDontSee('private provider detail')
+        ->assertDontSee('private discarded generation');
 
     Http::assertSentCount(2);
     expect(RateLimiter::attempts('heat-assistant:daily'))->toBe(2)
@@ -244,12 +283,14 @@ test('a provider schema rejection retries once in JSON object mode and charges b
         ->and($attempts[0]['payload']['response_format']['json_schema']['strict'])->toBeTrue()
         ->and($attempts[1]['payload']['response_format'])->toBe(['type' => 'json_object']);
     foreach ($attempts as $attempt) {
-        expect($attempt['timeout'])->toBeGreaterThan(0)->toBeLessThanOrEqual(10)
+        expect($attempt['timeout'])->toBe(15)
+            ->and($attempt['connect_timeout'])->toBe(6)
             ->and($attempt['payload']['reasoning_effort'])->toBe('low')
             ->and($attempt['payload']['include_reasoning'])->toBeFalse()
             ->and($attempt['payload'])->not->toHaveKey('reasoning_format');
     }
-    expect($attempts[1]['payload']['messages'][0]['content'])->toContain('JSON')->toContain('needs_accessible')->toContain('emergency');
+    expect($attempts[1]['payload']['messages'][0]['content'])
+        ->toContain('JSON')->toContain('needs_accessible')->toContain('emergency');
 });
 
 test('interpretation does not retry unrelated client errors authentication failures or provider quotas', function ($status, $providerCode, $expectedStatus, $expectedCode) {
@@ -276,7 +317,8 @@ test('JSON mode fallback still rejects extra missing and incorrectly typed field
         ->push(['error' => ['code' => 'json_validate_failed']], 400)
         ->push($completion)]);
 
-    $this->postJson($this->endpoint, heatGps())->assertServiceUnavailable()->assertJsonPath('code', 'interpretation_unavailable');
+    $this->postJson($this->endpoint, heatGps())
+        ->assertServiceUnavailable()->assertJsonPath('code', 'interpretation_unavailable');
 
     Http::assertSentCount(2);
     expect(RateLimiter::attempts('heat-assistant:daily'))->toBe(2);
@@ -295,7 +337,8 @@ test('a second provider schema rejection fails visibly without another retry', f
         ->push(['error' => ['code' => 'json_validate_failed', 'failed_generation' => 'private failed output']], 400)
         ->push(heatIntent())]);
 
-    $this->postJson($this->endpoint, heatGps())->assertServiceUnavailable()->assertJsonPath('code', 'interpretation_unavailable')
+    $this->postJson($this->endpoint, heatGps())
+        ->assertServiceUnavailable()->assertJsonPath('code', 'interpretation_unavailable')
         ->assertDontSee('private failed output');
 
     Http::assertSentCount(2);
@@ -309,7 +352,6 @@ test('the shared daily budget can block a JSON fallback before a second upstream
         ->push(heatIntent())]);
 
     $this->postJson($this->endpoint, heatGps())->assertTooManyRequests()->assertJsonPath('code', 'assistant_limit');
-
     Http::assertSentCount(1);
     expect(RateLimiter::attempts('heat-assistant:daily'))->toBe(1);
 });
@@ -334,12 +376,18 @@ test('audio validation and transcription use multipart Whisper without saving re
     $this->postJson($endpoint, ['language' => 'fr', 'audio' => UploadedFile::fake()->create('bad.txt', 1, 'text/plain')])->assertUnprocessable();
     $this->postJson($endpoint, ['language' => 'fr', 'audio' => UploadedFile::fake()->create('large.wav', 4097, 'audio/wav')])->assertUnprocessable();
     Http::assertNothingSent();
+
     $multipartBody = '';
     $calls = 0;
-    Http::fake(function ($request) use (&$multipartBody, &$calls) {
+    $optionsSeen = [];
+    Http::fake(function ($request, $options) use (&$multipartBody, &$calls, &$optionsSeen) {
         // Inspect before the service closes its upload stream after the response.
         expect($request->isMultipart())->toBeTrue();
         $multipartBody = $request->body();
+        $optionsSeen[] = [
+            'timeout' => $options['timeout'] ?? null,
+            'connect_timeout' => $options['connect_timeout'] ?? null,
+        ];
 
         return Http::response(++$calls === 1
             ? ['text' => 'راني في تونس', 'segments' => [['no_speech_prob' => 0.01]]]
@@ -348,7 +396,15 @@ test('audio validation and transcription use multipart Whisper without saving re
     $this->postJson($endpoint, ['language' => 'derja', 'audio' => UploadedFile::fake()->create('voice.webm', 100, 'audio/webm')])
         ->assertOk()->assertJsonPath('text', 'راني في تونس')->assertHeader('Cache-Control', 'no-store, private');
     expect($multipartBody)->toContain('whisper-large-v3')->not->toContain('name="language"');
-    $this->postJson($endpoint, ['language' => 'fr', 'audio' => UploadedFile::fake()->create('silent.wav', 10, 'audio/wav')])->assertUnprocessable();
+    $this->postJson($endpoint, ['language' => 'fr', 'audio' => UploadedFile::fake()->create('silent.wav', 10, 'audio/wav')])
+        ->assertUnprocessable();
+
+    Http::assertSentCount(2);
+    expect($calls)->toBe(2);
+    foreach ($optionsSeen as $options) {
+        expect($options['timeout'])->toBe(40)
+            ->and($options['connect_timeout'])->toBe(8);
+    }
 });
 
 test('admin explicitly confirms water and shade and existing points default to unconfirmed', function () {
@@ -356,8 +412,10 @@ test('admin explicitly confirms water and shade and existing points default to u
     expect($point->fresh()->eau_potable)->toBeFalse()->and($point->fresh()->ombre)->toBeFalse();
     $data = $point->only(['nom', 'adresse', 'type_point_id', 'quartier_id']);
     $this->actingAs(User::factory()->create(['role' => 'ADMIN']))
-        ->put(route('admin.point-fraicheurs.update', $point), $data + ['eau_potable' => 1, 'ombre' => 1])->assertRedirect();
+        ->put(route('admin.point-fraicheurs.update', $point), $data + ['eau_potable' => 1, 'ombre' => 1])
+        ->assertRedirect();
     expect($point->fresh()->eau_potable)->toBeTrue()->and($point->fresh()->ombre)->toBeTrue();
-    $this->put(route('admin.point-fraicheurs.update', $point), $data + ['eau_potable' => 0, 'ombre' => 0])->assertRedirect();
+    $this->put(route('admin.point-fraicheurs.update', $point), $data + ['eau_potable' => 0, 'ombre' => 0])
+        ->assertRedirect();
     expect($point->fresh()->eau_potable)->toBeFalse()->and($point->fresh()->ombre)->toBeFalse();
 });
