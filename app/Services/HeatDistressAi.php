@@ -11,54 +11,68 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Log;
 class HeatDistressAi
 {
-    public function transcribe(UploadedFile $audio, string $language): string
-    {
-        $this->reserve($language);
-        $stream = fopen($audio->getRealPath(), 'rb');
-      
-try {
-    $response = Http::withToken(config('heat_assistant.key'))
-        ->acceptJson()
-        ->connectTimeout(8)
-        ->timeout(40)
-        ->attach(
-            'file',
-            $stream,
-            'recording.'.$audio->guessExtension()
-        )
-        ->post('https://api.groq.com/openai/v1/audio/transcriptions', [
-            'model' => config('heat_assistant.speech_model'),
-            'response_format' => 'verbose_json',
-            // Auto-detect French, Arabic and Tunisian Derja.
-            'temperature' => '0',
-        ]);
+   
+public function transcribe(UploadedFile $audio, string $language): string
+{
+    $this->reserve($language);
+
+    $stream = fopen($audio->getRealPath(), 'rb');
+
+    try {
+        $response = Http::withToken(config('heat_assistant.key'))
+            ->acceptJson()
+            ->connectTimeout(8)
+            ->timeout(40)
+            ->attach(
+                'file',
+                $stream,
+                'recording.'.$audio->guessExtension()
+            )
+            ->post('https://api.groq.com/openai/v1/audio/transcriptions', [
+                'model' => config('heat_assistant.speech_model'),
+                'response_format' => 'verbose_json',
+                // Automatic language detection for French, Arabic and Derja.
+                'temperature' => '0',
+            ]);
+    } catch (ConnectionException $e) {
+        $this->fail($language, 'transcription_unavailable');
+    } finally {
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
+    }
+
+    if ($response->status() === 429) {
+        $this->fail($language, 'assistant_limit', 'limit', 429);
+    }
+
+    if (! $response->successful()) {
+        $this->fail($language, 'transcription_unavailable');
+    }
+
+    $text = $response->json('text');
+    $segments = $response->json('segments', []);
+
+    $valid = is_string($text)
+        && trim($text) !== ''
+        && mb_strlen($text) <= 1000
+        && (
+            ! is_array($segments)
+            || $segments === []
+            || collect($segments)->contains(
+                fn ($segment) =>
+                    is_numeric($segment['no_speech_prob'] ?? null)
+                    && $segment['no_speech_prob'] < 0.6
+            )
+        );
+
+    if (! $valid) {
+        $this->fail($language, 'no_speech', 'no_speech', 422);
+    }
+
+    return trim($text);
 }
 
-        } catch (ConnectionException) {
-            $this->fail($language, 'transcription_unavailable');
-        } finally {
-            if (is_resource($stream)) {
-                fclose($stream);
-            }
-        }
-        if ($response->status() === 429) {
-            $this->fail($language, 'assistant_limit', 'limit', 429);
-        }
-        if (! $response->successful()) {
-            $this->fail($language, 'transcription_unavailable');
-        }
-        $text = $response->json('text');
-        $segments = $response->json('segments', []);
-        $valid = is_string($text) && trim($text) !== '' && mb_strlen($text) <= 1000
-            && (! is_array($segments) || $segments === [] || collect($segments)->contains(
-                fn ($segment) => is_numeric($segment['no_speech_prob'] ?? null) && $segment['no_speech_prob'] < 0.6
-            ));
-        if (! $valid) {
-            $this->fail($language, 'no_speech', 'no_speech', 422);
-        }
-
-        return trim($text);
-    }
 
     
 public function interpret(string $message, string $language): array
