@@ -1,0 +1,71 @@
+{
+    "checked_on": "2026-11-02",
+    "coordinate_note": "Google Maps place pins, not surveyed entrances or drinking-water outlets.",
+    "places": [
+        {
+            "nom": "Parc du Belvédère",
+            "type": "Shaded park",
+            "icon": "tree",
+            "quartier": "Belvédère",
+            "code_postal": "1002",
+            "adresse": "Avenue Mustapha Khaznadar, Belvédère, Tunis, Tunisie",
+            "latitude": 36.8219921,
+            "longitude": 10.1717264,
+            "horaires": "Tue-Fri, Sun 09:00-17:00; Sat 09:00-18:00; Mon closed",
+            "notes": "Public park and zoo. Google Maps lists weekday-specific hours and an accessible entrance; the full accessible route, drinking-water supply and shaded resting facilities still need on-site confirmation. Admission conditions may apply.",
+            "maps_url": "https://www.google.com/maps/place/Belvedere+Park/data=!4m2!3m1!1s0x12fd34819aa171bf:0x77a533be27aa925d",
+            "sources": [
+                "https://environnement.gov.tn/tunisie-environnement/lenvironnement-urbain/biodiversite-urbaine"
+            ]
+        },
+        {
+            "nom": "Jardin Habib Thameur",
+            "type": "Shaded park",
+            "icon": "tree",
+            "quartier": "Tunis Centre",
+            "code_postal": "1000",
+            "adresse": "Jardin Habib Thameur, près de l'avenue de Paris et de la station République, Tunis, Tunisie",
+            "latitude": 36.8049593,
+            "longitude": 10.1777092,
+            "horaires": "24/7",
+            "notes": "Central public garden. Google Maps lists 24-hour opening and an accessible entrance. Gate access, drinking-water supply and shaded resting facilities still need on-site confirmation; a decorative fountain does not establish a potable supply.",
+            "maps_url": "https://www.google.com/maps/place/Habib+Thameur+Park/data=!4m2!3m1!1s0x12fd355779bc5e31:0x7125ad28152acea7",
+            "sources": [
+                "https://mapcarta.com/36387024"
+            ]
+        },
+        {
+            "nom": "Bibliothèque nationale de Tunisie",
+            "type": "Public library",
+            "icon": "book",
+            "quartier": "Bab Souika",
+            "code_postal": "1006",
+            "adresse": "Boulevard du 9 Avril 1938, Bab Souika, 1006 Tunis, Tunisie",
+            "latitude": 36.7996151,
+            "longitude": 10.1636260,
+            "horaires": "Mon-Sat 08:30-20:00 (reception); Sun closed",
+            "notes": "National library. Official reception hours are Monday-Saturday 08:30-20:00; individual reading rooms differ and Google Maps lists different hours. Identification, subscription or special authorization can be required. Public cooling access, drinking-water supply, shaded resting facilities and accessible routes need confirmation.",
+            "maps_url": "https://www.google.com/maps/place/National+Library+of+Tunisia/data=!4m2!3m1!1s0x12fd34753bf91241:0x593ca907ae5bbf22",
+            "sources": [
+                "https://www.bibliotheque.nat.tn/BNT/contact.aspx?_lg=fr-FR",
+                "https://www.bibliotheque.nat.tn/BNT/accueil-orientation.aspx"
+            ]
+        },
+        {
+            "nom": "Tunisia Mall",
+            "type": "Shopping centre",
+            "icon": "building",
+            "quartier": "Les Berges du Lac II",
+            "code_postal": "1053",
+            "adresse": "Rue de l'Île de Zembretta, Les Berges du Lac II, Tunis, Tunisie",
+            "latitude": 36.8480222,
+            "longitude": 10.2790152,
+            "horaires": "08:00 - 21:00",
+            "notes": "Commercial shopping centre, not a designated emergency shelter. Google Maps and the website's weekly table list 08:00-21:00 daily; the website FAQ gives different hours. The website describes air conditioning, a food court and accessibility. Free drinking-water supply, permission to rest without a purchase, shaded resting facilities and the full accessible route remain unconfirmed.",
+            "maps_url": "https://www.google.com/maps/place/Tunisia+Mall/data=!4m2!3m1!1s0x12fd4ab44df809c9:0x97b81064f47410e2",
+            "sources": [
+                "https://tunisia-mall.com/"
+            ]
+        }
+    ]
+}

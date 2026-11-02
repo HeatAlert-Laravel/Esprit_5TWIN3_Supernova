@@ -25,6 +25,8 @@ The fictitious professor-demo record created in one developer's local database i
 
 ## Configuration
 
+For researched Tunis place records and a separate, explicitly labelled local classroom simulation, see [Tunis locations and demo setup](tunis-cooling-demo.md).
+
 | Variable | Default / purpose |
 | --- | --- |
 | `HEAT_ASSISTANT_GROQ_API_KEY` | Optional dedicated key, falling back to `GROQ_API_KEY` |
