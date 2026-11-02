@@ -15,15 +15,25 @@ class HeatDistressAi
     {
         $this->reserve($language);
         $stream = fopen($audio->getRealPath(), 'rb');
-        try {
-            $response = Http::withToken(config('heat_assistant.key'))->acceptJson()
-                ->connectTimeout(5)->timeout(25)->attach('file', $stream, 'recording.'.$audio->guessExtension())
-                ->post('https://api.groq.com/openai/v1/audio/transcriptions', [
-                    'model' => config('heat_assistant.speech_model'), 'response_format' => 'verbose_json',
-                    // Auto-detect input: the response-language selector must not force
-                    // mixed Arabic/French/Derja audio into the wrong transcription language.
-                    'temperature' => '0',
-                ]);
+      
+try {
+    $response = Http::withToken(config('heat_assistant.key'))
+        ->acceptJson()
+        ->connectTimeout(8)
+        ->timeout(40)
+        ->attach(
+            'file',
+            $stream,
+            'recording.'.$audio->guessExtension()
+        )
+        ->post('https://api.groq.com/openai/v1/audio/transcriptions', [
+            'model' => config('heat_assistant.speech_model'),
+            'response_format' => 'verbose_json',
+            // Auto-detect French, Arabic and Tunisian Derja.
+            'temperature' => '0',
+        ]);
+}
+
         } catch (ConnectionException) {
             $this->fail($language, 'transcription_unavailable');
         } finally {
